@@ -1,0 +1,16 @@
+name: onboardflow-local
+services:
+  db:
+    image: postgres:17
+    env_file: .local/database.env
+    ports:
+      - '127.0.0.1:54329:5432'
+    volumes:
+      - database:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U onboardflow -d onboardflow_dev']
+      interval: 2s
+      timeout: 3s
+      retries: 30
+volumes:
+  database:

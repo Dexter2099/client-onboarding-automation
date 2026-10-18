@@ -1,0 +1,12 @@
+.local/
+node_modules/
+dist/
+**/bin/
+**/obj/
+**/TestResults/
+playwright-report/
+test-results/
+src/OnboardFlow.Api/wwwroot/
+.env
+.env.*
+!.env.example

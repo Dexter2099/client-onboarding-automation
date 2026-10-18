@@ -1,0 +1,40 @@
+# OnboardFlow demo recording script
+
+Draft for review · 19 October 2026 · Main segment target: about three minutes
+
+This is a recording plan, not a completed video or proof of first-time human timing. Record the working local React/C#/PostgreSQL app. Keep the local/demo context visible; do not imply a public deployment or real email/Sheets connection.
+
+## Before the take
+
+- Follow the [README setup](../README.md#run-locally) and open http://127.0.0.1:5080/ at a comfortable desktop size, such as 1280 × 900.
+- Use a fresh private browser window. If reusing your sandbox, **Reset both sample projects** clears both of your fictional projects; it does not affect other visitors.
+- Start on OF-1042. Keep unrelated tabs, notifications, terminals and credentials outside the recording.
+- Rehearse once with this script, then start a fresh sandbox for the take. An edited or rehearsed recording does not satisfy the separate uncoached human walkthrough check.
+
+## Main take
+
+Timing is a pacing guide, not an established completion time. Pause briefly on results so an employer can read them.
+
+| Approximate time | Show and do | Suggested narration |
+| --- | --- | --- |
+| 0:00–0:15 | Show the opening task and OF-1042. Briefly open Project details to show the five signed pages, then close it. | “OnboardFlow is a personal project built with React, TypeScript, C# and PostgreSQL. I'm Alex, the project manager, preparing a fictional website project for kickoff.” |
+| 0:15–0:35 | Select **Start onboarding**, then **Load Maya's sample reply**. | “The app saves the request and prepares a simulated welcome. This demo control supplies Maya's reply; it doesn't approve her answers.” |
+| 0:35–1:10 | **Approve Goals & audience**, then **Review Pages**. Point to Shop and the signed scope. Enter “Please remove Shop and confirm the five signed pages.” Select **Request changes**. | “Shop is outside the agreement. Pages can't be approved until corrected. I record the reason so the request and review history stay together.” |
+| 1:10–1:40 | **Load Maya's corrected Pages**, inspect the new revision and **Approve Pages**. Select **Review Brand assets** and **Approve Brand assets**. | “The correction creates a new revision requiring fresh approval. The earlier answer stays in history, and the approved goals are retained.” |
+| 1:40–2:10 | Select **Mark ready for kickoff**. Show the saved brief and its five approved pages. | “All current answers are approved. Mark ready saves the approved brief and closes the review task. Readiness is separate from handoff confirmation.” |
+| 2:10–2:40 | **Publish simulated handoff**, open **Inspect register entry**, then **Repeat Publish**. Pause on the same register reference. | “Publishing saves a simulated register entry in PostgreSQL. Repeating it reuses the same result. No Make or Google Sheets connection is used.” |
+| 2:40–3:00 | Briefly show Activity and Outbox, then return to the brief. | “Activity and Outbox make the saved results inspectable. The local harness covers the workflow, repeat safety and recovery. This is a local demo; hosting and first-time human timing remain to be verified.” |
+
+If the take runs long, shorten narration or omit opening Project details. Keep the correction, new approval, saved brief and separate handoff confirmation intact.
+
+## Optional recovery segment: about 45 seconds
+
+Switch to **OF-1043 Website refresh** and select **Start onboarding**. Pause on “1 of 3 attempts used” and the retained request/review task. Select **Restore simulated service**, show the count is unchanged, then **Try welcome**. The guided example succeeds on attempt two. Open Demo tools / repeat protection to show **2 of 3** attempts used if needed.
+
+Suggested narration: “This second project deliberately fails its first welcome attempt. The request and task remain saved. Restoring availability doesn't reset the budget or retry automatically. My explicit retry prepares the welcome on attempt two. Three committed failures would exhaust this project's budget until the sandbox is reset.”
+
+Finish by returning to OF-1042 to show its confirmed brief is unaffected. This segment is optional for the employer and does not add another failure scenario.
+
+## Review before sharing
+
+Check that text is readable, outcomes have time to register, narration matches the saved UI and only fictional data is visible. Describe messages as prepared and the handoff as simulated. Keep the original capture and review the final clip before publication. No video has been recorded or published as part of preparing this script.
