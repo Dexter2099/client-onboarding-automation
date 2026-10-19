@@ -6,9 +6,14 @@ namespace OnboardFlow.Api;
 public static class ApiSafety
 {
     private const int MaxBodyBytes = 16 * 1024;
+    private const string BrowserPolicy = "default-src 'none'; script-src 'self'; script-src-attr 'none'; "
+        + "style-src 'self'; style-src-attr 'none'; img-src 'self'; font-src 'self'; connect-src 'self'; "
+        + "base-uri 'none'; object-src 'none'; frame-ancestors 'none'; form-action 'none'";
 
     public static void AddApiSafety(this WebApplicationBuilder builder)
     {
+        // Initial rollout pins only this host. Do not preload a provider-owned domain.
+        builder.Services.AddHsts(options => options.MaxAge = TimeSpan.FromDays(1));
         builder.WebHost.ConfigureKestrel(options => options.Limits.MaxRequestBodySize = MaxBodyBytes);
         builder.Services.AddRateLimiter(options =>
         {
@@ -45,6 +50,8 @@ public static class ApiSafety
             http.Response.Headers.XContentTypeOptions = "nosniff";
             http.Response.Headers.XFrameOptions = "DENY";
             http.Response.Headers["Referrer-Policy"] = "no-referrer";
+            // The built app needs only local assets and same-origin API calls; no inline/eval exceptions.
+            http.Response.Headers.ContentSecurityPolicy = BrowserPolicy;
             if (IsApi(http))
             {
                 http.Response.Headers.CacheControl = "no-store";

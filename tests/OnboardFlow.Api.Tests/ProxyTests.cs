@@ -63,6 +63,8 @@ public sealed class ProxyTests
         });
 
         Assert.Equal(expectedStatus, response.Response.StatusCode);
+        Assert.Equal(expectedStatus == 200,
+            response.Response.Headers.ContainsKey("Strict-Transport-Security"));
         if (expectedStatus == 200)
         {
             var cookie = response.Response.Headers.SetCookie.ToString();
