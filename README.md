@@ -1,44 +1,62 @@
 # OnboardFlow
 
-A client-onboarding workspace built with **React, TypeScript, C#, ASP.NET Core and PostgreSQL**. Review a signed website project's client answers, resolve an out-of-scope request and save an approved kickoff brief with a separately confirmed simulated handoff.
+A full-stack client-onboarding demo built with **React, TypeScript, C#, ASP.NET Core and PostgreSQL**. A project manager reviews a signed website project's client replies, resolves an out-of-scope request and saves an approved kickoff brief with an inspectable handoff.
 
-**Version-one review package · 19 October 2026.** The combined React/C# app is deployed on Deplexo Free with Neon Free PostgreSQL 17. Secure workspace creation and the bounded hosted workflow/recovery/security checks pass. Extended-idle entry, first-time human timing and employer-access reputation remain open, so employer sharing is still behind review. The planned entry is a Try this demo button beside GitHub on the OnboardFlow card at dexter-developer.dev, opening the working app separately. [Hosting evidence](HARNESS.md) distinguishes observed passes from remaining acceptance. All client data is fictional; email delivery and the external register connection are simulated.
+[Try the live demo](https://dexter-onboardflow.de.deplexo.com/) · [Engineering case study](docs/case-study.md) · [QA evidence](docs/case-study.md#qa-and-testing-evidence)
 
-## Try the demo
+[![Delivery](https://github.com/Dexter2099/client-onboarding-automation/actions/workflows/delivery.yml/badge.svg)](https://github.com/Dexter2099/client-onboarding-automation/actions/workflows/delivery.yml)
 
-Open the [hosted OnboardFlow demo](https://dexter-onboardflow.de.deplexo.com/). You're the project manager for Juniper Studio, reviewing client replies and preparing its signed website redesign for kickoff. No account or personal information is needed.
+## The problem
 
-1. Open OF-1042 and select **Start onboarding**, then **Load Maya's sample reply**.
-2. Approve Goals & audience and follow **Review Pages**. Shop is outside the signed five-page scope, so request a correction with a comment.
-3. Load the corrected Pages, approve that revision, then review and approve Brand assets.
-4. Select **Mark ready for kickoff**, inspect the approved brief and **Publish simulated handoff**.
+Receiving client information does not mean it is ready for kickoff. A reply may add work outside the signed agreement, and a correction must receive fresh approval. Repeated clicks or a lost response must not duplicate requests, messages or handoffs.
 
-OF-1043 is the optional recovery example: its first welcome attempt fails. Restore the simulated service and explicitly try again. There are **three attempts total per project**, including the first; restoring availability does not reset the budget.
+The fictional Juniper Studio project makes those rules visible. Maya's first reply adds Shop to a signed five-page website. The visitor acts as the project manager, requests a correction and approves the revised answer before marking the project ready.
 
-Work survives refresh in a private sandbox that expires 24 hours after creation. **Reset both sample projects** clears only your visitor's two projects. Outbox, Activity, earlier revisions and register details make the saved results inspectable.
+## Try it
 
-## Browser compatibility
+No account, installation or personal information is needed. Use a current browser with JavaScript and same-origin cookies enabled.
 
-Visitors use the hosted application in a browser; they do not need .NET, Docker or a Windows computer. The intended audience uses current Chrome, Edge, Firefox or Safari with JavaScript and same-origin cookies available. The application bundles its fonts/assets and has no OS integration or browser-extension requirement.
+1. Select OF-1042, **Start onboarding**, then **Load Maya's sample reply**.
+2. Approve Goals & audience. Review Pages and request a correction with a comment because Shop is outside the agreement.
+3. Load the corrected Pages, approve that revision, then approve Brand assets.
+4. **Mark ready for kickoff**, inspect the saved brief and **Publish simulated handoff**. Inspect its register entry and repeat Publish to see the same result reused.
 
-`npm run verify` runs the same twelve browser scenarios in **Chromium, Firefox and WebKit** (36 executions), including desktop/phone layouts, keyboard controls, correction/approval/handoff, refresh, visitor isolation, recovery and CSP enforcement. CI installs all three engines and gates release on the complete matrix. Screenshots are stored under `.local/reports/<engine>/`, so one engine cannot overwrite another's evidence; CI retains them with the reports for seven days.
+OF-1043 provides an optional recovery exercise. Its first welcome attempt fails while the request and task remain saved. Restore the simulated service, then explicitly try welcome again. There are three attempts total per project; restoration does not reset the counter.
 
-WebKit is Safari's engine, but [Playwright WebKit is not the branded Safari application](https://playwright.dev/docs/browsers#webkit). Windows local and Ubuntu CI results do not establish testing on real macOS, iPhone/iPad hardware, assistive technology or every managed browser/security product. A phone-sized viewport is layout evidence, not a physical-device certification. See [HARNESS.md](HARNESS.md) for actual passes and gaps.
+Each visitor has a private fictional sandbox with a fixed 24-hour lifetime. Work survives refresh. **Reset both sample projects** replaces only that visitor's projects.
 
-After a passing main deployment, a separate **macos-15** job checks the live release using native macOS WebKit at 2x pixel scale: a fresh fictional visitor completes correction, approval, handoff, repeat, refresh and desktop/phone-width controls. It has no deployment/database credentials, no automatic mutation retries and a six-minute bound. Its summary and screenshots provide the Mac evidence only when the job passes. GitHub [standard runners are free for this public repository](https://docs.github.com/en/actions/reference/runners/github-hosted-runners); the job is excluded if the repository becomes private. This is a macOS browser-engine check, not branded Safari or physical iOS certification.
+## What is real and what is simulated?
 
-The installed Vite build resolves to Chrome/Edge 111, Firefox 114 and Safari/iOS 16.4 syntax targets. These are build targets, not a promise that those older versions are supported/tested; use a current browser. No legacy polyfill dependency or user-agent routing was added.
+| Part | What actually happens |
+| --- | --- |
+| Review and approval | The C# API enforces signed scope, current-revision approval and readiness. PostgreSQL stores the answers, decisions, history and frozen kickoff brief. |
+| Visitor workspace | Server-enforced ownership and expiry isolate visitors. Reset, persistence and repeat/concurrency protection use the real API/database. |
+| Client replies | Labelled demo controls supply prepared fictional replies. There is no separate client portal. |
+| Email / Outbox | The app saves prepared welcome/correction messages for inspection. Delivery is simulated: no email is sent and visitors supply no email address. |
+| Handoff | Publish stores a real snapshot of the approved brief in the visitor's demo register. Repeats reuse that saved entry. The external destination is simulated: no Make, Google Sheets or other external register is updated. |
+
+This is a personal portfolio project with fictional data. Real external delivery/integration is outside version one.
+
+## Engineering and QA
+
+- **Frontend:** React/TypeScript, contextual next actions, keyboard controls and desktop/phone layouts.
+- **Backend:** one same-origin ASP.NET Core app on .NET 10 LTS, EF Core/Npgsql and PostgreSQL 17. Direct transactions and database constraints protect workflow consistency.
+- **Reliability:** revision-bound approvals, idempotent commands, explicit lost-response recovery, rollback checks and a three-attempt welcome budget.
+- **Security:** private expiring sandboxes, ownership checks, Secure/HttpOnly cookies, CSRF protection, resource limits, controlled errors, enforced CSP and HTTPS HSTS. These are OWASP-aware controls, not a certification.
+- **Delivery:** Docker on Deplexo Free with Neon Free; passing GitHub Actions checks gate deployment and verify the live Git revision.
+
+| Automated check | Coverage |
+| --- | --- |
+| Unit | 16 isolated scope/readiness cases without an API host or database. |
+| Integration / security | 57 ASP.NET pipeline and PostgreSQL cases, including ownership, expiry, stale approvals, concurrency and injected failures. |
+| Browser E2E | Twelve scenarios in Chromium, Firefox and WebKit: 36 executions covering the main journey, recovery, persistence, isolation and CSP. |
+| Post-deploy smoke | Live revision/API/security checks followed by a native macOS arm64/WebKit visitor journey at desktop/phone widths and 2x scale. |
+
+Regression, security and recovery describe overlapping test purposes; they are not additional counts. See the [QA table](docs/case-study.md#qa-and-testing-evidence) for source links, failure cases and limits, and the [delivery history](https://github.com/Dexter2099/client-onboarding-automation/actions/workflows/delivery.yml?query=branch%3Amain) for actual release results. Detailed CI reports/screenshots are retained for seven days.
 
 ## Run locally
 
-Verified on Windows with PowerShell 7. Install these prerequisites first:
-
-- Node.js 24 and npm (verified with npm 11).
-- .NET SDK **10.0.402**, or the compatible patch selected by [global.json](global.json). The SDK is not bundled in this repository.
-- Docker Desktop running Linux containers, with Docker Compose available.
-- Git, to obtain the source.
-
-From the repository root, in **PowerShell 7**, run:
+Prerequisites: Node.js 24/npm, .NET SDK **10.0.402** selected by [global.json](global.json), PowerShell 7 and Docker with Linux containers. Local setup is verified on Windows; CI runs the harness on Ubuntu.
 
 ```powershell
 npm ci
@@ -47,95 +65,36 @@ npm run build
 npm run api
 ```
 
-Open **http://127.0.0.1:5080/**. Use `127.0.0.1` consistently so the sandbox cookie stays with the same hostname.
+Open **http://127.0.0.1:5080/**. Setup creates ignored local database credentials, starts PostgreSQL, applies migrations and installs the three Playwright engines. It preserves existing development data and requires no hosting account. Keep `.local/database.env` when retaining the database volume.
 
-`setup` creates an ignored `.local/database.env` with a random local password, starts PostgreSQL, restores the .NET solution and EF tool, applies migrations and installs Playwright Chromium. No provider account, webhook or manually supplied database secret is needed. Initial setup requires internet access for packages, the database image and browser download.
-
-The development database uses `127.0.0.1:54329`. The app uses port 5080; browser checks use 5081. Keep these ports available. Setup preserves existing database data: keep `.local/database.env` when retaining the Docker database volume. Use one local checkout/container arrangement at a time.
-
-For frontend editing, keep `npm run api` running and open another PowerShell terminal:
-
-```powershell
-npm run dev
-```
-
-Vite runs at **http://127.0.0.1:5173** and proxies `/api` to the C# application. The API serves the last frontend build on port 5080; rebuild after edits when reviewing that port.
-
-## Verify and stop
+For frontend development, run `npm run dev` in another terminal and open http://127.0.0.1:5173/. Vite proxies the C# API. The API on port 5080 serves the last frontend build. PostgreSQL uses port 54329; browser checks use 5081.
 
 ```powershell
 npm run verify
 npm run format:check
 ```
 
-The harness builds the application, runs **16 isolated unit cases and 57 integration/security cases**, then exercises twelve browser scenarios in Chromium, Firefox and WebKit (**36 executions**). API and browser integration checks own disposable local test databases; they do not reset the development database. The separate post-deploy smoke checks verify the hosted release and native macOS visitor journey. See [HARNESS.md](HARNESS.md) for actual results and practical limits.
+The full harness builds the app and runs unit, integration and browser checks. Database tests own disposable local fixtures and never reset development or hosted data. Unit cases can run alone with `dotnet test tests/OnboardFlow.Api.Tests --filter "Category=Unit"`.
 
-Unit cases test the pure scope/readiness rules without an API host or database. They can also run alone with the installed .NET SDK:
+Stop API/Vite with Ctrl+C; `npm run stop:db` stops PostgreSQL while retaining its volume. Run `npm run setup` before the next start. See [HARNESS.md](HARNESS.md) for troubleshooting and exact verification evidence.
 
-```powershell
-dotnet test tests/OnboardFlow.Api.Tests --filter "Category=Unit"
-```
+## Code and deployment
 
-The existing test project uses `Category=Unit` and `Category=Integration` traits to distinguish levels. Security, regression, recovery and compatibility describe the purpose of checks across those levels; they are not extra test counts. The [QA evidence table](docs/case-study.md#qa-and-testing-evidence) maps each claim to concrete scenarios, source files and remaining gaps. Keyboard/layout checks are partial accessibility evidence; no full WCAG audit, penetration test, sustained-load benchmark or human usability result is claimed.
-
-Stop the API/Vite terminals with Ctrl+C. Stop PostgreSQL while retaining its volume with:
-
-```powershell
-npm run stop:db
-```
-
-Run `npm run setup` before the next start. If setup fails, check Docker is running Linux containers and `dotnet --version` resolves the pinned SDK from this folder. Use a fresh terminal if an inherited `ConnectionStrings__OnboardFlow` override points the API elsewhere. Do not delete local credentials to troubleshoot a retained database.
-
-## Container package
-
-The Dockerfile builds the React frontend and C# API from source, then runs the published application as a non-root user on port 8080. Build it from the repository root:
-
-```powershell
-docker build --tag onboardflow:review .
-```
-
-Only the final runtime image is deployed; Node, npm, the .NET SDK and tests stay in build stages. The build context excludes local credentials, database state and generated files. deplexo.yaml configures a single web container on port 8080. The container disables JSON config reload (`DOTNET_HOSTBUILDER__RELOADCONFIGONCHANGE=false`) because the shared host exhausted its file-watcher allowance during the first startup. Apply configuration changes by restarting/redeploying the app.
-
-At runtime, supply `ConnectionStrings__OnboardFlow` through the host's secret environment settings, using a PostgreSQL connection with verified TLS. Do not commit it or bake it into an image. Apply the checked-in EF migrations to the intended database before serving visitors; image startup does not migrate it. Keep Production enabled, retain a writable persistent /data mount for ASP.NET keys, and configure `ReverseProxy__KnownProxies__0` (and further indexes if needed) only for verified proxy addresses. HTTPS and Secure-cookie/CSRF behaviour must pass the hosted checks before release. Do not trust arbitrary forwarders to make deployment pass.
-
-The verified Deplexo ingress replaces `X-Forwarded-Proto` with its internal HTTP scheme but preserves Cloudflare's documented `CF-Visitor` scheme. Set `ReverseProxy__UseCloudflareVisitor=true` only for that verified path, alongside its exact configured peer. This opt-in adapter discards any visitor-supplied derived header, accepts a single valid HTTP/HTTPS scheme only from an explicitly configured proxy, and passes it through ASP.NET's forwarded-header middleware. It fails closed when that evidence is missing or invalid. Keep the option off for other hosts unless their ingress and header-overwrite behaviour have been verified. See [Cloudflare's header reference](https://developers.cloudflare.com/fundamentals/reference/http-headers/#cf-visitor) and the retained hosted checks in HARNESS.md.
-
-The built image passed the focused local Production/resource probe documented in HARNESS.md. This does not establish provider allocation, browser performance or long-idle acceptance.
-
-## Project structure and evidence
-
-| Path | Purpose |
+| Path | Responsibility |
 | --- | --- |
-| `src/web` | React interface and typed API calls. |
-| `src/OnboardFlow.Api` | Same-origin C# API, EF model, migrations and static frontend host. |
-| `tests` | Isolated workflow-rule unit tests, API/PostgreSQL integration tests and browser journeys. |
-| [Case study](docs/case-study.md) | Short employer-facing draft describing the problem, choices and evidence. |
-| [Recording script](docs/demo-recording-script.md) | Draft main walkthrough and optional recovery segment; no recording has been produced. |
-| [PLAN.md](PLAN.md) | Scope and acceptance criteria. |
-| [HARNESS.md](HARNESS.md) | Reproducible checks and current review/release gates. |
+| `src/web` | React workspace, typed API client and onboarding UI. |
+| `src/OnboardFlow.Api` | HTTP endpoints, workflow transactions, pure rules, response mapping, EF model/migrations and static hosting. |
+| `tests` | Isolated rule tests, API/database integration checks and Playwright journeys. |
+| `.github/workflows/delivery.yml` | Required PR checks, source packaging/image build, production deployment and live smoke verification. |
 
-This improves an earlier prototype; its assessment and reuse decisions are in [docs/architecture.md](docs/architecture.md). The current implementation uses one C# app, direct EF Core and PostgreSQL transactions, with no background job or generic workflow engine.
+Merge a passing PR into main to release. Actions packages the checked commit, verifies its checksum and sends that source archive to the existing Deplexo app, which rebuilds it. This is verified source delivery, not promotion of an identical prebuilt image. Main releases are serial; production credentials stay in the production environment, and database credentials stay with the host. A failed live check fails release verification; mutations are not blindly retried.
 
-The focused quality review separates HTTP endpoints, workflow transactions, pure validation and response mapping. The API enforces ownership, fixed expiry, antiforgery, revision checks and repeat/attempt limits on the server. It also limits body size and API traffic, returns controlled errors and avoids caching private API responses. Enforced CSP restricts the built app to its own assets/API without inline/eval exceptions; production HTTPS uses HSTS with an initial one-day policy. [Architecture and API review](docs/architecture.md) explains the controls, tests and relevant OWASP risks without claiming certification. Security headers do not clear reputation lists: the submitted Webroot review remains separate, and visitors should never bypass a warning.
+Implementation and production configuration are described in [architecture.md](docs/architecture.md). [HARNESS.md](HARNESS.md) owns operational/release evidence; [PLAN.md](PLAN.md) owns scope and acceptance criteria. A [recording script](docs/demo-recording-script.md) is available; no completed recording is claimed.
 
-## Continuous integration and deployment
+## Known limits
 
-[![Delivery](https://github.com/Dexter2099/client-onboarding-automation/actions/workflows/delivery.yml/badge.svg)](https://github.com/Dexter2099/client-onboarding-automation/actions/workflows/delivery.yml)
+Neon Free suspends database compute after five idle minutes and wakes on access. Post-idle requests can take longer; [HARNESS.md](HARNESS.md) distinguishes measured suspended-database entry from warm timing. No keep-alive workaround, always-on guarantee or sustained-load result is claimed.
 
-The [Delivery workflow](.github/workflows/delivery.yml) runs on pull requests and main, with a manual trigger available. It installs the locked dependencies, starts disposable local PostgreSQL, checks formatting, runs all API/browser tests, packages the exact checked-out commit and builds that package's Docker image. A failing check prevents deployment. Test reports and the verified source package are retained for seven days.
-
-Only a successful main run can access the **production** deployment secret. It downloads that run's verified package, checks its SHA-256 and revision, uploads it to the existing Deplexo app and waits for that exact deployment to succeed. The live smoke check verifies `/release.json` matches the Git commit, requires CSP/HSTS on the document and API responses, then checks real database-backed workspace creation, Secure cookies, CSRF, fixed expiry and saved/repeated Start. A failed smoke check fails the release job; it does not blindly repeat a mutation or claim success. Production runs are serial and are not automatically cancelled during a container swap.
-
-Deplexo's existing ZIP app has no supported in-place Git-source conversion. GitHub Actions therefore delivers a versioned source archive through the documented API; there is no manual ZIP upload in the normal release path. GitHub's run/deployment record, package checksum and live revision marker tie it to the source commit. Deplexo rebuilds the same package; CI does not publish a prebuilt image. Base images are pinned by digest, actions by commit SHA, and npm/NuGet inputs by checked-in lockfiles with locked restore. This makes inputs repeatable without claiming bit-for-bit identical image output. Review dependency/base-image updates deliberately; regenerate NuGet locks with `dotnet restore OnboardFlow.slnx --use-lock-file --force-evaluate` when changing package versions, then run the harness.
-
-The production environment requires one `DEPLEXO_TOKEN` secret with **app:deploy, app:restart and app:read** only. It does not need database credentials, environment-variable access, deletion, stop, domains or logs permissions. The token is account-scoped because Deplexo does not offer a per-app scope; the script additionally fixes the existing app ID. Dexter approved **No expiry** on 19 October 2026 to avoid scheduled credential replacement. Keep it out of files/logs and revoke/replace it if exposed or no longer needed. The Neon secret remains solely in Deplexo. Provider push auto-deploy stays disabled so it cannot bypass the checks.
-
-This key is used only for future deployments. Revoking or expiring it prevents later automated releases; it does not stop the already-running app or expire visitor access. The fixed 24-hour visitor sandbox lifetime is a separate application rule.
-
-Main requires the **Verify and package** check from the GitHub Actions app, up to date with the target branch; administrators are included. Force pushes and branch deletion are disabled. The production environment permits only main. The first [PR verification run](https://github.com/Dexter2099/client-onboarding-automation/actions/runs/39186999599) passed 50 API tests, eleven browser tests and the packaged image build.
-
-To release, merge a passing pull request into main. To rerun main deliberately, use Delivery's **Run workflow** button. Inspect a failed deployment/history before retrying if submission or confirmation was lost. There is no automatic rollback: source rollback cannot undo database changes or restore provider key files. This slice makes no schema changes. The host can briefly interrupt service while replacing its container. See [HARNESS.md](HARNESS.md) for actual execution evidence and limits.
-
-First-time human walkthrough timing and ongoing-free hosting/startup acceptance remain open. This is a personal portfolio project, not production client work. There is no real email sending or Make/Google Sheets integration in version one. Local automated timing is not a measured business saving or a human usability result.
+Branded Safari, physical phones, screen readers and a full accessibility audit remain unverified. Human first-time usability testing is separate from automated browser acceptance. A Webroot review was submitted; vendor clearance remains unconfirmed. Visitors should not bypass a security warning.
 
 Application code is [MIT licensed](LICENSE); dependencies retain their own licences. See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).

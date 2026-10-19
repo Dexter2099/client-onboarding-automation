@@ -721,7 +721,10 @@ export function OnboardingPanel({
                       <p>
                         <strong>Handoff: not published.</strong>
                       </p>
-                      <p>Save the approved brief to this sandbox. No external connection.</p>
+                      <p>
+                        Save an inspectable register entry in your private demo. No external service
+                        is contacted.
+                      </p>
                       <button
                         className="button primary"
                         disabled={blocked}
@@ -753,7 +756,8 @@ export function OnboardingPanel({
                           ))}
                         </ul>
                         <p>
-                          Snapshot of the approved kickoff brief. No external connection was used.
+                          Saved copy of the approved kickoff brief in your private demo register. No
+                          external service was contacted.
                         </p>
                         <button
                           className="button secondary"

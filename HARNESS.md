@@ -509,3 +509,22 @@ Dexter requested employer-visible QA/testing evidence, including smoke, integrat
 | Delivery | The existing required PR check runs all these cases and the packaged image build before a main release. Main then requires live revision/API/header checks and the native macOS visitor job. Actual run links and results, rather than a test count alone, establish CI/CD acceptance. |
 
 The first unit-test compile attempt used array-valued InlineData arguments that the attribute constructor could not accept; it was corrected to typed xUnit MemberData before the successful isolated/full runs. No policy exception or production change was needed. The [case-study QA table](docs/case-study.md#qa-and-testing-evidence) is the presentation artifact; this harness remains the verification authority. Existing historical counts above describe their original checkpoints.
+
+### Neon idle-entry investigation on 19 October 2026
+
+Dexter asked to distinguish a genuinely idle database from his recent browser use before considering a replacement. The existing OnboardFlow compute's read-only settings show 0.25 CU minimum/maximum and a fixed five-minute scale-to-zero period; configuring it requires an upgrade. [Neon's documentation](https://neon.com/docs/introduction/scale-to-zero) confirms automatic wake and the fixed Free setting. Neither the plan nor compute settings were changed, and the unrelated Neon project was untouched.
+
+The recent Chrome navigation recorded project/onboarding data by 2.874 seconds, but Dexter had been using the app. This is a recently used browser observation, not independent cold-entry evidence. The older 12.509-second capture included a 7.356-second POST /api/session; it measures initial sandbox/application/database work together and does not isolate Neon's wake time.
+
+After natural inactivity, Neon visibly reported **SUSPENDED**. A bounded HTTP probe then used a separate in-memory cookie jar to reproduce a new visitor's HTML, missing-session, CSRF, session-creation, projects and onboarding requests. It did not use/reset the existing browser visitor, execute direct database queries, bypass a warning or retry a mutation. Neon subsequently visibly reported ACTIVE. An immediate comparison used another fresh visitor with the database already warm.
+
+| Measurement | After confirmed Neon suspension | Warm comparison |
+| --- | --- | --- |
+| Complete HTML/API sequence, six requests | **3.626 seconds** | **2.216 seconds** |
+| HTML GET | 1.089 seconds | 0.395 seconds |
+| New sandbox POST | **1.039 seconds** | **0.382 seconds** |
+| Project list / onboarding GET | 0.375 / 0.386 seconds | 0.368 / 0.358 seconds |
+
+The samples completed at 13:34:44 and 13:34:48 Brisbane time (03:34:44/03:34:48 UTC). They include client/network/server/database time and exclude frontend asset download/rendering. The 1.410-second total difference cannot all be assigned to Neon: the HTML request also differed. The sandbox POST difference was 0.657 seconds. This supports retaining the current provider for this bounded release; it does not establish an overnight result, every visitor's latency or the pure database-wake cost. No keep-alive, paid upgrade, card, new account or startup retry was added.
+
+Ignored evidence: `.local/startup-review/profile-entry.mjs`, `after-neon-suspension.json`, `warm.json`, `neon-suspended.png` and `neon-after-entry.png`. The script fixes the public origin, asserts expected statuses/two projects/fixed expiry and logs timings only; cookies/CSRF remain in process memory. The HTTP measurement is separate from subsequent full browser regression and human acceptance.

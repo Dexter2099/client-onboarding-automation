@@ -1,6 +1,6 @@
 # OnboardFlow: from signed scope to an approved kickoff
 
-Draft for review · 19 October 2026 · Personal portfolio project
+19 October 2026 · Personal portfolio project
 
 ## The problem
 
