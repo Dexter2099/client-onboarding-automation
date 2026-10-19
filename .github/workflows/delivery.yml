@@ -1,0 +1,98 @@
+name: Delivery
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# Never overlap production releases or cancel a deployment during its swap.
+concurrency:
+  group: delivery-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+jobs:
+  verify:
+    name: Verify and package
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '24.19.0'
+          cache: npm
+      - uses: actions/setup-dotnet@26b0ec14cb23fa6904739307f278c14f94c95bf1 # v5
+        with:
+          global-json-file: global.json
+      - name: Install locked dependencies and browser prerequisites
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $PSNativeCommandUseErrorActionPreference = $true
+          npm ci
+          npx playwright install --with-deps chromium
+          npm run setup
+      - name: Check formatting and run API/browser regression
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $PSNativeCommandUseErrorActionPreference = $true
+          npm run format:check
+          npm run verify
+      - name: Package this revision and build its deployment image
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $PSNativeCommandUseErrorActionPreference = $true
+          ./scripts/package-release.ps1 -Revision $env:GITHUB_SHA
+          docker build --tag onboardflow:verified .local/release/source
+      - name: Retain the verified release bundle
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: verified-release
+          path: |
+            .local/release/onboardflow-*.zip
+            .local/release/release-manifest.json
+          if-no-files-found: error
+          retention-days: 7
+      - name: Retain test evidence
+        if: always()
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: test-results
+          path: |
+            .local/reports/*.trx
+            playwright-report
+          if-no-files-found: ignore
+          retention-days: 7
+
+  deploy:
+    name: Deploy verified revision
+    needs: verify
+    if: github.repository == 'Dexter2099/client-onboarding-automation' && github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    environment:
+      name: production
+      url: https://dexter-onboardflow.de.deplexo.com/
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '24.19.0'
+      - uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7
+        with:
+          name: verified-release
+          path: .local/release
+      - name: Deploy the checked package and verify the live revision
+        env:
+          DEPLEXO_TOKEN: ${{ secrets.DEPLEXO_TOKEN }}
+        run: node scripts/deploy-demo.mjs
