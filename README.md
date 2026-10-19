@@ -17,6 +17,16 @@ OF-1043 is the optional recovery example: its first welcome attempt fails. Resto
 
 Work survives refresh in a private sandbox that expires 24 hours after creation. **Reset both sample projects** clears only your visitor's two projects. Outbox, Activity, earlier revisions and register details make the saved results inspectable.
 
+## Browser compatibility
+
+Visitors use the hosted application in a browser; they do not need .NET, Docker or a Windows computer. The intended audience uses current Chrome, Edge, Firefox or Safari with JavaScript and same-origin cookies available. The application bundles its fonts/assets and has no OS integration or browser-extension requirement.
+
+`npm run verify` runs the same twelve browser scenarios in **Chromium, Firefox and WebKit** (36 executions), including desktop/phone layouts, keyboard controls, correction/approval/handoff, refresh, visitor isolation, recovery and CSP enforcement. CI installs all three engines and gates release on the complete matrix. Screenshots are stored under `.local/reports/<engine>/`, so one engine cannot overwrite another's evidence; CI retains them with the reports for seven days.
+
+WebKit is Safari's engine, but [Playwright WebKit is not the branded Safari application](https://playwright.dev/docs/browsers#webkit). Windows local and Ubuntu CI results do not establish testing on real macOS, iPhone/iPad hardware, assistive technology or every managed browser/security product. A phone-sized viewport is layout evidence, not a physical-device certification. See [HARNESS.md](HARNESS.md) for actual passes and gaps.
+
+The installed Vite build resolves to Chrome/Edge 111, Firefox 114 and Safari/iOS 16.4 syntax targets. These are build targets, not a promise that those older versions are supported/tested; use a current browser. No legacy polyfill dependency or user-agent routing was added.
+
 ## Run locally
 
 Verified on Windows with PowerShell 7. Install these prerequisites first:
