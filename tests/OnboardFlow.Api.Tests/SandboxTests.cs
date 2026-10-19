@@ -8,6 +8,7 @@ using OnboardFlow.Api;
 namespace OnboardFlow.Api.Tests;
 
 [Trait("Acceptance", "AC-07, AC-11 foundation")]
+[Trait("Category", "Integration")]
 public sealed class SandboxTests : IClassFixture<FoundationFixture>
 {
     private readonly FoundationFixture fixture;

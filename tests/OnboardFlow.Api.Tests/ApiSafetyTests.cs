@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace OnboardFlow.Api.Tests;
 
+[Trait("Category", "Integration")]
 public sealed class ApiSafetyTests
 {
     private static WebApplicationFactory<Program> Factory(int requestsPerMinute = 240, string environment = "Production") =>

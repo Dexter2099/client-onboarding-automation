@@ -68,7 +68,15 @@ npm run verify
 npm run format:check
 ```
 
-The harness builds the application, runs PostgreSQL-backed API checks and exercises the built UI in Chromium. API and browser checks own disposable local test databases; they do not reset the development database. Current evidence is **50 API/security tests and 11 browser tests passing**, including seventeen Production HTTPS/proxy cases and API resource/error controls. See [HARNESS.md](HARNESS.md) for the commands, evidence and practical limits.
+The harness builds the application, runs **16 isolated unit cases and 57 integration/security cases**, then exercises twelve browser scenarios in Chromium, Firefox and WebKit (**36 executions**). API and browser integration checks own disposable local test databases; they do not reset the development database. The separate post-deploy smoke checks verify the hosted release and native macOS visitor journey. See [HARNESS.md](HARNESS.md) for actual results and practical limits.
+
+Unit cases test the pure scope/readiness rules without an API host or database. They can also run alone with the installed .NET SDK:
+
+```powershell
+dotnet test tests/OnboardFlow.Api.Tests --filter "Category=Unit"
+```
+
+The existing test project uses `Category=Unit` and `Category=Integration` traits to distinguish levels. Security, regression, recovery and compatibility describe the purpose of checks across those levels; they are not extra test counts. The [QA evidence table](docs/case-study.md#qa-and-testing-evidence) maps each claim to concrete scenarios, source files and remaining gaps. Keyboard/layout checks are partial accessibility evidence; no full WCAG audit, penetration test, sustained-load benchmark or human usability result is claimed.
 
 Stop the API/Vite terminals with Ctrl+C. Stop PostgreSQL while retaining its volume with:
 
@@ -100,7 +108,7 @@ The built image passed the focused local Production/resource probe documented in
 | --- | --- |
 | `src/web` | React interface and typed API calls. |
 | `src/OnboardFlow.Api` | Same-origin C# API, EF model, migrations and static frontend host. |
-| `tests` | PostgreSQL-backed API tests and browser journeys. |
+| `tests` | Isolated workflow-rule unit tests, API/PostgreSQL integration tests and browser journeys. |
 | [Case study](docs/case-study.md) | Short employer-facing draft describing the problem, choices and evidence. |
 | [Recording script](docs/demo-recording-script.md) | Draft main walkthrough and optional recovery segment; no recording has been produced. |
 | [PLAN.md](PLAN.md) | Scope and acceptance criteria. |

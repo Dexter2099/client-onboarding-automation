@@ -8,6 +8,7 @@ using OnboardFlow.Api;
 namespace OnboardFlow.Api.Tests;
 
 [Trait("Acceptance", "AC-01 through AC-07, AC-09, AC-11")]
+[Trait("Category", "Integration")]
 public sealed partial class WorkflowTests : IClassFixture<FoundationFixture>
 {
     private readonly FoundationFixture fixture;
