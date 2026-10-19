@@ -16,14 +16,16 @@ The fictional Juniper Studio project makes those rules visible. Maya's first rep
 
 No account, installation or personal information is needed. Use a current browser with JavaScript and same-origin cookies enabled.
 
-1. Select OF-1042, **Start onboarding**, then **Load Maya's sample reply**.
+1. The main walkthrough opens directly on OF-1042. Select **Start onboarding**, then **Load Maya's sample reply**.
 2. Approve Goals & audience. Review Pages and request a correction with a comment because Shop is outside the agreement.
 3. Load the corrected Pages, approve that revision, then approve Brand assets.
 4. **Mark ready for kickoff**, inspect the saved brief and **Publish simulated handoff**. Inspect its register entry and repeat Publish to see the same result reused.
 
-OF-1043 provides an optional recovery exercise. Its first welcome attempt fails while the request and task remain saved. Restore the simulated service, then explicitly try welcome again. There are three attempts total per project; restoration does not reset the counter.
+Below the main walkthrough, **Try failure recovery** opens an optional exercise on the separate OF-1043 fixture. Its first welcome attempt fails while the request and task remain saved. Restore the simulated service, then explicitly try welcome again. There are three attempts total per project; restoration does not reset the counter. **Back to main walkthrough** returns to your saved OF-1042 work. Refresh opens the main walkthrough; both projects' saved state remains available.
 
 Each visitor has a private fictional sandbox with a fixed 24-hour lifetime. Work survives refresh. **Reset both sample projects** replaces only that visitor's projects.
+
+The public demo link also works on another laptop or network; no local server, shared Wi-Fi, firewall rule or installation is needed. Each browser/device receives its own sandbox, so work is not transferred between devices.
 
 ## What is real and what is simulated?
 

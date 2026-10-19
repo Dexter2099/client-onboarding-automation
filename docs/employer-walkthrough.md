@@ -1,8 +1,8 @@
 # Employer walkthrough and project screen
 
-Updated 19 October 2026. **Local review and the bounded hosted workflow/security checks pass; publication remains behind review.** The Deplexo/Neon workspace failure is resolved. [PLAN.md](../PLAN.md) owns scope; [HARNESS.md](../HARNESS.md) records evidence/gates. The [case study](case-study.md) and [recording script](demo-recording-script.md) are drafts. Extended-idle entry, first-time human timing and an actual recording remain pending. The portfolio entry is unchanged.
+Updated 19 October 2026. **The main/recovery walkthrough runs through the GitHub delivery pipeline; portfolio publication remains separate.** The Deplexo/Neon workspace failure is resolved. [PLAN.md](../PLAN.md) owns scope; [HARNESS.md](../HARNESS.md) records actual release evidence and limits. The [case study](case-study.md) explains the engineering; the [recording script](demo-recording-script.md) remains an unrecorded draft. Dexter reported a successful human walkthrough. Extended-idle entry, independent first-time timing and an actual recording remain pending. The portfolio entry is unchanged.
 
-The application implements the main review/correction/brief journey, repeat protection, OF-1043 welcome recovery and the persisted simulated register. The UI now uses larger text, shorter instructions and contextual actions. Refresh retains saved work. Readiness initially shows Handoff: not published; explicit Publish stores a separate confirmation. Stop for review at this checkpoint.
+The application implements the main review/correction/brief journey, repeat protection, optional OF-1043 welcome recovery and the persisted simulated register. On 19 October 2026 Dexter approved one main walkthrough with **Try failure recovery** below it, replacing equal project tabs. The UI uses larger text, shorter instructions and contextual actions. Refresh opens the main walkthrough and retains both projects' saved work. Readiness initially shows Handoff: not published; explicit Publish stores a separate confirmation. Dexter reported that his human walkthrough worked; independent first-time timing remains unmeasured.
 
 ## Entry and main journey
 
@@ -42,7 +42,7 @@ Use the existing restrained workspace. Open on the project rather than an empty 
 4. **Project tabs:** Onboarding, Kickoff brief, Activity and Outbox.
 5. **Central review area:** required-item checklist, selected answer, revision/review status, validation, correction comment and relevant action.
 6. **Relevant context:** show the exact signed pages beside the submitted Pages answer. Keep Activity/Outbox and approval/revision metadata in existing tabs/details, with no duplicate activity summary.
-7. **Contextual demo actions:** label sample replies at the point they are needed; keep repeat controls collapsed. OF-1043 provides optional recovery. Reset stays separate and names both projects.
+7. **Contextual demo actions:** label sample replies at the point they are needed; keep repeat controls collapsed. Below the main project, **Try failure recovery** explains and opens optional OF-1043. Its task introduction explains recovering a failed welcome; **Back to main walkthrough** returns to saved OF-1042 work. Switching focuses the destination project heading for keyboard users. Reset stays separate and names both projects.
 
 The principal action follows the stage: Start onboarding, Load sample reply, approve/request changes beside the selected answer, load corrected Pages, Mark ready and Publish simulated handoff. Mark ready is shown only when eligible. After approving an answer, Review next moves to remaining work. Supplying a reply and changing the selected answer move keyboard focus to that answer; saving readiness moves focus to the brief. The brief puts handoff controls before the longer snapshot. Confirmation feedback reflects committed results.
 
@@ -77,7 +77,7 @@ The final agent-guided review also completed the journey using Review next: Goal
 
 **Repeat:** repeat Start or Publish and inspect the same output identities and counts. Show concise repeat feedback beside the existing result and Activity; replaying a saved action does not create another business event.
 
-**Recover:** use OF-1043 independently of the main path. Welcome attempt one fails while the request and review task remain intact. Show the attempt count and the retained work. Restore the simulated service, then explicitly retry the failed welcome step; the guided example succeeds on attempt two.
+**Recover:** select **Try failure recovery** below the main walkthrough to use OF-1043 independently. Welcome attempt one fails while the request and review task remain intact. Show the attempt count and the retained work. Restore the simulated service, then explicitly retry the failed welcome step; the guided example succeeds on attempt two. **Back to main walkthrough** returns to the preserved main project. Refresh starts on the main view; reopening recovery reads its saved state.
 
 Allow three attempts total per project, including the first. Restore changes simulated availability, not the counter; repeated Start does not retry a failure. There are no automatic/timed retries. After three failures show that the budget is exhausted, retain existing work and offer sandbox Reset for a fresh run. Reset affects both sample projects, so make that consequence clear in its label/help text. No reminder scheduler or additional failure variants enter version one.
 

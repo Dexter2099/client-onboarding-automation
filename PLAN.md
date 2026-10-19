@@ -43,7 +43,7 @@ This supersedes the old restriction that only the Juniper logo could be reused. 
 
 The employer takes the **project manager** role without being assigned a fictional name. At Dexter's request, the introduction explains the task: “You're the project manager, getting Juniper Studio's signed website redesign ready for kickoff. Review Maya's replies, resolve the extra Shop page, then approve the brief and publish a simulated handoff.” **Maya Ellis** is the client contact at fictional **Juniper Studio**. Project **OF-1042** is a signed redesign covering Home, About, Services, Projects and Contact. The project manager needs approved goals/audience, page confirmation and sample brand-asset references. Maya's initial reply includes Shop, which is outside the agreement.
 
-**OF-1043** is another signed project for the same client, used for the recoverable-failure scenario. One client can legitimately have two projects.
+On 19 October 2026 Dexter approved **one main walkthrough with optional “Try failure recovery.”** Entry opens directly on OF-1042 without equal project-choice tabs. Below the main walkthrough, the optional action opens the separate OF-1043 recovery fixture and explains its purpose. **Back to main walkthrough** restores the saved main project. Refresh opens the main walkthrough without resetting either fixture. Two projects remain internal to the demo's isolation/recovery model; they are not two competing business walkthroughs. No API, schema, attempt-budget or business-rule change is required.
 
 The core application contains:
 
@@ -104,7 +104,7 @@ On 19 October 2026 Dexter accepted all four recommendations. These are now versi
 
 | Decision | Agreed version-one boundary | Scope consequence |
 | --- | --- | --- |
-| Project entry and setup | Open on the prepared signed Juniper Studio project. Keep one client, two projects, one service and one request template. | Project/client creation and editing workflows are outside version one. |
+| Project entry and setup | Open directly on the prepared signed Juniper Studio main walkthrough. Keep the second fixture behind optional Try failure recovery, with an explicit return to saved main work. One client, two stored projects, one service and one request template remain. | Project/client creation and editing workflows are outside version one. |
 | Staff and client interaction | The visitor stays in the project manager role, without a fictional visitor name. Labelled demo controls supply Maya's original and corrected replies. | No separate client portal, client accounts or real invitation delivery in version one. Each actual review decision belongs to the project manager. |
 | Out-of-scope requests | Flag Shop, request a correction with a comment, then review the revised page list. | No quote, price change, contract variation or route for approving additional scope in version one. |
 | Reliability depth | Verify repeated Start/Publish and one independent welcome-message failure/recovery scenario on OF-1043. Dexter confirmed three attempts total, including the first, on 19 October 2026. | Visitors may skip the exercises. Restoring service does not reset the limit. Additional failure variants, reminders and a general automation engine are outside version one. |

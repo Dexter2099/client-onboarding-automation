@@ -14,6 +14,8 @@ The React/TypeScript workspace uses a C# ASP.NET Core API and PostgreSQL. The pr
 
 Explicit readiness saves an approved kickoff brief and closes the review task. Publishing then stores a separately confirmed, clearly labelled simulated register entry. Outbox and Activity show what was prepared, who acted and the result.
 
+The visitor enters one main walkthrough. An optional **Try failure recovery** exercise uses a separate saved project to show a failed welcome without disturbing the main result. Returning to the main walkthrough restores that work. This keeps the employer's first journey focused while retaining the reliability evidence.
+
 ## Engineering choices
 
 - One same-origin application and direct EF Core keep the structure small.
