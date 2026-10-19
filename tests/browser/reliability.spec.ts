@@ -32,9 +32,12 @@ for (const screen of [
       page.getByRole('button', { name: 'Simulated service available', exact: true }),
     ).toBeDisabled();
     await expect(
-      page.getByText('The simulated service is available. Try welcome to continue.', {
-        exact: true,
-      }),
+      page.getByText(
+        'The simulated service is available. Select Try welcome to retry only the failed welcome step; your saved request and review task will be reused.',
+        {
+          exact: true,
+        },
+      ),
     ).toBeVisible();
     await expect(
       page.getByText('1 of 3 attempts used · Request and review task saved', { exact: true }),
