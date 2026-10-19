@@ -1,6 +1,6 @@
 # OnboardFlow: from signed scope to an approved kickoff
 
-Draft for review · 19 October 2026 · Personal portfolio project
+19 October 2026 · Personal portfolio project
 
 ## The problem
 
@@ -17,6 +17,7 @@ Explicit readiness saves an approved kickoff brief and closes the review task. P
 ## Engineering choices
 
 - One same-origin application and direct EF Core keep the structure small.
+- A focused React hook manages API/loading/recovery state; separate review, recovery, brief and history views keep rendering apart from requests. The panel retains navigation and keyboard focus.
 - Revision-bound decisions prevent a changed answer inheriting old approval.
 - Transactions, unique constraints and command/version checks make repeats reuse saved work.
 - A failed welcome preserves setup. Recovery allows three attempts total per project, including the first; restoring availability does not reset the budget.
@@ -32,7 +33,7 @@ Dexter requested retaining these points on 19 October 2026 for the later demo de
 | OWASP-aware API security | Ownership/expiry enforcement, typed commands, CSRF/Secure cookies, request/resource limits, controlled errors and repeat/attempt guards mapped to relevant OWASP API risks. | Architecture review, negative API tests and hosted checks. This is not an OWASP certification or a complete penetration test. |
 | Browser security | Enforced CSP permits the app's own assets/API and blocks inline code, eval, external resources and framing. HSTS teaches browsers to use HTTPS for this host after a secure visit, with a bounded initial one-day policy. | ApiSafety/Program, Production policy/proxy tests, browser rejection tests and a full desktop/phone journey with no CSP violations. The release smoke check requires live CSP/HSTS headers. |
 | Browser compatibility | The same main, recovery, isolation, keyboard and responsive-layout scenarios run in three browser engines. A separate post-deploy WebKit job checks the live main journey on native macOS at 2x scale. No visitor-side install or third-party cookie dependency is needed. | Playwright projects, per-engine reports/screenshots and CI. The Mac job's actual result is separate from Windows/Ubuntu regression; branded Safari and physical iOS certification are not claimed. |
-| SOLID principles applied proportionately | Single-responsibility separation between HTTP routing, workflow transactions, pure rules and view mapping; time and database dependencies supplied through the existing DI container. | WorkflowEndpoints, WorkflowService, WorkflowRules, WorkflowViewMapper and regression tests. Do not claim all five SOLID principles were formally assessed or add unused interfaces to support a slogan. |
+| SOLID principles applied proportionately | Single-responsibility separation between HTTP routing, workflow transactions, pure rules and view mapping; time and database dependencies supplied through the existing DI container. React request/recovery state is separated from section rendering and navigation/focus. | WorkflowEndpoints, WorkflowService, WorkflowRules, WorkflowViewMapper, useOnboardingWorkflow and the focused onboarding views, plus regression tests. Do not claim all five SOLID principles were formally assessed or add unused interfaces to support a slogan. |
 
 The full-stack workflow and safe repeat/recovery behaviour are the central evidence. Email/register integration remains simulated; no production customer outcome, uptime guarantee or business saving is claimed.
 
