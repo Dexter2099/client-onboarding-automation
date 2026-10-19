@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
-import { ArrowRight, FolderOpen, RotateCcw, TriangleAlert } from 'lucide-react';
+import { ArrowLeft, ArrowRight, RotateCcw, TriangleAlert } from 'lucide-react';
 import { api, ApiError, type Project } from './api';
 import { OnboardingPanel } from './OnboardingPanel';
 
@@ -52,6 +52,11 @@ export function App() {
   const [notice, setNotice] = useState('');
   const generation = useRef(0);
   const checkedExpiry = useRef('');
+  const projectHeading = useRef<HTMLHeadingElement>(null);
+
+  useEffect(() => {
+    projectHeading.current?.focus();
+  }, [selected]);
 
   function showError(error: unknown) {
     const expired = error instanceof ApiError && error.status === 401;
@@ -130,6 +135,7 @@ export function App() {
   }
 
   const project = workspace?.projects.find((item) => item.reference === selected);
+  const recovery = selected === 'OF-1043';
   const expiry =
     workspace &&
     new Intl.DateTimeFormat(undefined, {
@@ -153,11 +159,11 @@ export function App() {
       </header>
       <main id="main-content" tabIndex={-1}>
         <div className="intro">
-          <h1>Get Juniper ready for kickoff</h1>
+          <h1>{recovery ? 'Recover a failed welcome' : 'Get Juniper ready for kickoff'}</h1>
           <p>
-            You're the project manager, getting Juniper Studio's signed website redesign ready for
-            kickoff. Review Maya's replies, resolve the extra Shop page, then approve the brief and
-            publish a simulated handoff.
+            {recovery
+              ? "You're the project manager, recovering a failed welcome on a separate sample project. Start onboarding to see the failure, restore the simulated service, then try welcome again. Your main walkthrough stays saved."
+              : "You're the project manager, getting Juniper Studio's signed website redesign ready for kickoff. Review Maya's replies, resolve the extra Shop page, then approve the brief and publish a simulated handoff."}
           </p>
         </div>
 
@@ -184,33 +190,26 @@ export function App() {
 
         {workspace && (
           <>
-            <nav className="project-picker" aria-label="Sample projects">
-              {workspace.projects.map((item) => (
-                <button
-                  key={item.id}
-                  className={
-                    selected === item.reference ? 'project-option selected' : 'project-option'
-                  }
-                  aria-pressed={selected === item.reference}
-                  onClick={() => setSelected(item.reference)}
-                >
-                  <FolderOpen size={18} aria-hidden="true" />
-                  <span>
-                    <strong>{item.reference}</strong>
-                    <span>{item.name}</span>
-                  </span>
-                </button>
-              ))}
-            </nav>
+            {recovery && (
+              <nav className="walkthrough-navigation" aria-label="Walkthrough">
+                <Button onClick={() => setSelected('OF-1042')} secondary>
+                  <ArrowLeft size={16} aria-hidden="true" />
+                  Back to main walkthrough
+                </Button>
+              </nav>
+            )}
             {project && (
               <section className="project-card" aria-labelledby="project-heading">
                 <div className="project-heading">
                   <img src="/clients/juniper.webp" alt="" width="48" height="48" />
                   <div>
                     <p className="eyebrow">
+                      {recovery && 'Optional failure recovery · '}
                       {project.reference} · {project.clientName}
                     </p>
-                    <h2 id="project-heading">{project.name}</h2>
+                    <h2 id="project-heading" ref={projectHeading} tabIndex={-1}>
+                      {project.name}
+                    </h2>
                   </div>
                 </div>
                 <details className="project-context" key={`context-${project.id}`}>
@@ -246,6 +245,20 @@ export function App() {
                   onSessionUnavailable={showError}
                 />
               </section>
+            )}
+            {!recovery && (
+              <aside className="optional-exercise" aria-labelledby="recovery-heading">
+                <div>
+                  <h2 id="recovery-heading">Optional: failure recovery</h2>
+                  <p>
+                    See how a failed welcome keeps the request and task saved. This uses a separate
+                    sample project; your main walkthrough stays saved.
+                  </p>
+                </div>
+                <Button onClick={() => setSelected('OF-1043')} secondary>
+                  Try failure recovery <ArrowRight size={16} aria-hidden="true" />
+                </Button>
+              </aside>
             )}
             <aside className="demo-tools" aria-labelledby="demo-heading">
               <div>

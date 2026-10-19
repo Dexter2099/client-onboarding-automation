@@ -9,7 +9,7 @@ for (const screen of [
   }, testInfo) => {
     await page.setViewportSize(screen);
     await page.goto('/');
-    await page.getByRole('button', { name: 'OF-1043 Website refresh', exact: true }).click();
+    await page.getByRole('button', { name: 'Try failure recovery', exact: true }).click();
     await expect(page.locator('details.project-context')).toHaveCount(1);
     await page.getByRole('button', { name: 'Start onboarding', exact: true }).click();
     await expect(
@@ -68,7 +68,7 @@ for (const screen of [
     ).toEqual([false, true]);
     expect(recovered.outbox).toHaveLength(1);
     await page.reload();
-    await page.getByRole('button', { name: 'OF-1043 Website refresh', exact: true }).click();
+    await page.getByRole('button', { name: 'Try failure recovery', exact: true }).click();
     await expect(
       page.getByRole('button', { name: 'Load Maya’s sample reply', exact: true }),
     ).toBeVisible();
@@ -85,7 +85,7 @@ test('three failures remain exhausted after restoration until both sample projec
   page,
 }) => {
   await page.goto('/');
-  await page.getByRole('button', { name: 'OF-1043 Website refresh', exact: true }).click();
+  await page.getByRole('button', { name: 'Try failure recovery', exact: true }).click();
   await page.getByRole('button', { name: 'Start onboarding', exact: true }).click();
   await expect(
     page.getByText('1 of 3 attempts used · Request and review task saved', { exact: true }),
@@ -105,7 +105,7 @@ test('three failures remain exhausted after restoration until both sample projec
   ).toBeVisible();
   await page.getByRole('button', { name: 'Reset both sample projects', exact: true }).click();
   await expect(page.getByRole('status')).toHaveText('Both sample projects have been reset.');
-  await page.getByRole('button', { name: 'OF-1043 Website refresh', exact: true }).click();
+  await page.getByRole('button', { name: 'Try failure recovery', exact: true }).click();
   await page.getByRole('button', { name: 'Start onboarding', exact: true }).click();
   await expect(
     page.getByText('1 of 3 attempts used · Request and review task saved', { exact: true }),

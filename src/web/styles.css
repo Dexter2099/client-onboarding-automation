@@ -108,6 +108,7 @@ main {
 }
 .intro {
   max-width: 760px;
+  margin-bottom: 24px;
 }
 .eyebrow {
   color: var(--green);
@@ -131,34 +132,8 @@ h1 {
 .status-line:not(:empty) {
   padding-top: 12px;
 }
-.project-picker {
-  display: flex;
-  gap: 12px;
-  margin: 24px 0 20px;
-}
-.project-option {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  background: white;
-  border: 1px solid var(--line);
-  border-radius: 10px;
-  text-align: left;
-  padding: 12px 16px;
-  flex: 1;
-}
-.project-option.selected {
-  border-color: var(--green);
-  box-shadow: 0 0 0 1px var(--green);
-  background: #f2f8f3;
-}
-.project-option strong,
-.project-option span span {
-  display: block;
-}
-.project-option span span {
-  color: var(--muted);
-  font-size: 14px;
+.walkthrough-navigation {
+  margin-bottom: 20px;
 }
 .project-card {
   background: #fff;
@@ -238,23 +213,34 @@ h3 {
   color: var(--muted);
   max-width: 680px;
 }
-.demo-tools {
+.demo-tools,
+.optional-exercise {
   display: flex;
   align-items: center;
   gap: 32px;
   padding: 24px 0;
 }
-.demo-tools > div {
+.demo-tools > div,
+.optional-exercise > div {
   flex: 1;
 }
-.demo-tools h2 {
+.demo-tools h2,
+.optional-exercise h2 {
   font-size: 15px;
   margin-bottom: 6px;
 }
-.demo-tools p {
+.demo-tools p,
+.optional-exercise p {
   color: var(--muted);
   font-size: 14px;
   margin-top: 6px;
+}
+.optional-exercise {
+  margin-top: 24px;
+  border-bottom: 1px solid var(--line);
+}
+.optional-exercise .button {
+  flex-shrink: 0;
 }
 .button {
   display: inline-flex;
@@ -729,9 +715,6 @@ summary:focus-visible {
   .environment-label {
     max-width: 140px;
   }
-  .project-picker {
-    flex-direction: column;
-  }
   .project-heading {
     flex-wrap: wrap;
     padding: 20px;
@@ -755,7 +738,8 @@ summary:focus-visible {
   .signed-scope {
     padding-top: 0;
   }
-  .demo-tools {
+  .demo-tools,
+  .optional-exercise {
     flex-direction: column;
     gap: 20px;
     align-items: stretch;
