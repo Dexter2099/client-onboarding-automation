@@ -21,7 +21,13 @@ No account, installation or personal information is needed. Use a current browse
 3. Load the corrected Pages, approve that revision, then approve Brand assets.
 4. **Mark ready for kickoff**, inspect the saved brief and **Publish simulated handoff**. Inspect its register entry and repeat Publish to see the same result reused.
 
-Below the main walkthrough, **Try failure recovery** opens an optional exercise on the separate OF-1043 fixture. Its first welcome attempt fails while the request and task remain saved. Restore the simulated service, then explicitly try welcome again. There are three attempts total per project; restoration does not reset the counter. **Back to main walkthrough** returns to your saved OF-1042 work. Refresh opens the main walkthrough; both projects' saved state remains available.
+Below the main walkthrough, **Try failure recovery** shows how the app handles a service failure without losing completed work. It uses the separate OF-1043 fixture:
+
+1. **Start onboarding** saves the request and staff review task, but deliberately fails to prepare the welcome message because its simulated service is unavailable.
+2. **Restore simulated service** pretends the service is available again. It does not retry anything or reset the attempt counter.
+3. **Try welcome** retries only the failed welcome step. The guided example succeeds on attempt two, keeping the original request and task.
+
+This demonstrates preserved data, controlled retries and duplicate prevention. No real service is contacted or email sent. There are three welcome attempts total per project. **Back to main walkthrough** returns to your unchanged OF-1042 work. Refresh opens the main walkthrough; both projects' saved state remains available.
 
 Each visitor has a private fictional sandbox with a fixed 24-hour lifetime. Work survives refresh. **Reset both sample projects** replaces only that visitor's projects.
 

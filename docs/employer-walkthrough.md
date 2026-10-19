@@ -77,7 +77,16 @@ The final agent-guided review also completed the journey using Review next: Goal
 
 **Repeat:** repeat Start or Publish and inspect the same output identities and counts. Show concise repeat feedback beside the existing result and Activity; replaying a saved action does not create another business event.
 
-**Recover:** select **Try failure recovery** below the main walkthrough to use OF-1043 independently. Welcome attempt one fails while the request and review task remain intact. Show the attempt count and the retained work. Restore the simulated service, then explicitly retry the failed welcome step; the guided example succeeds on attempt two. **Back to main walkthrough** returns to the preserved main project. Refresh starts on the main view; reopening recovery reads its saved state.
+**Recover:** select **Try failure recovery** below the main walkthrough to use OF-1043 independently. Explain the purpose before asking the visitor to act: **See how the app handles a service failure. The welcome message deliberately fails while the request and review task remain saved. Restore the simulated service, then retry just the failed step. Your main walkthrough stays unchanged.**
+
+| Action | What the visitor should understand and see |
+| --- | --- |
+| Start onboarding | The simulated welcome-message service is unavailable. Attempt one fails, but the request and staff review task are saved. |
+| Restore simulated service | Pretends the service is available again. It neither retries the welcome nor changes the attempt count. |
+| Try welcome | Explicitly retries only the failed welcome step; the guided example succeeds on attempt two, reusing the saved request and task. |
+| Back to main walkthrough | Returns to the unchanged main project. Refresh also opens the main view; reopening recovery reads its saved state. |
+
+The employer-facing value is preserved data, controlled retries and duplicate prevention, with inspectable attempt history. No real service is contacted or email sent. The recovery view describes the current unavailable/available/exhausted state and the next action; it must not imply that Restore repairs an actual external provider.
 
 Allow three attempts total per project, including the first. Restore changes simulated availability, not the counter; repeated Start does not retry a failure. There are no automatic/timed retries. After three failures show that the budget is exhausted, retain existing work and offer sandbox Reset for a fresh run. Reset affects both sample projects, so make that consequence clear in its label/help text. No reminder scheduler or additional failure variants enter version one.
 

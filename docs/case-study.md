@@ -14,7 +14,7 @@ The React/TypeScript workspace uses a C# ASP.NET Core API and PostgreSQL. The pr
 
 Explicit readiness saves an approved kickoff brief and closes the review task. Publishing then stores a separately confirmed, clearly labelled simulated register entry. Outbox and Activity show what was prepared, who acted and the result.
 
-The visitor enters one main walkthrough. An optional **Try failure recovery** exercise uses a separate saved project to show a failed welcome without disturbing the main result. Returning to the main walkthrough restores that work. This keeps the employer's first journey focused while retaining the reliability evidence.
+The visitor enters one main walkthrough. An optional **Try failure recovery** exercise shows a concrete service failure on a separate saved project. Start onboarding saves the request and review task, but deliberately fails the welcome message. Restore simulated service pretends the service is available again; Try welcome explicitly retries just the failed step and retains the original request and task. The guided example succeeds on attempt two. This demonstrates preserved data, controlled retries and duplicate prevention. No real service is contacted or email sent, and returning to the main walkthrough shows its work unchanged.
 
 ## Engineering choices
 
