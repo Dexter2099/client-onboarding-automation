@@ -58,6 +58,8 @@ if (useCloudflareVisitor) app.Use(async (http, next) =>
     await next(http);
 });
 app.UseForwardedHeaders();
+// Determine HTTPS from the verified proxy before HSTS; preserve local HTTP development.
+if (!app.Environment.IsDevelopment()) app.UseHsts();
 app.UseExceptionHandler(handler => handler.Run(async http =>
 {
     var error = http.Features.Get<IExceptionHandlerFeature>()?.Error;

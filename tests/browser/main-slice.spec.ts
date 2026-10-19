@@ -10,6 +10,11 @@ for (const screen of [
     await page.setViewportSize({ width: screen.width, height: screen.height });
     const runtimeErrors: string[] = [];
     page.on('pageerror', (error) => runtimeErrors.push(error.message));
+    await page.addInitScript(() => {
+      document.addEventListener('securitypolicyviolation', (event) => {
+        document.documentElement.dataset.cspViolation = event.effectiveDirective;
+      });
+    });
     await page.goto('/');
     await page.getByRole('button', { name: 'Start onboarding', exact: true }).click();
     await expect(page.getByText('Waiting for client', { exact: true })).toBeVisible();
@@ -153,5 +158,6 @@ for (const screen of [
     ).toHaveLength(1);
     await page.screenshot({ path: `.local/reports/handoff-${screen.name}.png`, fullPage: true });
     expect(runtimeErrors).toEqual([]);
+    expect(await page.locator('html').getAttribute('data-csp-violation')).toBeNull();
   });
 }

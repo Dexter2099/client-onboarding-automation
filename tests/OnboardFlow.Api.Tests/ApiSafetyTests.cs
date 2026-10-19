@@ -7,10 +7,10 @@ namespace OnboardFlow.Api.Tests;
 
 public sealed class ApiSafetyTests
 {
-    private static WebApplicationFactory<Program> Factory(int requestsPerMinute = 240) =>
+    private static WebApplicationFactory<Program> Factory(int requestsPerMinute = 240, string environment = "Production") =>
         new WebApplicationFactory<Program>().WithWebHostBuilder(builder =>
         {
-            builder.UseEnvironment("Production");
+            builder.UseEnvironment(environment);
             builder.ConfigureAppConfiguration((_, configuration) => configuration.AddInMemoryCollection(
                 new Dictionary<string, string?>
                 {
@@ -58,5 +58,44 @@ public sealed class ApiSafetyTests
         Assert.Equal("no-referrer", response.Headers.GetValues("Referrer-Policy").Single());
         Assert.True(response.Headers.CacheControl?.NoStore);
         Assert.DoesNotContain("StackTrace", await response.Content.ReadAsStringAsync());
+    }
+
+    [Theory]
+    [InlineData("/")]
+    [InlineData("/favicon.svg")]
+    [InlineData("/api/unknown")]
+    public async Task Documents_assets_and_errors_enforce_browser_policy_and_https_pinning(string path)
+    {
+        await using var factory = Factory();
+        using var client = factory.CreateClient(new() { BaseAddress = new Uri("https://demo.example") });
+        var response = await client.GetAsync(path);
+        var policy = response.Headers.GetValues("Content-Security-Policy").Single();
+        Assert.Contains("default-src 'none'", policy);
+        foreach (var directive in new[] { "script", "style", "img", "font", "connect" })
+            Assert.Contains($"{directive}-src 'self'", policy);
+        foreach (var directive in new[] { "script-src-attr", "style-src-attr", "base-uri", "object-src", "frame-ancestors", "form-action" })
+            Assert.Contains($"{directive} 'none'", policy);
+        Assert.DoesNotContain("unsafe-", policy);
+        Assert.False(response.Headers.Contains("Content-Security-Policy-Report-Only"));
+        Assert.Equal("max-age=86400", response.Headers.GetValues("Strict-Transport-Security").Single());
+        if (response.Content.Headers.ContentType?.MediaType == "text/html")
+        {
+            Assert.True(response.Headers.CacheControl?.NoCache);
+            Assert.True(response.Headers.CacheControl?.NoTransform);
+        }
+    }
+
+    [Theory]
+    [InlineData("Production", "http://demo.example")]
+    [InlineData("Development", "https://demo.example")]
+    [InlineData("Production", "https://localhost")]
+    [InlineData("Production", "https://127.0.0.1")]
+    public async Task Hsts_does_not_pin_http_development_or_loopback(string environment, string address)
+    {
+        await using var factory = Factory(environment: environment);
+        using var client = factory.CreateClient(new() { BaseAddress = new Uri(address) });
+        var response = await client.GetAsync("/favicon.svg");
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.False(response.Headers.Contains("Strict-Transport-Security"));
     }
 }
