@@ -25,6 +25,8 @@ Visitors use the hosted application in a browser; they do not need .NET, Docker 
 
 WebKit is Safari's engine, but [Playwright WebKit is not the branded Safari application](https://playwright.dev/docs/browsers#webkit). Windows local and Ubuntu CI results do not establish testing on real macOS, iPhone/iPad hardware, assistive technology or every managed browser/security product. A phone-sized viewport is layout evidence, not a physical-device certification. See [HARNESS.md](HARNESS.md) for actual passes and gaps.
 
+After a passing main deployment, a separate **macos-15** job checks the live release using native macOS WebKit at 2x pixel scale: a fresh fictional visitor completes correction, approval, handoff, repeat, refresh and desktop/phone-width controls. It has no deployment/database credentials, no automatic mutation retries and a six-minute bound. Its summary and screenshots provide the Mac evidence only when the job passes. GitHub [standard runners are free for this public repository](https://docs.github.com/en/actions/reference/runners/github-hosted-runners); the job is excluded if the repository becomes private. This is a macOS browser-engine check, not branded Safari or physical iOS certification.
+
 The installed Vite build resolves to Chrome/Edge 111, Firefox 114 and Safari/iOS 16.4 syntax targets. These are build targets, not a promise that those older versions are supported/tested; use a current browser. No legacy polyfill dependency or user-agent routing was added.
 
 ## Run locally
