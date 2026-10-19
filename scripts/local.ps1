@@ -33,7 +33,7 @@ switch ($Action) {
         & $onboardflowDotnet restore OnboardFlow.slnx --locked-mode
         & $onboardflowDotnet tool restore
         & $onboardflowDotnet ef database update --project src/OnboardFlow.Api
-        npx playwright install chromium
+        npx playwright install chromium firefox webkit
     }
     'api' {
         & $onboardflowDotnet run --project src/OnboardFlow.Api --no-launch-profile --urls "http://127.0.0.1:$Port"

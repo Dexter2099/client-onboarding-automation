@@ -38,7 +38,7 @@ jobs:
           $ErrorActionPreference = 'Stop'
           $PSNativeCommandUseErrorActionPreference = $true
           npm ci
-          npx playwright install --with-deps chromium
+          npx playwright install --with-deps chromium firefox webkit
           npm run setup
       - name: Check formatting and run API/browser regression
         run: |
@@ -66,8 +66,11 @@ jobs:
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
         with:
           name: test-results
+          # Only the explicit report paths below; never upload the whole .local directory.
+          include-hidden-files: true
           path: |
             .local/reports/*.trx
+            .local/reports/*/*.png
             playwright-report
           if-no-files-found: ignore
           retention-days: 7

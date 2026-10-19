@@ -6,14 +6,14 @@ for (const screen of [
 ]) {
   test(`complete review, correction and saved kickoff brief on ${screen.name}`, async ({
     page,
-  }) => {
+  }, testInfo) => {
     await page.setViewportSize({ width: screen.width, height: screen.height });
     const runtimeErrors: string[] = [];
+    const policyErrors: string[] = [];
     page.on('pageerror', (error) => runtimeErrors.push(error.message));
-    await page.addInitScript(() => {
-      document.addEventListener('securitypolicyviolation', (event) => {
-        document.documentElement.dataset.cspViolation = event.effectiveDirective;
-      });
+    // Keep observations across reloads, not only in the last document.
+    page.on('console', (message) => {
+      if (/content[- ]security[- ]policy/i.test(message.text())) policyErrors.push(message.text());
     });
     await page.goto('/');
     await page.getByRole('button', { name: 'Start onboarding', exact: true }).click();
@@ -79,10 +79,14 @@ for (const screen of [
     ).toBeVisible();
     await page.getByText('Earlier revisions (1)', { exact: true }).click();
     await expect(page.getByText('Shop', { exact: true })).toBeVisible();
-    await page.screenshot({
-      path: `.local/reports/main-review-${screen.name}.png`,
-      fullPage: true,
-    });
+    // WebKit's screenshot synchronization injects a no-op inline stylesheet.
+    // Its final capture comes after the policy assertions, without weakening CSP.
+    if (testInfo.project.name !== 'webkit')
+      await page.screenshot({
+        path: `.local/reports/${testInfo.project.name}/main-review-${screen.name}.png`,
+        caret: 'initial',
+        fullPage: true,
+      });
     await page.getByRole('button', { name: 'Approve Pages', exact: true }).click();
     await expect(page.getByText('Review complete', { exact: true })).toBeVisible();
     await expect(
@@ -111,7 +115,12 @@ for (const screen of [
     expect(
       await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth),
     ).toBe(true);
-    await page.screenshot({ path: `.local/reports/main-brief-${screen.name}.png`, fullPage: true });
+    if (testInfo.project.name !== 'webkit')
+      await page.screenshot({
+        path: `.local/reports/${testInfo.project.name}/main-brief-${screen.name}.png`,
+        caret: 'initial',
+        fullPage: true,
+      });
     if (screen.name === 'desktop') {
       // Commit the handoff but lose its HTTP confirmation. The UI must read before retrying.
       let loseResponse = true;
@@ -156,8 +165,12 @@ for (const screen of [
         (event: { action: string }) => event.action === 'Simulated handoff confirmed',
       ),
     ).toHaveLength(1);
-    await page.screenshot({ path: `.local/reports/handoff-${screen.name}.png`, fullPage: true });
     expect(runtimeErrors).toEqual([]);
-    expect(await page.locator('html').getAttribute('data-csp-violation')).toBeNull();
+    expect(policyErrors).toEqual([]);
+    await page.screenshot({
+      path: `.local/reports/${testInfo.project.name}/handoff-${screen.name}.png`,
+      caret: 'initial',
+      fullPage: true,
+    });
   });
 }
