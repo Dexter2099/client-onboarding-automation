@@ -28,7 +28,7 @@ Dexter requested retaining these points on 19 October 2026 for the later demo de
 
 | Topic | What the demo demonstrates | Evidence to link |
 | --- | --- | --- |
-| CI/CD | GitHub Actions checks formatting, API/browser behaviour and the packaged Docker build. Only passing main builds may deploy; package checksum and live revision identify the release. First GitHub execution is being verified; do not claim a completed production run until HARNESS.md records it. | Delivery workflow, PR checks, successful release run and live `/release.json`. |
+| CI/CD | GitHub Actions checks formatting, API/browser behaviour and the packaged Docker build. PR verification passes 50 API and eleven browser tests plus the package build. Only passing main builds may deploy; package checksum and live revision identify the release. A successful production run requires its deployment and live smoke result in the Actions summary. | Delivery workflow, PR checks, successful release run and live `/release.json`. |
 | OWASP-aware API security | Ownership/expiry enforcement, typed commands, CSRF/Secure cookies, request/resource limits, controlled errors and repeat/attempt guards mapped to relevant OWASP API risks. | Architecture review, negative API tests and hosted checks. This is not an OWASP certification or a complete penetration test. |
 | SOLID principles applied proportionately | Single-responsibility separation between HTTP routing, workflow transactions, pure rules and view mapping; time and database dependencies supplied through the existing DI container. | WorkflowEndpoints, WorkflowService, WorkflowRules, WorkflowViewMapper and regression tests. Do not claim all five SOLID principles were formally assessed or add unused interfaces to support a slogan. |
 
