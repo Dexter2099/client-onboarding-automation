@@ -87,6 +87,12 @@ At Dexter's request, the existing workflow endpoint file was separated by respon
 
 The review uses the [OWASP API Security Top 10 (2023)](https://owasp.org/API-Security/editions/2023/en/0x11-t10/) and relevant session, input and HTTP controls from [ASVS](https://owasp.org/projects/asvs). It is a focused checklist with test evidence, not a complete ASVS assessment or security certification.
 
+### Frontend responsibility separation on 19 October 2026
+
+The former 873-line `OnboardingPanel.tsx` combined request/recovery state, view selection, review forms, results and history. It now coordinates navigation, form/focus state and explicit visitor actions. `onboarding/useOnboardingWorkflow.ts` owns loading, command responses, controlled errors, conflict reconciliation and the read-before-new-command guard after an uncertain response. Its initial-load/action callbacks let the panel control selection/focus without teaching the data hook about tabs or DOM refs.
+
+`ReviewWorkspace`, `WelcomeRecovery`, `KickoffBrief`, `ActivityLog` and `SimulatedOutbox` render the existing sections with typed data and callbacks. Shared response types and date formatting live in `onboarding/workflow.ts`. The panel is 362 lines; the request hook is 100. The same elements, labels, keyboard behavior, correction rules and saved-state recovery remain under the existing browser suite. This is responsibility separation within the existing React application, with no state-management library, generic workflow framework, API/schema change or runtime-speed claim. The API/database remains authoritative.
+
 ### Browser security hardening on 19 October 2026
 
 `ApiSafety` sends an enforced Content Security Policy for the built application. It starts with `default-src 'none'` and permits scripts, styles, images, fonts and API connections only from the same origin. Inline scripts/event handlers/styles and `eval` have no exceptions; objects, embedding, base-URL changes and native form submissions are denied. The application uses bundled local assets and fetch-based commands, so no third-party allowlist, nonce service or dependency is needed. This is an origin-allowlist CSP, not a nonce/hash-based strict CSP or a substitute for output encoding. See [OWASP CSP guidance](https://cheatsheetseries.owasp.org/cheatsheets/Content_Security_Policy_Cheat_Sheet.html).
