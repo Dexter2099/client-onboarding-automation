@@ -6,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace OnboardFlow.Api.Tests;
 
+[Trait("Category", "Integration")]
 public sealed class ProxyTests
 {
     [Theory]
