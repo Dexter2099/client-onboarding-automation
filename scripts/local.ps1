@@ -30,7 +30,7 @@ $env:ASPNETCORE_ENVIRONMENT = 'Development'
 switch ($Action) {
     'setup' {
         docker compose up -d --wait db
-        & $onboardflowDotnet restore OnboardFlow.slnx
+        & $onboardflowDotnet restore OnboardFlow.slnx --locked-mode
         & $onboardflowDotnet tool restore
         & $onboardflowDotnet ef database update --project src/OnboardFlow.Api
         npx playwright install chromium

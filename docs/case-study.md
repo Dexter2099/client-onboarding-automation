@@ -22,6 +22,18 @@ Explicit readiness saves an approved kickoff brief and closes the review task. P
 - A failed welcome preserves setup. Recovery allows three attempts total per project, including the first; restoring availability does not reset the budget.
 - Private, fixed 24-hour sandboxes isolate visitors and support an explicit reset.
 
+### Engineering evidence for the employer description
+
+Dexter requested retaining these points on 19 October 2026 for the later demo description. Describe the stack as React/TypeScript, C#/ASP.NET Core, EF Core/Npgsql and PostgreSQL, packaged in Docker and hosted on Deplexo/Neon. Link to the code and actual results rather than using engineering terms without examples.
+
+| Topic | What the demo demonstrates | Evidence to link |
+| --- | --- | --- |
+| CI/CD | GitHub Actions checks formatting, API/browser behaviour and the packaged Docker build. PR verification passes 50 API and eleven browser tests plus the package build. Only passing main builds may deploy; package checksum and live revision identify the release. A successful production run requires its deployment and live smoke result in the Actions summary. | Delivery workflow, PR checks, successful release run and live `/release.json`. |
+| OWASP-aware API security | Ownership/expiry enforcement, typed commands, CSRF/Secure cookies, request/resource limits, controlled errors and repeat/attempt guards mapped to relevant OWASP API risks. | Architecture review, negative API tests and hosted checks. This is not an OWASP certification or a complete penetration test. |
+| SOLID principles applied proportionately | Single-responsibility separation between HTTP routing, workflow transactions, pure rules and view mapping; time and database dependencies supplied through the existing DI container. | WorkflowEndpoints, WorkflowService, WorkflowRules, WorkflowViewMapper and regression tests. Do not claim all five SOLID principles were formally assessed or add unused interfaces to support a slogan. |
+
+The full-stack workflow and safe repeat/recovery behaviour are the central evidence. Email/register integration remains simulated; no production customer outcome, uptime guarantee or business saving is claimed.
+
 The work began with an assessed and preserved earlier prototype. Useful React/assets were retained while the workflow moved from Worker/D1 code to the selected C#/PostgreSQL stack.
 
 ## Evidence and limits
