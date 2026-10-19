@@ -31,7 +31,7 @@ If the take runs long, shorten narration or omit opening Project details. Keep t
 
 Select **Try failure recovery** below the main walkthrough. The optional exercise opens OF-1043 and explains its separate purpose. Select **Start onboarding**. Pause on “1 of 3 attempts used” and the retained request/review task. Select **Restore simulated service**, show the count is unchanged, then **Try welcome**. The guided example succeeds on attempt two. Open Demo tools / repeat protection to show **2 of 3** attempts used if needed.
 
-Suggested narration: “This second project deliberately fails its first welcome attempt. The request and task remain saved. Restoring availability doesn't reset the budget or retry automatically. My explicit retry prepares the welcome on attempt two. Three committed failures would exhaust this project's budget until the sandbox is reset.”
+Suggested narration: “This exercise shows how the app handles a service failure without losing completed work. The simulated welcome-message service is unavailable, so the welcome deliberately fails while the request and review task stay saved. Restore pretends the service is working again; it doesn't retry anything or reset the budget. Try welcome retries only the failed step and succeeds on attempt two, retaining the original request and task. No real service is contacted or email sent. Three committed failures would exhaust this project's budget until the sandbox is reset.”
 
 Finish with **Back to main walkthrough** to show OF-1042's confirmed brief is unaffected. This segment is optional for the employer and does not add another failure scenario.
 

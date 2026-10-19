@@ -162,7 +162,7 @@ export function App() {
           <h1>{recovery ? 'Recover a failed welcome' : 'Get Juniper ready for kickoff'}</h1>
           <p>
             {recovery
-              ? "You're the project manager, recovering a failed welcome on a separate sample project. Start onboarding to see the failure, restore the simulated service, then try welcome again. Your main walkthrough stays saved."
+              ? "You're the project manager, testing how the app handles a service failure. Start onboarding: the welcome message deliberately fails while the request and review task remain saved. Restore the simulated service, then retry just the failed step. Your main walkthrough stays unchanged."
               : "You're the project manager, getting Juniper Studio's signed website redesign ready for kickoff. Review Maya's replies, resolve the extra Shop page, then approve the brief and publish a simulated handoff."}
           </p>
         </div>
@@ -251,8 +251,9 @@ export function App() {
                 <div>
                   <h2 id="recovery-heading">Optional: failure recovery</h2>
                   <p>
-                    See how a failed welcome keeps the request and task saved. This uses a separate
-                    sample project; your main walkthrough stays saved.
+                    See how the app handles a service failure. The welcome message deliberately
+                    fails while the request and review task remain saved. Restore the simulated
+                    service, then retry just the failed step. Your main walkthrough stays unchanged.
                   </p>
                 </div>
                 <Button onClick={() => setSelected('OF-1043')} secondary>

@@ -45,6 +45,8 @@ The employer takes the **project manager** role without being assigned a fiction
 
 On 19 October 2026 Dexter approved **one main walkthrough with optional “Try failure recovery.”** Entry opens directly on OF-1042 without equal project-choice tabs. Below the main walkthrough, the optional action opens the separate OF-1043 recovery fixture and explains its purpose. **Back to main walkthrough** restores the saved main project. Refresh opens the main walkthrough without resetting either fixture. Two projects remain internal to the demo's isolation/recovery model; they are not two competing business walkthroughs. No API, schema, attempt-budget or business-rule change is required.
 
+Dexter subsequently found the exercise's purpose unclear and authorised clearer app/documentation copy. Explain the simulated welcome-message service failure, preserved request/review task, Restore as availability only and Try welcome as an explicit retry of just the failed step. State the value: preserved data, controlled retries and duplicate prevention. No real service is contacted or email sent. This clarifies the existing scenario without adding functionality or changing the three-attempt budget.
+
 The core application contains:
 
 - One fictional client, two projects, one service and one fixed information-request template.

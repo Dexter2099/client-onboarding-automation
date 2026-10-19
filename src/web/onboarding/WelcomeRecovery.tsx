@@ -18,10 +18,10 @@ export function WelcomeRecovery({
       <p>{attempts.length} of 3 attempts used · Request and review task saved</p>
       <p>
         {attempts.length >= 3
-          ? 'Your work is retained. Reset both sample projects below for a fresh sandbox.'
+          ? 'Your request and review task are still saved. All three welcome attempts have been used. Reset both sample projects below for a fresh sandbox.'
           : onboarding.welcomeServiceAvailable
-            ? 'The simulated service is available. Try welcome to continue.'
-            : 'Restore the simulated service, then try the welcome again.'}
+            ? 'The simulated service is available. Select Try welcome to retry only the failed welcome step; your saved request and review task will be reused.'
+            : 'The simulated welcome-message service is unavailable. Your request and review task are already saved. Restore simulated service makes it available again; it does not retry the welcome.'}
       </p>
       <div className="recovery-actions">
         <button
@@ -53,7 +53,7 @@ export function WelcomeRecovery({
         </ol>
       </details>
       <span className="simulation-label">
-        Demo control · No email is sent. Restore does not reset attempts.
+        Demo only · No real service is contacted or email sent. Restore does not reset attempts.
       </span>
     </section>
   );
