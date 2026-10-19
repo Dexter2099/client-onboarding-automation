@@ -54,7 +54,14 @@ export async function smokeDemo(revision) {
   requests++;
   assert.equal(document.status, 200);
   checkBrowserHeaders(document);
-  await document.text();
+  assert.match(document.headers.get('cache-control') ?? '', /no-transform/);
+  const html = await document.text();
+  for (const [, source] of html.matchAll(/<script\b[^>]*\bsrc=["']([^"']+)["']/gi))
+    assert.equal(
+      new URL(source, origin).origin,
+      origin,
+      'An external script was injected into the document.',
+    );
   async function call(path, method = 'GET', csrf = true, expected = 200) {
     const headers = { Cookie: [...cookies].map(([name, value]) => `${name}=${value}`).join('; ') };
     if (method === 'POST' && csrf) headers['X-CSRF-TOKEN'] = token;

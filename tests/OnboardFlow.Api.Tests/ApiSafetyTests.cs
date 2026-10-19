@@ -78,6 +78,11 @@ public sealed class ApiSafetyTests
         Assert.DoesNotContain("unsafe-", policy);
         Assert.False(response.Headers.Contains("Content-Security-Policy-Report-Only"));
         Assert.Equal("max-age=86400", response.Headers.GetValues("Strict-Transport-Security").Single());
+        if (response.Content.Headers.ContentType?.MediaType == "text/html")
+        {
+            Assert.True(response.Headers.CacheControl?.NoCache);
+            Assert.True(response.Headers.CacheControl?.NoTransform);
+        }
     }
 
     [Theory]

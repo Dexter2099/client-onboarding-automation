@@ -50,8 +50,14 @@ public static class ApiSafety
             http.Response.Headers.XContentTypeOptions = "nosniff";
             http.Response.Headers.XFrameOptions = "DENY";
             http.Response.Headers["Referrer-Policy"] = "no-referrer";
-            // The built app needs only local assets and same-origin API calls; no inline/eval exceptions.
-            http.Response.Headers.ContentSecurityPolicy = BrowserPolicy;
+            http.Response.OnStarting(() =>
+            {
+                // Apply after static/error handling; preserve the document through proxy transformations.
+                http.Response.Headers.ContentSecurityPolicy = BrowserPolicy;
+                if (http.Response.ContentType?.StartsWith("text/html", StringComparison.OrdinalIgnoreCase) == true)
+                    http.Response.Headers.CacheControl = "no-cache, no-transform";
+                return Task.CompletedTask;
+            });
             if (IsApi(http))
             {
                 http.Response.Headers.CacheControl = "no-store";
