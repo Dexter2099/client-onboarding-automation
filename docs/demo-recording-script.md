@@ -8,7 +8,7 @@ This is a recording plan, not a completed video or proof of first-time human tim
 
 - Follow the [README setup](../README.md#run-locally) and open http://127.0.0.1:5080/ at a comfortable desktop size, such as 1280 × 900.
 - Use a fresh private browser window. If reusing your sandbox, **Reset both sample projects** clears both of your fictional projects; it does not affect other visitors.
-- Start on OF-1042. Keep unrelated tabs, notifications, terminals and credentials outside the recording.
+- Entry opens directly on the main OF-1042 walkthrough. Keep unrelated tabs, notifications, terminals and credentials outside the recording.
 - Rehearse once with this script, then start a fresh sandbox for the take. An edited or rehearsed recording does not satisfy the separate uncoached human walkthrough check.
 
 ## Main take
@@ -29,11 +29,11 @@ If the take runs long, shorten narration or omit opening Project details. Keep t
 
 ## Optional recovery segment: about 45 seconds
 
-Switch to **OF-1043 Website refresh** and select **Start onboarding**. Pause on “1 of 3 attempts used” and the retained request/review task. Select **Restore simulated service**, show the count is unchanged, then **Try welcome**. The guided example succeeds on attempt two. Open Demo tools / repeat protection to show **2 of 3** attempts used if needed.
+Select **Try failure recovery** below the main walkthrough. The optional exercise opens OF-1043 and explains its separate purpose. Select **Start onboarding**. Pause on “1 of 3 attempts used” and the retained request/review task. Select **Restore simulated service**, show the count is unchanged, then **Try welcome**. The guided example succeeds on attempt two. Open Demo tools / repeat protection to show **2 of 3** attempts used if needed.
 
 Suggested narration: “This second project deliberately fails its first welcome attempt. The request and task remain saved. Restoring availability doesn't reset the budget or retry automatically. My explicit retry prepares the welcome on attempt two. Three committed failures would exhaust this project's budget until the sandbox is reset.”
 
-Finish by returning to OF-1042 to show its confirmed brief is unaffected. This segment is optional for the employer and does not add another failure scenario.
+Finish with **Back to main walkthrough** to show OF-1042's confirmed brief is unaffected. This segment is optional for the employer and does not add another failure scenario.
 
 ## Review before sharing
 

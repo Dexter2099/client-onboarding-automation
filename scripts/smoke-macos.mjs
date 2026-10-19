@@ -80,9 +80,18 @@ try {
       await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth),
       `Horizontal overflow at ${width}px`,
     );
+    await page.getByRole('button', { name: 'Try failure recovery', exact: true }).click();
+    await expect(page.getByRole('heading', { name: 'Website refresh', exact: true })).toBeFocused();
+    await expect(page.getByRole('heading', { name: 'Recover a failed welcome' })).toBeVisible();
+    assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
+    await page.getByRole('button', { name: 'Back to main walkthrough', exact: true }).click();
     await expect(
-      page.getByRole('button', { name: 'OF-1043 Website refresh', exact: true }),
+      page.getByRole('heading', { name: 'Website redesign', exact: true }),
+    ).toBeFocused();
+    await expect(
+      page.getByRole('heading', { name: 'Simulated handoff confirmed', exact: true }),
     ).toBeVisible();
+    assert.deepEqual((await readJson(route)).registerEntry, published.registerEntry);
     await page.getByRole('tab', { name: 'Activity', exact: true }).click();
     await page.getByRole('tab', { name: 'Kickoff brief', exact: true }).click();
   }
