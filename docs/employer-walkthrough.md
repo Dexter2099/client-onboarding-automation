@@ -1,14 +1,16 @@
 # Employer walkthrough and project screen
 
-Updated 19 October 2026. **Final local employer review complete; source/presentation package prepared for review.** The journey is coherent with no blocking application defect found. [PLAN.md](../PLAN.md) owns scope; [HARNESS.md](../HARNESS.md) records evidence/gates. The [case study](case-study.md) and [recording script](demo-recording-script.md) are drafts. First-time human timing and an actual recording remain pending. No deployment.
+Updated 19 October 2026. **Local review and the bounded hosted workflow/security checks pass; publication remains behind review.** The Deplexo/Neon workspace failure is resolved. [PLAN.md](../PLAN.md) owns scope; [HARNESS.md](../HARNESS.md) records evidence/gates. The [case study](case-study.md) and [recording script](demo-recording-script.md) are drafts. Extended-idle entry, first-time human timing and an actual recording remain pending. The portfolio entry is unchanged.
 
 The application implements the main review/correction/brief journey, repeat protection, OF-1043 welcome recovery and the persisted simulated register. The UI now uses larger text, shorter instructions and contextual actions. Refresh retains saved work. Readiness initially shows Handoff: not published; explicit Publish stores a separate confirmation. Stop for review at this checkpoint.
 
 ## Entry and main journey
 
-Open directly on the prepared Juniper Studio project. The introduction gives Alex's role and the task: turn Maya's replies into an approved kickoff brief. The signed five-page agreement is summarised beside Project details; contact/owner/service metadata is available there on demand. No visitor account is required.
+The public entry agreed on 19 October 2026 is an OnboardFlow project card on **dexter-developer.dev**, with **Try this demo** beside **GitHub**. Try this demo opens the separately hosted application in a new tab/window and lands directly on the prepared project screen below. The portfolio remains open. No iframe, extra portal or purchased custom domain is required. The button must target a verified public HTTPS app URL; localhost is only for development. Portfolio-site implementation/publication remains separate work.
 
-Dexter accepted the prepared-project entry, Alex-only visitor role with sample replies, correction-only scope handling and bounded repeat/one-failure coverage on 19 October 2026. Version one has no project/client creation or editing flow, separate client portal, quote or contract-variation workflow. The two projects are prepared fixtures, not an invitation to add project management features.
+Open directly on the prepared Juniper Studio project. The introduction says “You're the project manager, getting Juniper Studio's signed website redesign ready for kickoff. Review Maya's replies, resolve the extra Shop page, then approve the brief and publish a simulated handoff.” The visitor is not assigned a fictional name. The signed five-page agreement is summarised beside Project details; contact/owner/service metadata is available there on demand. No visitor account is required.
+
+Dexter accepted the prepared-project entry, project manager visitor role with sample replies, correction-only scope handling and bounded repeat/one-failure coverage on 19 October 2026. Version one has no project/client creation or editing flow, separate client portal, quote or contract-variation workflow. The two projects are prepared fixtures, not an invitation to add project management features.
 
 | Moment | Visitor action | Visible result |
 | --- | --- | --- |
@@ -26,9 +28,9 @@ Aim for a useful result within two actions from entry and roughly four minutes f
 
 The public hosting design must not impose a minute-long wake-up wait. Cold-entry and post-inactivity performance must be measured before publication; showing an immediate shell while the usable workflow remains blocked for a minute does not satisfy that requirement.
 
-The employer remains Alex throughout. Sample client replies replace waiting for a real person; they are explicitly demo actions, not a second user-account system or automatic approval.
+The employer remains in the project manager role throughout. Sample client replies replace waiting for a real person; they are explicitly demo actions, not a second user-account system or automatic approval.
 
-Shop must appear in the submitted reply so Alex can review and request its correction. The API accepts that reply into review but rejects its approval against the signed scope. Approving all answers makes Mark ready available; it does not mark the project ready automatically. Repeating Mark ready returns the same saved brief.
+Shop must appear in the submitted reply so the project manager can review and request its correction. The API accepts that reply into review but rejects its approval against the signed scope. Approving all answers makes Mark ready available; it does not mark the project ready automatically. Repeating Mark ready returns the same saved brief.
 
 ## Main project screen
 
@@ -36,7 +38,7 @@ Use the existing restrained workspace. Open on the project rather than an empty 
 
 1. **Project header:** Juniper Studio, OF-1042 and project name. Project details is collapsed by default and contains owner/contact/service plus signed pages.
 2. **Stage indicator:** Setup, Client answers, Review and Kickoff. Handoff has its own status; it must not masquerade as readiness.
-3. **Blocker or next-action message:** explain what is stopping progress and what Alex can do about it.
+3. **Blocker or next-action message:** explain what is stopping progress and what the project manager can do about it.
 4. **Project tabs:** Onboarding, Kickoff brief, Activity and Outbox.
 5. **Central review area:** required-item checklist, selected answer, revision/review status, validation, correction comment and relevant action.
 6. **Relevant context:** show the exact signed pages beside the submitted Pages answer. Keep Activity/Outbox and approval/revision metadata in existing tabs/details, with no duplicate activity summary.
@@ -61,7 +63,7 @@ Pending handoff feedback describes a request awaiting confirmation, not a succes
 
 Dexter's 19 October 2026 review found competing blocks of text and small type. The authorised pass implements the five changes below, using native details and the existing React/CSS. No screens, alternate workflows, component framework or design system were added.
 
-1. **First view:** one short instruction explaining Alex's task; project name/reference, current stage and one next action. Replace the long introduction and repeated explanations with concise copy.
+1. **First view:** one short instruction explaining the project manager's task; project name/reference, current stage and one next action. Replace the long introduction and repeated explanations with concise copy.
 2. **Context on demand:** collapse owner/contact/service details and repeated agreement context into Project details. Keep the relevant five-page scope beside Pages when reviewing it. Keep the current blocker visible.
 3. **Actions by stage:** emphasise the action that advances the current step. Avoid a permanently competing disabled Mark ready button. Show sample replies as labelled demo actions at the moment they are needed. Keep optional recovery/repeat exercises out of the main path.
 4. **Readable type and spacing:** use 16px body/action text, at least 14px supporting text and approximately 1.5 line height. Reserve compact labels for short tags. Review both 1280px desktop and 390px phone layouts for comfortable reading and no horizontal overflow.

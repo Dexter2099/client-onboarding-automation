@@ -155,7 +155,9 @@ export function App() {
         <div className="intro">
           <h1>Get Juniper ready for kickoff</h1>
           <p>
-            You’re Alex, the project manager. Turn Maya’s replies into an approved kickoff brief.
+            You're the project manager, getting Juniper Studio's signed website redesign ready for
+            kickoff. Review Maya's replies, resolve the extra Shop page, then approve the brief and
+            publish a simulated handoff.
           </p>
         </div>
 

@@ -2,11 +2,11 @@
 
 A client-onboarding workspace built with **React, TypeScript, C#, ASP.NET Core and PostgreSQL**. Review a signed website project's client answers, resolve an out-of-scope request and save an approved kickoff brief with a separately confirmed simulated handoff.
 
-**Version-one review package · 19 October 2026.** The application runs locally. Public hosting and deployment have not been validated or performed. All client data is fictional; email delivery and the external register connection are simulated.
+**Version-one review package · 19 October 2026.** The combined React/C# app is deployed on Deplexo Free with Neon Free PostgreSQL 17. Secure workspace creation and the bounded hosted workflow/recovery/security checks pass. Extended-idle entry, first-time human timing and employer-access reputation remain open, so employer sharing is still behind review. The planned entry is a Try this demo button beside GitHub on the OnboardFlow card at dexter-developer.dev, opening the working app separately. [Hosting evidence](HARNESS.md) distinguishes observed passes from remaining acceptance. All client data is fictional; email delivery and the external register connection are simulated.
 
 ## Try the demo
 
-You play Alex, the project manager for Juniper Studio. No account or personal information is needed.
+Open the [hosted OnboardFlow demo](https://dexter-onboardflow.de.deplexo.com/). You're the project manager for Juniper Studio, reviewing client replies and preparing its signed website redesign for kickoff. No account or personal information is needed.
 
 1. Open OF-1042 and select **Start onboarding**, then **Load Maya's sample reply**.
 2. Approve Goals & audience and follow **Review Pages**. Shop is outside the signed five-page scope, so request a correction with a comment.
@@ -56,7 +56,7 @@ npm run verify
 npm run format:check
 ```
 
-The harness builds the application, runs PostgreSQL-backed API checks and exercises the built UI in Chromium. API and browser checks own disposable local test databases; they do not reset the development database. Current evidence is **30 API/database tests and 11 browser tests passing**. See [HARNESS.md](HARNESS.md) for the commands, evidence and practical limits.
+The harness builds the application, runs PostgreSQL-backed API checks and exercises the built UI in Chromium. API and browser checks own disposable local test databases; they do not reset the development database. Current evidence is **50 API/security tests and 11 browser tests passing**, including seventeen Production HTTPS/proxy cases and API resource/error controls. See [HARNESS.md](HARNESS.md) for the commands, evidence and practical limits.
 
 Stop the API/Vite terminals with Ctrl+C. Stop PostgreSQL while retaining its volume with:
 
@@ -65,6 +65,22 @@ npm run stop:db
 ```
 
 Run `npm run setup` before the next start. If setup fails, check Docker is running Linux containers and `dotnet --version` resolves the pinned SDK from this folder. Use a fresh terminal if an inherited `ConnectionStrings__OnboardFlow` override points the API elsewhere. Do not delete local credentials to troubleshoot a retained database.
+
+## Container package
+
+The Dockerfile builds the React frontend and C# API from source, then runs the published application as a non-root user on port 8080. Build it from the repository root:
+
+```powershell
+docker build --tag onboardflow:review .
+```
+
+Only the final runtime image is deployed; Node, npm, the .NET SDK and tests stay in build stages. The build context excludes local credentials, database state and generated files. deplexo.yaml configures a single web container on port 8080. The container disables JSON config reload (`DOTNET_HOSTBUILDER__RELOADCONFIGONCHANGE=false`) because the shared host exhausted its file-watcher allowance during the first startup. Apply configuration changes by restarting/redeploying the app.
+
+At runtime, supply `ConnectionStrings__OnboardFlow` through the host's secret environment settings, using a PostgreSQL connection with verified TLS. Do not commit it or bake it into an image. Apply the checked-in EF migrations to the intended database before serving visitors; image startup does not migrate it. Keep Production enabled, retain a writable persistent /data mount for ASP.NET keys, and configure `ReverseProxy__KnownProxies__0` (and further indexes if needed) only for verified proxy addresses. HTTPS and Secure-cookie/CSRF behaviour must pass the hosted checks before release. Do not trust arbitrary forwarders to make deployment pass.
+
+The verified Deplexo ingress replaces `X-Forwarded-Proto` with its internal HTTP scheme but preserves Cloudflare's documented `CF-Visitor` scheme. Set `ReverseProxy__UseCloudflareVisitor=true` only for that verified path, alongside its exact configured peer. This opt-in adapter discards any visitor-supplied derived header, accepts a single valid HTTP/HTTPS scheme only from an explicitly configured proxy, and passes it through ASP.NET's forwarded-header middleware. It fails closed when that evidence is missing or invalid. Keep the option off for other hosts unless their ingress and header-overwrite behaviour have been verified. See [Cloudflare's header reference](https://developers.cloudflare.com/fundamentals/reference/http-headers/#cf-visitor) and the retained hosted checks in HARNESS.md.
+
+The built image passed the focused local Production/resource probe documented in HARNESS.md. This does not establish provider allocation, browser performance or long-idle acceptance.
 
 ## Project structure and evidence
 
@@ -79,6 +95,10 @@ Run `npm run setup` before the next start. If setup fails, check Docker is runni
 | [HARNESS.md](HARNESS.md) | Reproducible checks and current review/release gates. |
 
 This improves an earlier prototype; its assessment and reuse decisions are in [docs/architecture.md](docs/architecture.md). The current implementation uses one C# app, direct EF Core and PostgreSQL transactions, with no background job or generic workflow engine.
+
+The focused quality review separates HTTP endpoints, workflow transactions, pure validation and response mapping. The API enforces ownership, fixed expiry, antiforgery, revision checks and repeat/attempt limits on the server. It also limits body size and API traffic, returns controlled errors and avoids caching private API responses. [Architecture and API review](docs/architecture.md) maps these controls to relevant OWASP risks without claiming certification.
+
+The current deployment uses a reviewed source ZIP. The local Git history is prepared for review; source has not been pushed and CI/CD is not configured. GitHub deployment would make releases traceable and support automated checks, but the same container on the same host would have the same runtime limits and database wake behaviour. A future pipeline should verify changes before deploying a selected revision, rather than treating every push as a reviewed release.
 
 First-time human walkthrough timing and ongoing-free hosting/startup acceptance remain open. This is a personal portfolio project, not production client work. There is no real email sending or Make/Google Sheets integration in version one. Local automated timing is not a measured business saving or a human usability result.
 

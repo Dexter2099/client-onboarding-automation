@@ -1,6 +1,8 @@
 # OnboardFlow project plan
 
-Updated 19 October 2026. **Status: version-one source/review package prepared; stop for review.** The local employer review found no blocking application defect. Dexter authorised a local source commit, setup instructions, a short case-study draft and a recording-script draft. Human timing, hosting validation, the actual recording and public publication/deployment remain open in [HARNESS.md](HARNESS.md). No deployment is authorised.
+Updated 19 October 2026. **Status: the hosted workspace failure is resolved; bounded Deplexo/Neon workflow and security checks pass.** The app uses the verified Cloudflare scheme from its exact configured proxy, retaining Production antiforgery and Secure cookies. Both accounts remain Free. Hour-idle/overnight entry, first-time human timing and employer-access reputation remain open. No card, paid upgrade, source publication or portfolio-site change is authorised. See [HARNESS.md](HARNESS.md).
+
+Dexter subsequently requested the explanatory introduction and a focused quality/API review. That bounded slice passes 50 local API/security tests, eleven browser tests and 54 live workflow/API requests. It separates existing responsibilities without schema/dependency changes. At his request, do not prolong this handoff with hours of manual testing; retain long-idle, sustained uptime and first-time human timing as unmeasured limits. Portfolio edits/publication remain with the other chat, explicitly reconfirmed on 19 October 2026. Source publication and CI/CD activation still require review.
 
 ## Purpose and document ownership
 
@@ -28,6 +30,8 @@ The dated [developer research](docs/seek-developer-research-2026-10-18.md) and [
 - Dexter accepted the same-origin ASP.NET Core/React approach with .NET 10 LTS, EF Core/Npgsql and PostgreSQL on 19 October 2026. The architecture document owns the working data/state design.
 - This work improves an existing initial codebase. Assess it before deciding what to retain, repair or replace; do not assume either a complete rewrite or that its old design must survive.
 - The project must cost Dexter nothing extra and offer a public employer demo without visitor registration or personal data.
+- The employer enters from the OnboardFlow card on **dexter-developer.dev**, using **Try this demo** beside **GitHub**. The demo opens separately on the prepared project screen. A provider HTTPS address is sufficient; a custom subdomain is optional. This entry design does not require the portfolio host to run C# or PostgreSQL. It does not replace the working app with a recording or browser-only simulation.
+- On 19 October 2026 Dexter clarified that free hosting must also require **no credit-card verification**. Reject providers requiring a card before setup; do not ask him to add one to unlock a free tier. He confirmed no existing server or spare computer is available for self-hosting.
 - On 19 October 2026 Dexter ruled out hosting that imposes an approximately minute-long startup wait after inactivity. Validate usable cold-entry performance as well as the warm walkthrough.
 - Keep portfolio-site changes in the other chat. Review locally before any deployment.
 
@@ -37,7 +41,7 @@ This supersedes the old restriction that only the Juniper logo could be reused. 
 
 ## Business scenario and working scope
 
-The employer plays **Alex Morgan**, the agency project manager. **Maya Ellis** is the client contact at fictional **Juniper Studio**. Project **OF-1042** is a signed redesign covering Home, About, Services, Projects and Contact. Alex needs approved goals/audience, page confirmation and sample brand-asset references. Maya's initial reply includes Shop, which is outside the agreement.
+The employer takes the **project manager** role without being assigned a fictional name. At Dexter's request, the introduction explains the task: “You're the project manager, getting Juniper Studio's signed website redesign ready for kickoff. Review Maya's replies, resolve the extra Shop page, then approve the brief and publish a simulated handoff.” **Maya Ellis** is the client contact at fictional **Juniper Studio**. Project **OF-1042** is a signed redesign covering Home, About, Services, Projects and Contact. The project manager needs approved goals/audience, page confirmation and sample brand-asset references. Maya's initial reply includes Shop, which is outside the agreement.
 
 **OF-1043** is another signed project for the same client, used for the recoverable-failure scenario. One client can legitimately have two projects.
 
@@ -101,7 +105,7 @@ On 19 October 2026 Dexter accepted all four recommendations. These are now versi
 | Decision | Agreed version-one boundary | Scope consequence |
 | --- | --- | --- |
 | Project entry and setup | Open on the prepared signed Juniper Studio project. Keep one client, two projects, one service and one request template. | Project/client creation and editing workflows are outside version one. |
-| Staff and client interaction | The visitor stays Alex. Labelled demo controls supply Maya's original and corrected replies. | No separate client portal, client accounts or real invitation delivery in version one. Each actual review decision still belongs to Alex. |
+| Staff and client interaction | The visitor stays in the project manager role, without a fictional visitor name. Labelled demo controls supply Maya's original and corrected replies. | No separate client portal, client accounts or real invitation delivery in version one. Each actual review decision belongs to the project manager. |
 | Out-of-scope requests | Flag Shop, request a correction with a comment, then review the revised page list. | No quote, price change, contract variation or route for approving additional scope in version one. |
 | Reliability depth | Verify repeated Start/Publish and one independent welcome-message failure/recovery scenario on OF-1043. Dexter confirmed three attempts total, including the first, on 19 October 2026. | Visitors may skip the exercises. Restoring service does not reset the limit. Additional failure variants, reminders and a general automation engine are outside version one. |
 
@@ -111,7 +115,7 @@ Review the actual main screen against these boundaries during its implementation
 
 On 19 October 2026 Dexter requested a sharp end to planning. **This data/state pass is the last scheduled planning pass.** CP-1 is ready when the five documents consistently define scope, the main journey, the data/state rules, acceptance and the first implementation boundary. This checkpoint assesses specification completeness, not working software.
 
-Dexter authorised the **baseline and foundation**, **main vertical slice**, **reliability and simulated handoff**, **employer UI improvements/demo-readiness checks**, final local review and then **source/release-package preparation** on 19 October 2026. The current stop is for review of the local source commit and presentation drafts in [HARNESS.md](HARNESS.md). Do not insert another general planning round. Human timing, hosting acceptance, actual recording and remote publication/deployment remain separate gates.
+Dexter authorised the **baseline and foundation**, **main vertical slice**, **reliability and simulated handoff**, **employer UI improvements/demo-readiness checks**, final local review, **source/release-package preparation**, **hosting validation** and then **alwaysdata Free setup/hosted acceptance** on 19 October 2026. Complete this bounded hosted check and stop before employer distribution. Do not insert another general planning round. Human timing, hosted acceptance, actual recording and source publication remain separate evidence gates.
 
 Reopen a settled decision only for a material contradiction, a failed feasibility check that prevents an acceptance requirement, or Dexter's scope change. State the specific blocker and smallest decision needed; do not restart discovery or add planning documents. New ideas stay in the backlog and do not delay the agreed milestone.
 
@@ -119,9 +123,9 @@ Reopen a settled decision only for a material contradiction, a failed feasibilit
 | --- | --- |
 | Existing-code assessment | Original tree preserved; isolated build/tests assessed and reuse decisions applied. The legacy formatting failure is recorded separately. |
 | Application and behaviour | Technical approach accepted; working data model, revision-bound approvals, three-total-attempt rule, transactions and fixed 24-hour sandbox specified in the architecture document. Verify them in implementation. |
-| Implementation checkpoints | Working app and local review complete. Local source/setup/presentation-draft package prepared; stop for review. Human timing, actual recording and hosting acceptance remain open; no remote publication/deployment is authorised. |
-| Public hosting feasibility | Render Free is excluded. Northflank Sandbox is a candidate only; account/resource/performance checks remain execution/publication work. Unselected hosting does not block a local foundation. |
+| Implementation checkpoints | Working app/local review and source/setup/presentation-draft package complete. The later hosting reassessment supersedes proceeding with alwaysdata activation. Human timing, recording and hosted acceptance remain open. Source publication and employer distribution are not authorised. |
+| Public hosting feasibility | The authorised Deplexo Free app and Neon Free PostgreSQL 17 now pass secure workspace creation, the real workflow and bounded recovery/security checks. The verified Cloudflare scheme adapter resolves Deplexo's incorrect standard forwarding header without weakening cookies or proxy trust. Normal suspended-database entry is measured; hour-idle/overnight entry, human timing and employer-access reputation still need evidence. Alwaysdata remains unsubmitted; no further signup is needed for this slice. See the architecture and harness. |
 
-Record material decisions here with an absolute date, reason and affected scope. Keep milestones and evidence in [HARNESS.md](HARNESS.md), not a second roadmap. Dexter authorised the local source/release package on 19 October 2026 and explicitly required a stop for review; deployment is not authorised.
+Record material decisions here with an absolute date, reason and affected scope. Keep milestones and evidence in [HARNESS.md](HARNESS.md), not a second roadmap. On 19 October 2026 Dexter rejected credit-card verification and requested an open source alternative using OpenAlternative. Northflank setup was stopped; no payment method or app/database/job was created. His later instruction authorises alwaysdata Free setup and hosted acceptance, with review before employer distribution. Preserve the existing React/C#/PostgreSQL app and reviewed frontend; do not rewrite it or install a hosting dashboard to justify a provider choice.
 
-Only ongoing free plans qualify: no temporary-credit dependency, paid quota increases or automatic paid fallback. Preserve work and stop the affected connected action when an allowance is exhausted. Verify terms and account eligibility before deployment; no hosting provider has been selected for the target stack.
+Only ongoing free plans without card verification qualify: no temporary-credit dependency, purchased server, paid quota increases or automatic paid fallback. Verify the whole app/database arrangement, not software licensing alone. Preserve work and stop the affected connected action when an allowance is exhausted. Deplexo Free + Neon Free is the authorised route; the remaining extended-idle and release gates still apply.

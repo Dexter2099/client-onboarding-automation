@@ -2,7 +2,7 @@
 
 Draft for review · 19 October 2026 · Main segment target: about three minutes
 
-This is a recording plan, not a completed video or proof of first-time human timing. Record the working local React/C#/PostgreSQL app. Keep the local/demo context visible; do not imply a public deployment or real email/Sheets connection.
+This is a recording plan, not a completed video or proof of first-time human timing. Record the working local React/C#/PostgreSQL app. Keep the local/demo context visible; do not imply production business use or a real email/Sheets connection. The separately hosted demonstration and its remaining acceptance gates are documented in HARNESS.md.
 
 ## Before the take
 
@@ -17,13 +17,13 @@ Timing is a pacing guide, not an established completion time. Pause briefly on r
 
 | Approximate time | Show and do | Suggested narration |
 | --- | --- | --- |
-| 0:00–0:15 | Show the opening task and OF-1042. Briefly open Project details to show the five signed pages, then close it. | “OnboardFlow is a personal project built with React, TypeScript, C# and PostgreSQL. I'm Alex, the project manager, preparing a fictional website project for kickoff.” |
+| 0:00–0:15 | Show the opening task and OF-1042. Briefly open Project details to show the five signed pages, then close it. | “OnboardFlow is a personal project built with React, TypeScript, C# and PostgreSQL. You're the project manager, preparing a fictional website project for kickoff.” |
 | 0:15–0:35 | Select **Start onboarding**, then **Load Maya's sample reply**. | “The app saves the request and prepares a simulated welcome. This demo control supplies Maya's reply; it doesn't approve her answers.” |
 | 0:35–1:10 | **Approve Goals & audience**, then **Review Pages**. Point to Shop and the signed scope. Enter “Please remove Shop and confirm the five signed pages.” Select **Request changes**. | “Shop is outside the agreement. Pages can't be approved until corrected. I record the reason so the request and review history stay together.” |
 | 1:10–1:40 | **Load Maya's corrected Pages**, inspect the new revision and **Approve Pages**. Select **Review Brand assets** and **Approve Brand assets**. | “The correction creates a new revision requiring fresh approval. The earlier answer stays in history, and the approved goals are retained.” |
 | 1:40–2:10 | Select **Mark ready for kickoff**. Show the saved brief and its five approved pages. | “All current answers are approved. Mark ready saves the approved brief and closes the review task. Readiness is separate from handoff confirmation.” |
 | 2:10–2:40 | **Publish simulated handoff**, open **Inspect register entry**, then **Repeat Publish**. Pause on the same register reference. | “Publishing saves a simulated register entry in PostgreSQL. Repeating it reuses the same result. No Make or Google Sheets connection is used.” |
-| 2:40–3:00 | Briefly show Activity and Outbox, then return to the brief. | “Activity and Outbox make the saved results inspectable. The local harness covers the workflow, repeat safety and recovery. This is a local demo; hosting and first-time human timing remain to be verified.” |
+| 2:40–3:00 | Briefly show Activity and Outbox, then return to the brief. | “Activity and Outbox make the saved results inspectable. Automated checks cover the workflow, repeat safety and recovery. The demo runs on Deplexo with PostgreSQL on Neon; long-idle behaviour and first-time human timing remain unmeasured.” |
 
 If the take runs long, shorten narration or omit opening Project details. Keep the correction, new approval, saved brief and separate handoff confirmation intact.
 

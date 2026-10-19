@@ -10,6 +10,11 @@ for (const screen of [
     await page.setViewportSize(screen);
     await page.goto('/');
     await expect(
+      page.getByText(
+        /You're the project manager, getting Juniper Studio's signed website redesign/,
+      ),
+    ).toBeVisible();
+    await expect(
       page.getByRole('heading', { name: 'Get Juniper ready for kickoff', exact: true }),
     ).toBeVisible();
     const start = page.getByRole('button', { name: 'Start onboarding', exact: true });
