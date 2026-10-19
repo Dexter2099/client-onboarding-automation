@@ -21,7 +21,13 @@ public sealed class FoundationFactory(string connection, TestClock clock) : WebA
     {
         builder.UseEnvironment("Testing");
         builder.ConfigureAppConfiguration((_, configuration) => configuration.AddInMemoryCollection(
-            new Dictionary<string, string?> { ["ConnectionStrings:OnboardFlow"] = connection }));
+            new Dictionary<string, string?>
+            {
+                ["ConnectionStrings:OnboardFlow"] = connection,
+                // This shared test host runs many independent visitors in seconds.
+                // A separate production-policy test exercises actual request rejection.
+                ["ApiLimits:RequestsPerMinute"] = "10000"
+            }));
         builder.ConfigureServices(services =>
         {
             services.RemoveAll<TimeProvider>();
@@ -56,7 +62,9 @@ public sealed class FoundationFixture : IAsyncLifetime
 
     public HttpClient Client(bool cookies = true) => Factory.CreateClient(new WebApplicationFactoryClientOptions
     {
-        BaseAddress = new Uri("https://localhost"), HandleCookies = cookies, AllowAutoRedirect = false
+        BaseAddress = new Uri("https://localhost"),
+        HandleCookies = cookies,
+        AllowAutoRedirect = false
     });
 
     private async Task AdminSql(string sql)

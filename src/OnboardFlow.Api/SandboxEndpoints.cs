@@ -12,15 +12,15 @@ public static class SandboxEndpoints
     {
         app.MapGet("/api/session", async (HttpContext http, FoundationDb db, TimeProvider clock) =>
         {
-            var session = await FindSession(http, db, false);
-            return Active(session, clock) ? Results.Ok(View(session!)) : Unavailable(http);
+            var session = await SandboxSessionAccess.Find(http.Request.Cookies[CookieName], db, false, http.RequestAborted);
+            return SandboxSessionAccess.Active(session, clock) ? Results.Ok(View(session!)) : Unavailable(http);
         });
 
         app.MapPost("/api/session", async (HttpContext http, FoundationDb db, TimeProvider clock) =>
         {
             await using var transaction = await db.Database.BeginTransactionAsync(http.RequestAborted);
-            var existing = await FindSession(http, db, true);
-            if (Active(existing, clock))
+            var existing = await SandboxSessionAccess.Find(http.Request.Cookies[CookieName], db, true, http.RequestAborted);
+            if (SandboxSessionAccess.Active(existing, clock))
             {
                 await transaction.CommitAsync(http.RequestAborted);
                 return Results.Ok(View(existing!));
@@ -30,7 +30,7 @@ public static class SandboxEndpoints
             db.SandboxSessions.Add(session);
             await DeleteExpired(db, clock, http.RequestAborted);
             await db.SaveChangesAsync(http.RequestAborted);
-            if (!Active(session, clock)) return Unavailable(http);
+            if (!SandboxSessionAccess.Active(session, clock)) return Unavailable(http);
             await transaction.CommitAsync(http.RequestAborted);
             SetCookie(http, session, token, app.Environment.IsDevelopment());
             return Results.Created("/api/session", View(session));
@@ -39,14 +39,14 @@ public static class SandboxEndpoints
         app.MapPost("/api/session/reset", async (HttpContext http, FoundationDb db, TimeProvider clock) =>
         {
             await using var transaction = await db.Database.BeginTransactionAsync(http.RequestAborted);
-            var previous = await FindSession(http, db, true);
-            if (!Active(previous, clock)) return Unavailable(http);
+            var previous = await SandboxSessionAccess.Find(http.Request.Cookies[CookieName], db, true, http.RequestAborted);
+            if (!SandboxSessionAccess.Active(previous, clock)) return Unavailable(http);
 
             var (session, token) = NewSandbox(clock);
             db.SandboxSessions.Remove(previous!);
             db.SandboxSessions.Add(session);
             await db.SaveChangesAsync(http.RequestAborted);
-            if (!Active(previous, clock)) return Unavailable(http);
+            if (!SandboxSessionAccess.Active(previous, clock)) return Unavailable(http);
             await transaction.CommitAsync(http.RequestAborted);
             SetCookie(http, session, token, app.Environment.IsDevelopment());
             return Results.Ok(View(session));
@@ -54,45 +54,28 @@ public static class SandboxEndpoints
 
         app.MapGet("/api/projects", async (HttpContext http, FoundationDb db, TimeProvider clock) =>
         {
-            var session = await FindSession(http, db, false);
-            if (!Active(session, clock)) return Unavailable(http);
+            var session = await SandboxSessionAccess.Find(http.Request.Cookies[CookieName], db, false, http.RequestAborted);
+            if (!SandboxSessionAccess.Active(session, clock)) return Unavailable(http);
             var projects = await db.Projects.AsNoTracking().Where(x => x.SandboxSessionId == session!.Id)
                 .OrderBy(x => x.Reference).Select(x => new ProjectView(x.Id, x.Reference, x.Name,
                     x.ClientName, x.ClientContact, x.Owner, x.Service, x.SignedPages))
                 .ToArrayAsync(http.RequestAborted);
-            return Active(session, clock) ? Results.Ok(projects) : Unavailable(http);
+            return SandboxSessionAccess.Active(session, clock) ? Results.Ok(projects) : Unavailable(http);
         });
 
         app.MapGet("/api/projects/{id:guid}", async (Guid id, HttpContext http, FoundationDb db, TimeProvider clock) =>
         {
-            var session = await FindSession(http, db, false);
-            if (!Active(session, clock)) return Unavailable(http);
+            var session = await SandboxSessionAccess.Find(http.Request.Cookies[CookieName], db, false, http.RequestAborted);
+            if (!SandboxSessionAccess.Active(session, clock)) return Unavailable(http);
             var project = await db.Projects.AsNoTracking()
                 .Where(x => x.Id == id && x.SandboxSessionId == session!.Id)
                 .Select(x => new ProjectView(x.Id, x.Reference, x.Name, x.ClientName,
                     x.ClientContact, x.Owner, x.Service, x.SignedPages))
                 .SingleOrDefaultAsync(http.RequestAborted);
-            if (!Active(session, clock)) return Unavailable(http);
+            if (!SandboxSessionAccess.Active(session, clock)) return Unavailable(http);
             return project is null ? Results.NotFound() : Results.Ok(project);
         });
     }
-
-    internal static async Task<SandboxSession?> FindSession(HttpContext http, FoundationDb db, bool forUpdate)
-    {
-        if (!http.Request.Cookies.TryGetValue(CookieName, out var token) ||
-            token.Length != 64 || !token.All(Uri.IsHexDigit)) return null;
-
-        var hash = Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(token)));
-        return forUpdate
-            ? await db.SandboxSessions.FromSqlInterpolated(
-                $"SELECT * FROM \"SandboxSessions\" WHERE \"TokenHash\" = {hash} FOR UPDATE")
-                .SingleOrDefaultAsync(http.RequestAborted)
-            : await db.SandboxSessions.AsNoTracking().SingleOrDefaultAsync(x => x.TokenHash == hash,
-                http.RequestAborted);
-    }
-
-    internal static bool Active(SandboxSession? session, TimeProvider clock) =>
-        session is not null && clock.GetUtcNow() < session.ExpiresAt;
 
     internal static IResult Unavailable(HttpContext http) => Results.Problem(
         statusCode: StatusCodes.Status401Unauthorized,
