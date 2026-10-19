@@ -6,7 +6,7 @@ for (const screen of [
 ]) {
   test(`employer sees a readable next action and reaches review in two actions on ${screen.name}`, async ({
     page,
-  }) => {
+  }, testInfo) => {
     await page.setViewportSize(screen);
     await page.goto('/');
     await expect(
@@ -49,7 +49,8 @@ for (const screen of [
     expect(smallText).toEqual([]);
     await start.focus();
     await page.screenshot({
-      path: `.local/reports/employer-entry-${screen.name}.png`,
+      path: `.local/reports/${testInfo.project.name}/employer-entry-${screen.name}.png`,
+      caret: 'initial',
       fullPage: true,
     });
 
@@ -76,7 +77,8 @@ for (const screen of [
       await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth),
     ).toBe(true);
     await page.screenshot({
-      path: `.local/reports/employer-review-${screen.name}.png`,
+      path: `.local/reports/${testInfo.project.name}/employer-review-${screen.name}.png`,
+      caret: 'initial',
       fullPage: true,
     });
     if (screen.name === 'phone') {

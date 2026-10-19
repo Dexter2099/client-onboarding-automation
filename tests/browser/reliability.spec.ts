@@ -6,7 +6,7 @@ for (const screen of [
 ]) {
   test(`welcome recovery retains setup and succeeds on attempt two on ${screen.name}`, async ({
     page,
-  }) => {
+  }, testInfo) => {
     await page.setViewportSize(screen);
     await page.goto('/');
     await page.getByRole('button', { name: 'OF-1043 Website refresh', exact: true }).click();
@@ -40,7 +40,8 @@ for (const screen of [
       page.getByText('1 of 3 attempts used · Request and review task saved', { exact: true }),
     ).toBeVisible();
     await page.screenshot({
-      path: `.local/reports/welcome-recovery-${screen.name}.png`,
+      path: `.local/reports/${testInfo.project.name}/welcome-recovery-${screen.name}.png`,
+      caret: 'initial',
       fullPage: true,
     });
     if (screen.name === 'desktop') {

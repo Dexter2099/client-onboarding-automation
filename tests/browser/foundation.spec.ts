@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 
 test('shows persisted project data after refresh and switches the two projects', async ({
   page,
-}) => {
+}, testInfo) => {
   await page.goto('/');
   await expect(page.getByRole('heading', { name: 'Website redesign' })).toBeVisible();
   await page.getByText('Project details', { exact: false }).click();
@@ -17,7 +17,11 @@ test('shows persisted project data after refresh and switches the two projects',
   await expect(page.getByRole('heading', { name: 'Website refresh' })).toBeVisible();
   await expect(page.locator('details.project-context')).toHaveCount(1);
   await expect(page.getByText('Maya Ellis', { exact: true })).toBeHidden();
-  await page.screenshot({ path: '.local/reports/foundation-desktop.png', fullPage: true });
+  await page.screenshot({
+    path: `.local/reports/${testInfo.project.name}/foundation-desktop.png`,
+    caret: 'initial',
+    fullPage: true,
+  });
 });
 
 test('reset replaces both projects while another visitor retains their workspace', async ({
@@ -46,7 +50,7 @@ test('reset replaces both projects while another visitor retains their workspace
   }
 });
 
-test('phone layout fits and project controls work by keyboard', async ({ page }) => {
+test('phone layout fits and project controls work by keyboard', async ({ page }, testInfo) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/');
   const project = page.getByRole('button', { name: 'OF-1043 Website refresh' });
@@ -58,5 +62,9 @@ test('phone layout fits and project controls work by keyboard', async ({ page })
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(
     true,
   );
-  await page.screenshot({ path: '.local/reports/foundation-mobile.png', fullPage: true });
+  await page.screenshot({
+    path: `.local/reports/${testInfo.project.name}/foundation-mobile.png`,
+    caret: 'initial',
+    fullPage: true,
+  });
 });

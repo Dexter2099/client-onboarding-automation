@@ -38,7 +38,7 @@ jobs:
           $ErrorActionPreference = 'Stop'
           $PSNativeCommandUseErrorActionPreference = $true
           npm ci
-          npx playwright install --with-deps chromium
+          npx playwright install --with-deps chromium firefox webkit
           npm run setup
       - name: Check formatting and run API/browser regression
         run: |
@@ -66,8 +66,11 @@ jobs:
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
         with:
           name: test-results
+          # Only the explicit report paths below; never upload the whole .local directory.
+          include-hidden-files: true
           path: |
             .local/reports/*.trx
+            .local/reports/*/*.png
             playwright-report
           if-no-files-found: ignore
           retention-days: 7
@@ -96,3 +99,34 @@ jobs:
         env:
           DEPLEXO_TOKEN: ${{ secrets.DEPLEXO_TOKEN }}
         run: node scripts/deploy-demo.mjs
+
+  macos-browser:
+    name: Verify live demo on macOS
+    needs: deploy
+    # Standard public-repository runner only; no production environment or secrets.
+    if: needs.deploy.result == 'success' && github.event.repository.private == false
+    runs-on: macos-15
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '24.19.0'
+          cache: npm
+      - name: Install the locked browser client
+        run: |
+          npm ci
+          npx playwright install webkit
+      - name: Verify this release as a macOS visitor
+        run: node scripts/smoke-macos.mjs
+      - name: Retain native macOS evidence
+        if: always()
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: macos-browser-evidence
+          path: .local/macos-browser-evidence
+          include-hidden-files: true
+          if-no-files-found: ignore
+          retention-days: 7
