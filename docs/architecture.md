@@ -87,6 +87,8 @@ At Dexter's request, the existing workflow endpoint file was separated by respon
 
 The review uses the [OWASP API Security Top 10 (2023)](https://owasp.org/API-Security/editions/2023/en/0x11-t10/) and relevant session, input and HTTP controls from [ASVS](https://owasp.org/projects/asvs). It is a focused checklist with test evidence, not a complete ASVS assessment or security certification.
 
+Delivery adds a generated public `/release.json` containing only the source commit and repository URL. It is a static release marker, not a diagnostic or privileged API. GitHub Actions packages committed files with this marker, builds the package before deployment, validates its SHA-256, delivers it to the existing app and verifies the live marker plus database-backed secure workflow. The host builds the package again; this is source-artifact delivery rather than promotion of an identical image digest. Pinned actions/base-image digests and npm/NuGet locks control inputs. Only the trusted main job receives the scoped deployment token; PostgreSQL credentials remain in Deplexo. README.md describes operation; HARNESS.md records actual run evidence.
+
 | Risk area | Implemented boundary and evidence |
 | --- | --- |
 | API1 / API3 / API5: object, property and function access | Server-owned project/session lookup on every workflow route; typed command DTOs do not accept an actor or arbitrary model update. Cross-visitor and revision-ownership negative tests remain passing after separation. There is one visitor role and no administration API. |
