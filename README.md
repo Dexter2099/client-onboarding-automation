@@ -1,56 +1,47 @@
 # OnboardFlow
 
-A client-onboarding application based closely on [this Content Snare client demo](https://demo.contentsnare.com/shared/21481036-b8ca-4abb-ac0b-4d09b663333a/l/instructions), with an AI agent drafting answers from fictional client documents.
+A client-onboarding app based closely on [this Content Snare client demo](https://demo.contentsnare.com/shared/21481036-b8ca-4abb-ac0b-4d09b663333a/l/instructions), with an AI agent drafting answers from fictional client documents.
 
-**Release build:** React/TypeScript, C#/.NET 10 and PostgreSQL, with server-side OpenAI inference. The dedicated project enforces US$5/month; a persistent database ledger cuts off the app at US$4.50. Nine real-model evaluation cases, 130 backend checks and 12 browser checks across Chromium, Firefox and WebKit pass. [Verification and setup](HARNESS.md) · [Delivery and release evidence](https://github.com/Dexter2099/client-onboarding-automation/actions/workflows/delivery.yml).
+React/TypeScript, C# / ASP.NET Core / .NET 10 and PostgreSQL. OpenAI runs on the server through a bounded adapter. The dedicated project has a US$5 monthly limit; a persistent PostgreSQL ledger stops new inference at US$4.50. The separate portfolio chatbot key is unrelated.
 
-## Try OnboardFlow
+## Try the demo
 
-[Open the hosted demo](https://dexter-onboardflow.de.deplexo.com/). It uses fictional documents and actions. AI availability is limited by the shared monthly allowance; saved progress and manual completion remain available when inference stops. The labelled Instructions recording shows the earlier local Ollama run.
+[Open the current hosted demo](https://dexter-onboardflow.de.deplexo.com/).
+
+**Hostless migration in progress:** the replacement uses the verified no-card free allocation of 0.25 vCPU / 512 MB, one always-running instance, maximum one instance and review apps disabled. The existing demo stays available until Hostless passes the full HTTPS journey and the first visit after at least one hour without visitor traffic. Published no-sleep behaviour is not a measured speed result. [Current release evidence](HARNESS.md).
 
 1. Select Let's get started, then Fill with AI.
-2. The model requests field definitions and documents through two read-only tools, then proposes supported drafts.
-3. View source beside an answer to inspect the supporting passage.
-4. Supply the labelled sample clarification for the missing fictional tax reference, then explicitly continue filling.
-5. Complete the four manual-only sample attachment/confirmation items yourself.
-6. Submit individual answers or Submit page for review. All 23 items finish awaiting review.
+2. Inspect a supporting passage with View source.
+3. Use the labelled sample reply for the missing fictional tax reference, then explicitly continue filling.
+4. Complete the four manual-only sample attachment/confirmation items.
+5. Submit individual answers or Submit page for review. All 23 items finish awaiting human review.
 
-AI does not submit/approve or complete actions on your behalf. Editing clears extraction attribution and requires resubmission. PostgreSQL stores drafts, questions, run state and allowance; refresh reads saved work without starting inference. Attachment/payment/access/message actions remain explicitly simulated.
+AI never submits or approves, uploads files, grants access or makes payments. Editing clears extraction attribution and requires resubmission. PostgreSQL stores drafts, questions, run state and allowance. Refresh loads saved work without starting another AI run. The Instructions video is labelled as the earlier local Ollama recording.
 
-## Technology and limits
+## Architecture and spending controls
 
-| Part           | Implementation                                                                                                                                                   |
-| -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| UI             | React/TypeScript; Instructions, 11 information fields, 12 tasks/eight groups, nested navigation and summaries.                                                   |
-| API and agent  | C# / ASP.NET Core / .NET 10; request rules, transactional storage, bounded tool/model loop and pure source validation.                                           |
-| Database       | PostgreSQL / EF Core / Npgsql; owned expiring sandbox and versioned request aggregate.                                                                           |
-| Real inference | OpenAI Responses with pinned GPT-5.4; explicit provider selection, strict output/source validation and no automatic fallback. Local Ollama remains available. |
-| Controls       | Six calls per run including continuation; 512 output tokens per call; 15-second call timeout; three runs per sandbox. No automatic provider retry/paid fallback. |
+| Part | Implementation |
+| --- | --- |
+| Interface | React/TypeScript; Instructions, 11 information fields, 12 tasks, nested navigation and page summaries. |
+| API and agent | ASP.NET Core; source validation, strict output, two read-only tools and a bounded model loop. |
+| Storage | PostgreSQL / EF Core / Npgsql; owned 24-hour sandboxes and persisted request state. |
+| Inference | OpenAI Responses, pinned evaluated GPT-5.4 snapshot; no automatic provider/model fallback or retry. |
+| Run limits | Six model calls including continuation, 512 output tokens per call, 15-second call timeout, three runs per sandbox. |
+| Monthly limit | Reserve counted input plus output allowance before each call. Settle conservatively; retain uncertain holds. Stop at US$4.50. |
+| Human boundary | Fictional documents and sample actions; submissions require the visitor's explicit action. |
 
-Model values replace canned browser extraction. Unknown tools/fields, manual-action proposals and invalid sources are rejected. Quotes are reconstructed from retrieved sections; semantic support still needs review. The model sees fictional document data, not visitor credentials. The [Ollama API](https://docs.ollama.com/capabilities/tool-calling) supplies native tool calls and [schema-constrained output](https://docs.ollama.com/capabilities/structured-outputs).
+The ledger is shared across hosts and survives sandbox resets, expiry, restarts and releases. Migration reuses the same production Neon database; it does not reset the budget or import an older counter. When inference is unavailable, saved work and manual completion remain available with an honest availability message. The model sees fictional source material, not visitor credentials.
 
-The 9 October 2026 100-ad sample counted C#/.NET in 20, React in 26, APIs in 51, SQL/relational databases in 42, testing in 64 and CI/CD in 58. This dated convenience sample supports the stack, not a market-wide demand estimate. [Scope/research](PLAN.md).
+## Run locally
 
-## Start locally
-
-Prerequisites: Node.js 24/npm, .NET SDK from global.json (repo-local SDK used when present), PowerShell 7, Docker and Ollama with qwen3.8:27b installed. No hosting/billing account.
-
-From repository root:
+Prerequisites: Node.js 24/npm, the .NET SDK in `global.json`, PowerShell 7, Docker, and Ollama with `qwen3.8:27b` for local inference.
 
 ```powershell
 npm ci
 pwsh -NoProfile -File scripts/intake-local.ps1 setup
 ```
 
-Start Ollama in a separate terminal if it is not running:
-
-```powershell
-$env:OLLAMA_HOST='127.0.0.1:11434'
-$env:OLLAMA_NO_CLOUD='1'
-& "$env:LOCALAPPDATA\Programs\Ollama\ollama.exe" serve
-```
-
-Start API and interface in separate terminals:
+Start the local API and interface in separate terminals:
 
 ```powershell
 pwsh -NoProfile -File scripts/intake-local.ps1 api
@@ -60,46 +51,50 @@ pwsh -NoProfile -File scripts/intake-local.ps1 api
 node node_modules/vite/bin/vite.js --config preview/content-snare/vite.config.ts
 ```
 
-Open **http://127.0.0.1:5622/l/instructions**. Vite proxies the same-origin API to loopback 5080; C# calls loopback Ollama on 11434. Keep all three processes running. Cold model loading is slower than warm inference; unavailability preserves confirmed drafts. Load saved work after uncertainty, rather than repeating the action.
+Open **http://127.0.0.1:5622/l/instructions**. Vite proxies to the C# API on loopback 5080; C# calls Ollama on loopback 11434. Keep those processes running. If Ollama is not already running, start it with `OLLAMA_HOST=127.0.0.1:11434` and `OLLAMA_NO_CLOUD=1`.
 
-## Checks and evaluation
+Ordinary local development uses Ollama. Local paid inference against a separate ledger is blocked after the production cutover. Never copy a production key into `VITE_*` variables, browser code, Git, images or test reports.
 
-```powershell
-pwsh -NoProfile -File scripts/intake-local.ps1 test
-node node_modules/typescript/bin/tsc -p preview/content-snare/tsconfig.json --noEmit
-node node_modules/vite/bin/vite.js build --config preview/content-snare/vite.config.ts
-```
-
-On Windows, stop the API with Ctrl+C before rebuilding or running .NET tests; the running process locks its assemblies. Restart it afterwards. The .NET suite uses deterministic doubles and disposable local databases. Opt-in evaluation calls the actual model for complete, missing/resumed and conflicting-source cases; every attempt is kept in a unique ignored evidence directory:
+## Build and verify
 
 ```powershell
-pwsh -NoProfile -File scripts/intake-local.ps1 evaluate
-node node_modules/@playwright/test/cli.js test --config preview/content-snare/playwright.config.ts
+npm run build
+npm run format:check
+npm run verify
 ```
 
-The separate browser suite uses this local API/model/UI and requires all three processes. Existing CI does not run live inference. Output stays in preview/content-snare/dist/; root npm run build still targets the earlier app. No deployment is part of these commands.
+The normal build packages the current interface into the ASP.NET static files. `npm run verify` runs backend checks plus 12 Chromium/Firefox/WebKit checks against a real Kestrel server, PostgreSQL and a test-assembly-only model double. Ordinary CI does not call paid inference. Stop a running local API before rebuilding on Windows to avoid assembly locks.
 
-## Source and plan
+Real-model evaluation uses the same nine complete, missing/resumed and conflicting-source cases, three repetitions each. The evaluated model passed 9/9 before the first production release. Evaluation timings, conservative costs, failures and limitations are in [HARNESS.md](HARNESS.md). A small fixed matrix does not establish general reliability.
 
-| Path                                        | Responsibility                                                                          |
-| ------------------------------------------- | --------------------------------------------------------------------------------------- |
-| src/OnboardFlow.Api/ClientRequests          | Fixed fictional schema/sources, rules/store, model adapter, agent and endpoints.        |
-| preview/content-snare/src                   | Reference UI and typed same-origin client; no canned extraction or browser persistence. |
-| tests/OnboardFlow.Api.Tests                 | Deterministic API/rule/security checks and opt-in real-model evaluation.                |
-| [PLAN.md](PLAN.md)                          | CS-01–CS-07 scope and limits.                                                           |
-| [Architecture](docs/architecture.md)        | Integration and SOLID boundaries.                                                       |
-| [Walkthrough](docs/employer-walkthrough.md) | Visitor/reference contract.                                                             |
-| [HARNESS.md](HARNESS.md)                    | Commands, actual results, failed attempts and limits.                                   |
-| [AGENTS.md](AGENTS.md)                      | AI development guardrails.                                                              |
+## Hostless deployment
 
-Local implementation only: Production does not map the new intake endpoints. Public inference is unconfigured; live app/website/hosting/CI release settings are unchanged. A release needs a separate instruction.
+Hostless builds Git repositories, so CI publishes the **verified source archive**, including its original revision marker and excluding workflow definitions, to the managed `deploy/hostless` branch. It never publishes ignored local files or credentials. The branch has normal fast-forward history; application changes are reviewed on `main` and must pass verification first. Provider deployment tracks this managed release branch. Documentation-only updates do not restart the runtime.
 
-## Earlier application baseline
+The free target is **0.25 vCPU, 512 MB, minimum one instance, maximum one instance, review apps off**, with no card, paid plan or credit dependency. Keep all configured resources within the account's shared free pool. Hostless's spending-limit field is not a hard invoice cap; entering zero disables that control. Use the free resource limits rather than relying on that field.
 
-[Published app](https://dexter-onboardflow.de.deplexo.com/) is the earlier manager/website-scope/simulated-handoff version. It has neither this interface nor AI agent. This local slice adds C# intake code and an additive local migration, while its deployed version, legacy frontend, hosting and delivery remain unchanged.
+The container reads Hostless's `PORT`, binds on all interfaces and exposes `/health` without touching the database. Workstation GC has a 256 MiB managed-heap ceiling within the 512 MB container. Fonts, licences, the labelled MP4/WebM recording and its poster are packaged locally. Startup secrets belong only in server settings:
 
-[HARNESS](HARNESS.md) retains setup/evidence; [case study](docs/case-study.md) describes earlier version. Original commands: npm run setup, npm run build, npm run api, npm run verify (.NET SDK from global.json, PowerShell 7, Docker). Old test counts/deployed results do not prove agent behaviour.
+- `ConnectionStrings__OnboardFlow`: the existing production Neon database, retaining the shared spending ledger.
+- `Intake__Enabled=true` and `Intake__Provider=OpenAI`.
+- The dedicated OnboardFlow project ID, verified-budget flag and restricted server-side Responses key.
+- Reverse-proxy settings verified against the actual ingress; never trust arbitrary forwarded headers.
 
-Zero additional cost/no card remain constraints. Public hosted inference is unverified; local Ollama is verified. No paid fallback or unlimited-public-runs promise.
+A separate credential-free ingress probe verifies the new host before the application secrets are moved. It is a deployment diagnostic, not simulated AI or the employer demo. The production Dockerfile does not include it. Cutover requires source/clarification/manual submissions, saved reload/restart, desktop/mobile playback and actual entry after inactivity to pass over HTTPS. Keep the previous release available for rollback; do not roll back the additive schema or the spending ledger.
 
-[MIT licence](LICENSE). Dependencies retain own licences; [third-party notices](THIRD_PARTY_NOTICES.md).
+## Project references
+
+| Path | Responsibility |
+| --- | --- |
+| `src/OnboardFlow.Api/ClientRequests` | Fixed fictional schema/sources, store, rules, model adapter, agent and endpoints. |
+| `preview/content-snare/src` | Current interface and typed same-origin API client. |
+| `tests/OnboardFlow.Api.Tests` | Rules, API/security checks, browser integration and opt-in real-model cases. |
+| [PLAN.md](PLAN.md) | Scope, acceptance and limits. |
+| [Architecture](docs/architecture.md) | Integration and design boundaries. |
+| [Walkthrough](docs/employer-walkthrough.md) | Visitor journey. |
+| [HARNESS.md](HARNESS.md) | Actual checks, measurements, failures and release evidence. |
+| [AGENTS.md](AGENTS.md) | Development guardrails and current authorisation. |
+
+The earlier manager/workflow prototype remains in Git history. It does not describe the current client-request interface. The portfolio website and a replacement recording from the hosted app are separate work.
+
+[MIT licence](LICENSE). Dependencies retain their own licences; [third-party notices](THIRD_PARTY_NOTICES.md).

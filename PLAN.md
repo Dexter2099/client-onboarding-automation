@@ -1,5 +1,11 @@
 # OnboardFlow project plan
 
+## Hosting clarification — 25 October 2026
+
+The current version must be sized independently of the legacy 128 MiB hosting allocation. Dexter reaffirmed free hosting and a fast employer-facing demo; a roughly minute-long Render Free startup is unacceptable. Evaluate suitable free, fast-starting or always-on capacity before migration, preserving the current live app and the shared US$5/US$4.50 inference controls throughout. No paid hosting upgrade is authorised.
+
+The current search explicitly requires always-on capacity and no payment-card verification. Hostless publishes an ongoing free shared pool of 0.5 vCPU/1 GiB RAM and Docker/ASP.NET Core support. The new account's signed-in final service form confirms 0.25 vCPU/512 MB, one always-running replica, maximum one replica, review apps disabled and US$0.00–US$0.00/month without a card. This is a verified account/configuration fit, not a deployed app. Retain the existing Neon database and spending ledger. No worker, extra database, review replica or paid capacity is required. Verify actual HTTPS security and entry after inactivity before migration; published no-sleep claims do not establish measured latency.
+
 ## Production release — authorised 25 October 2026
 
 Release the reviewed 23-item React/C#/PostgreSQL experience through the existing GitHub/Deplexo pipeline, with the separate OnboardFlow OpenAI project capped at US$5 and the shared database ledger stopping at US$4.50. Carry all October development usage and uncertain holds into production before enabling inference, then stop local paid inference against its separate ledger. Preserve the earlier release for rollback. Verify production packaging, protected routes, additive migrations, fonts/video, 128 MiB hosting capacity, saved progress, sources, clarification and human submissions over hosted HTTPS. Do not change the portfolio or replace the original recording in this release. Earlier local-only holds below are historical.

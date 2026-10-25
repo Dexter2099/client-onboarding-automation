@@ -19,6 +19,8 @@ jobs:
     name: Verify and package
     runs-on: ubuntu-24.04
     timeout-minutes: 20
+    outputs:
+      app_changed: ${{ steps.scope.outputs.app_changed }}
     defaults:
       run:
         shell: pwsh
@@ -26,6 +28,21 @@ jobs:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           persist-credentials: false
+          fetch-depth: 0
+      - name: Identify application changes
+        id: scope
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $PSNativeCommandUseErrorActionPreference = $true
+          $changed = $true
+          if ($env:GITHUB_EVENT_NAME -eq 'push') {
+            $event = Get-Content -Raw -LiteralPath $env:GITHUB_EVENT_PATH | ConvertFrom-Json
+            if ($event.before -match '^[a-f0-9]{40}$' -and $event.before -ne ('0' * 40)) {
+              $paths = @(git diff --name-only $event.before $env:GITHUB_SHA)
+              $changed = @($paths | Where-Object { $_ -notmatch '^(README\.md|AGENTS\.md|PLAN\.md|HARNESS\.md|docs/.*)$' }).Count -gt 0
+            }
+          }
+          "app_changed=$($changed.ToString().ToLowerInvariant())" >> $env:GITHUB_OUTPUT
       - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
           node-version: '24.19.0'
@@ -52,6 +69,7 @@ jobs:
           $PSNativeCommandUseErrorActionPreference = $true
           ./scripts/package-release.ps1 -Revision $env:GITHUB_SHA
           docker build --tag onboardflow:verified .local/release/source
+          docker build --file .local/release/source/deploy/hostless-probe/Dockerfile --tag onboardflow:ingress-probe .local/release/source
       - name: Retain the verified release bundle
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
         with:
@@ -77,14 +95,15 @@ jobs:
           retention-days: 7
 
   deploy:
-    name: Deploy verified revision
+    name: Publish verified Hostless source
     needs: verify
-    if: github.repository == 'Dexter2099/client-onboarding-automation' && github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    if: github.repository == 'Dexter2099/client-onboarding-automation' && github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && needs.verify.outputs.app_changed == 'true'
     runs-on: ubuntu-24.04
     timeout-minutes: 12
     environment:
       name: production
-      url: https://dexter-onboardflow.de.deplexo.com/
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
@@ -96,16 +115,17 @@ jobs:
         with:
           name: verified-release
           path: .local/release
-      - name: Deploy the checked package and verify the live revision
+      - name: Publish the checked package to Hostless's deployment branch
         env:
-          DEPLEXO_TOKEN: ${{ secrets.DEPLEXO_TOKEN }}
-        run: node scripts/deploy-demo.mjs
+          GITHUB_TOKEN: ${{ github.token }}
+        shell: pwsh
+        run: ./scripts/publish-hostless-source.ps1
 
   macos-browser:
     name: Verify live demo on macOS
     needs: deploy
     # Standard public-repository runner only; no production environment or secrets.
-    if: needs.deploy.result == 'success' && github.event.repository.private == false
+    if: needs.deploy.result == 'success' && github.event.repository.private == false && vars.HOSTLESS_ACCEPTANCE_ENABLED == 'true'
     runs-on: macos-15
     timeout-minutes: 6
     steps:

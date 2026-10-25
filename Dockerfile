@@ -22,7 +22,7 @@ ENV ASPNETCORE_ENVIRONMENT=Production \
     ASPNETCORE_HTTP_PORTS=8080 \
     DOTNET_HOSTBUILDER__RELOADCONFIGONCHANGE=false \
     DOTNET_gcServer=0 \
-    DOTNET_GCHeapHardLimit=0x4000000 \
+    DOTNET_GCHeapHardLimit=0x10000000 \
     HOME=/data
 RUN mkdir -p /data && chown app:app /data
 COPY --from=backend /publish/ ./
