@@ -2,12 +2,29 @@ using System.Net;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace OnboardFlow.Api.Tests;
 
 [Trait("Category", "Integration")]
 public sealed class ApiSafetyTests
 {
+    [Fact]
+    public async Task Content_hashed_assets_are_publicly_cacheable_without_caching_private_api_data()
+    {
+        await using var factory = Factory();
+        using var client = factory.CreateClient(new() { BaseAddress = new Uri("https://demo.example") });
+        var webRoot = factory.Services.GetRequiredService<IWebHostEnvironment>().WebRootPath;
+        var script = Directory.GetFiles(Path.Combine(webRoot, "assets"), "*.js").First();
+        var asset = await client.GetAsync("/assets/" + Path.GetFileName(script));
+        Assert.Equal(HttpStatusCode.OK, asset.StatusCode);
+        Assert.True(asset.Headers.CacheControl?.Public);
+        Assert.Equal(TimeSpan.FromDays(365), asset.Headers.CacheControl?.MaxAge);
+        Assert.Contains(asset.Headers.CacheControl!.Extensions, value => value.Name == "immutable");
+        Assert.False(asset.Headers.Contains("Set-Cookie"));
+        Assert.True((await client.GetAsync("/api/unknown")).Headers.CacheControl?.NoStore);
+        Assert.True((await client.GetAsync("/")).Headers.CacheControl?.NoCache);
+    }
     private static WebApplicationFactory<Program> Factory(int requestsPerMinute = 240, string environment = "Production") =>
         new WebApplicationFactory<Program>().WithWebHostBuilder(builder =>
         {
