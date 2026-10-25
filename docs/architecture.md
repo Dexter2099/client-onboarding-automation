@@ -1,6 +1,56 @@
 # Architecture and existing-code assessment
 
-Updated 19 October 2026. **The hosted workspace failure is resolved; bounded Deplexo/Neon workflow and security checks pass.** The single C# app serves React and reaches PostgreSQL with the verified Cloudflare scheme adapter and secure cookies. Both accounts remain Free. The website entry remains unchanged. Extended-idle entry, first-time human timing and employer-access reputation remain open in [HARNESS.md](../HARNESS.md).
+## Production packaging and rollout — 25 October 2026
+
+The normal npm/Vite build now compiles the reviewed interface in preview/content-snare into the ASP.NET static root; the isolated preview build remains available. The multi-stage Docker build copies that UI and its shared field/source specification, self-hosts Montserrat/Open Sans with their licences, and includes a silent H.264 MP4 plus the preserved original WebM recording. CSP adds same-origin media while retaining self-only script/style/font/connect rules. The recording stays labelled as local Ollama footage.
+
+Production intake requires Intake:Enabled=true, OpenAI, the verified dedicated project ID, server-side credentials and budget verification; wrong projects/providers fail startup. Default Production remains off for safe rollback. The request endpoints inherit owned sandboxes, CSRF and the existing rate limits. The pinned image uses workstation GC and a 64 MiB managed heap ceiling to leave native-process headroom within Deplexo's 128 MiB allocation; this is a managed-heap ceiling, not a process-memory guarantee. See [Microsoft's runtime configuration](https://learn.microsoft.com/dotnet/core/runtime-config/garbage-collector).
+
+CI runs deterministic backend tests and the packaged UI in Chromium/Firefox/WebKit against a real local Kestrel API and disposable PostgreSQL. A model double exists only in the test assembly; the production binary has no test provider. Explicit live evaluations remain separate. After deployment, HTTPS API checks verify revision/security/storage/media; native macOS WebKit performs one real hosted-model visitor journey within the same shared spending allowance.
+
+## Hosted provider adapter — 25 October 2026
+
+OpenAiIntakeClient implements IIntakeModelClient with direct server-side Responses HTTP and the pinned gpt-5.4-2026-03-05 snapshot. It converts the existing two read tools/history, requests strict structured output, counts the actual input/schema, reserves maximum cost and then generates with Standard processing, no storage, 512 output tokens and a 15-second overall deadline. No SDK, new host or service. Explicit Intake:Provider also retains Ollama and the failed Cloudflare comparison adapters; there is no automatic switch. Only OpenAI is the selected hosted path.
+
+IntakeSpendBudget owns one independent PostgreSQL reservation table, keyed by OpenAI project/month in UTC. Short advisory-lock transactions make reserve/settle atomic across instances; no lock spans inference. US$4.50 is the application ceiling below the verified US$5 provider hard cap. Unknown outcomes retain their full hold. Settlement counts full ordinary input pricing and output pricing, conservatively ignoring cache discounts; duplicate settlement cannot refund again and a usage overrun stops further calls for review. Sandbox reset/expiry cannot erase spend. A separately scoped EF context keeps budget transactions independent of request state. Live model evaluations use the persistent loopback development ledger even though their request databases are disposable. Release must carry the current project/month ledger into the shared hosted database before inference is enabled.
+
+The adapter bounds input at 8,192 counted tokens/64 KiB, reads responses within 64 KiB, disables redirects and redacts provider errors. Existing six-call and three-run reservations still count failed/uncertain attempts. Continuation refuses a changed model. Application code validates fictional identifiers against the actual cited text; missing-value statements cannot become identifiers. A valid clarification pauses when it is the only unresolved required field, regardless of the provider's done flag. Traces retain usage, timing and conservatively accounted USD without credentials or hidden reasoning. Production routes remain disabled during this checkpoint; HARNESS distinguishes real-model evidence, deterministic tests and older local baseline results.
+
+**Local implementation status — 25 October 2026:** C#/ASP.NET Core now owns the request API, PostgreSQL aggregate, source validation, bounded native-tool loop and call allowance. The reference UI calls this API; browser-only persistence and canned fill values have been removed. Installed Ollama qwen3.8:27b supplies real inference over loopback with cloud disabled. Fictional documents/actions remain labelled. Production does not map these local intake endpoints. The older preview-only/Cloudflare-provider statements below are historical; public hosted intake remains undeployed. HARNESS owns current verification results. No live app, site, hosting, CI release or deployment change was made.
+
+## Authorised local implementation — 25 October 2026
+
+Dexter has now authorised the C#/.NET request backend, real local AI and connection to the reviewed reference interface. Implement A0–A3 locally using installed Ollama (no cloud account or API fees), PostgreSQL and the existing .NET app. This supersedes earlier UI-only/source-change holds. Preserve the reference layout. No live app, website, hosting, CI release or deployment change is authorised. Public hosted inference remains future work.
+
+## Current C# reference rebuild — 25 October 2026
+
+PLAN CS-01–CS-07 replace the four-field design. Dexter reaffirmed C#/.NET. Use React/TypeScript UI, C#/ASP.NET Core APIs/request rules/agent and PostgreSQL with EF Core/Npgsql. No Python/LangGraph or automatic switch to Blazor. The reference frontend stays in preview/content-snare/ and connects to the existing C# host through the same-origin Vite proxy.
+
+### Current local code and future boundary
+
+Server-owned ClientRequests/demo.json defines the fixed fields and fictional sources and is shared with the frontend. IntakeStore owns transactions/revisions/submissions, IntakeRules pure validation, IntakeAgentService the bounded native-tool loop and OllamaIntakeClient model HTTP. The UI uses api.ts and PostgreSQL state; browser localStorage and canned extraction were removed. Quotes are reconstructed from retrieved paragraphs. Only external actions remain simulated.
+
+The local reference UI now calls the same-origin .NET API. Replacing the published main frontend remains release work. Do not force 23 bookkeeping items into Goal/Audience/Pages/Assets. Reuse ownership, fixed expiry, CSRF, error handling, database composition and delivery; old domain/UI constraints are superseded.
+
+One small C# request service owns fixed field rules, draft revisions and submissions; bounded agent service owns model/tools/budgets/proposals. Inject a narrow HttpClient model adapter; separate pure output/source validators. Direct EF Core/existing DI suffice. No projects-per-layer, generic repository, workflow engine or interface per class.
+
+Read-only tools read_required_fields and read_client_document bind to owned request/allowlisted source versions. Model chooses sources/one clarification/resume; no arbitrary URL/SQL/file/credentials, submission/approval, payment or messaging tools. Four manual-only fields are ineligible. App validates/saves drafts; visitor submits.
+
+### Persistence, provenance and SOLID
+
+Plan one owned client-request aggregate attached to existing sandbox lifetime, with expected version, bounded typed answer/provenance/status JSON and bounded saved-agent-run state. Retain sufficient revision/history for edits and source invalidation. Resolve exact migration in A1, without general form/document-builder schema. Definition is fixed code.
+
+Store field value/author/draft-or-submitted/answer revision and document/version/section/quote. Edits remove extraction provenance and invalidate submission. Page submission is explicit application authority. Attachment is fictional reference, not real parser/file proof. Real finance/access integration excluded.
+
+Reserve command/allowance in short transactions; infer outside locks. Persist source/schema/prompt versions, checkpoints, consumed/reserved calls and expiring claim. Replays reuse saved runs; changed-input identity conflicts. Read after uncertainty; expired claims interrupt; late completions cannot overwrite newer versions. No scheduler, automatic retries or refunded uncertain calls.
+
+Inherit server ownership/CSRF/fixed 24-hour expiry/reset. Changed sources invalidate affected answers/submissions. Validate known field/type/size/source/version/exact quote/span before save; separately evaluate semantic support. Source/model text is untrusted; escape values, keep keys server-side, no hidden-reasoning logs.
+
+Keep transport, request rules, orchestration, provider I/O, validation and presentation distinct. Narrow adapters share typed error/cancellation contracts; provider changes cannot change submission authority. Two tools remain narrow, direct EF retained.
+
+Cloudflare Workers AI remains unverified Free/no-card candidate, called directly by C# REST without another Worker. A0 checks eligibility, quality, latency, actual usage and CS-06 limits. Batch within bounds if needed; never silently raise them or enable billing. Existing app/database Free hosting remains baseline; local Ollama is not public hosting.
+
+Historical sections below concern reusable existing-app evidence, not this feature's proof or product constraints.
 
 ## Existing baseline
 

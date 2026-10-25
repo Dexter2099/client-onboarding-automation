@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { setTimeout as delay } from 'node:timers/promises';
+import { randomUUID } from 'node:crypto';
 
 const origin = 'https://dexter-onboardflow.de.deplexo.com';
 const repository = 'https://github.com/Dexter2099/client-onboarding-automation';
@@ -37,6 +38,7 @@ export async function smokeDemo(revision) {
       "default-src 'none'",
       "script-src 'self'",
       "connect-src 'self'",
+      "media-src 'self'",
       "frame-ancestors 'none'",
       "base-uri 'none'",
     ])
@@ -62,12 +64,14 @@ export async function smokeDemo(revision) {
       origin,
       'An external script was injected into the document.',
     );
-  async function call(path, method = 'GET', csrf = true, expected = 200) {
+  async function call(path, method = 'GET', csrf = true, expected = 200, body) {
     const headers = { Cookie: [...cookies].map(([name, value]) => `${name}=${value}`).join('; ') };
     if (method === 'POST' && csrf) headers['X-CSRF-TOKEN'] = token;
+    if (body) headers['Content-Type'] = 'application/json';
     const response = await fetch(origin + path, {
       method,
       headers,
+      body: body ? JSON.stringify(body) : undefined,
       redirect: 'error',
       signal: AbortSignal.timeout(20000),
     });
@@ -91,24 +95,36 @@ export async function smokeDemo(revision) {
   await call('/api/session', 'POST', false, 403);
   const session = await call('/api/session', 'POST', true, 201);
   assert.equal(Date.parse(session.expiresAt) - Date.parse(session.createdAt), 86400000);
-  const projects = await call('/api/projects');
-  assert.equal(projects.length, 2);
-  const project = projects.find((item) => item.reference === 'OF-1042');
-  assert(project, 'The prepared project is missing.');
-  const route = `/api/projects/${project.id}`;
-  const started = await call(`${route}/start`, 'POST');
-  const repeated = await call(`${route}/start`, 'POST');
-  assert.equal(repeated.onboarding.id, started.onboarding.id);
-  assert.equal(repeated.onboarding.welcomeAttempts.length, 1);
-  const saved = await call(`${route}/onboarding`);
-  assert.equal(saved.onboarding.id, started.onboarding.id);
-  assert.equal(saved.outbox.length, 1);
+  const intake = await call('/api/intake/');
+  assert.deepEqual(intake.answers, {});
+  const command = {
+    commandId: randomUUID(),
+    expectedVersion: intake.version,
+    operation: 'edit',
+    field: 'dba',
+    value: 'Fictional release verification',
+  };
+  const edited = await call('/api/intake/command', 'POST', true, 200, command);
+  const repeated = await call('/api/intake/command', 'POST', true, 200, command);
+  assert.equal(edited.version, repeated.version);
+  const saved = await call('/api/intake/');
+  assert.equal(saved.answers.dba.value, command.value);
+  assert.equal(saved.answers.dba.author, 'you');
+  assert.equal(saved.answers.dba.evidence, null);
+  const media = await fetch(origin + '/onboardflow-local-ai-20261025.mp4', {
+    headers: { Range: 'bytes=0-15' },
+    signal: AbortSignal.timeout(20000),
+    redirect: 'error',
+  });
+  assert.equal(media.status, 206);
+  assert.match(media.headers.get('content-type') ?? '', /^video\/mp4/);
   return {
     revision,
     liveRevisionVerified: true,
     secureCookies: true,
     csrf: true,
-    savedWorkflowAndRepeat: true,
+    savedIntakeAndCommandReplay: true,
+    localVideoAndRangeRequests: true,
     fixedLifetime: true,
     browserSecurityHeaders: true,
     requests,

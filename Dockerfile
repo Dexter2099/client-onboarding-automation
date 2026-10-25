@@ -3,9 +3,9 @@ WORKDIR /build
 COPY package.json package-lock.json ./
 RUN npm ci
 COPY index.html tsconfig.json vite.config.ts playwright.config.ts ./
-COPY src/web/ src/web/
+COPY preview/content-snare/ preview/content-snare/
 COPY public/ public/
-COPY tests/browser/ tests/browser/
+COPY src/OnboardFlow.Api/ClientRequests/demo.json src/OnboardFlow.Api/ClientRequests/demo.json
 RUN npm run build
 
 FROM mcr.microsoft.com/dotnet/sdk:10.0-alpine@sha256:230c3fbae0ceedc70bca04eed2bfb5694e8b248cadbb81010f41b7a993601f55 AS backend
@@ -21,6 +21,8 @@ WORKDIR /app
 ENV ASPNETCORE_ENVIRONMENT=Production \
     ASPNETCORE_HTTP_PORTS=8080 \
     DOTNET_HOSTBUILDER__RELOADCONFIGONCHANGE=false \
+    DOTNET_gcServer=0 \
+    DOTNET_GCHeapHardLimit=0x4000000 \
     HOME=/data
 RUN mkdir -p /data && chown app:app /data
 COPY --from=backend /publish/ ./

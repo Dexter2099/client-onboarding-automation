@@ -39,22 +39,22 @@ switch ($Action) {
         & $onboardflowDotnet run --project src/OnboardFlow.Api --no-launch-profile --urls "http://127.0.0.1:$Port"
     }
     'verify' {
+        $env:ONBOARDFLOW_LIVE_AI = '0'
+        $env:Intake__Provider = 'Ollama'
+        Remove-Item Env:Intake__SpendConnectionString -ErrorAction SilentlyContinue
         npm run build
         & $onboardflowDotnet build OnboardFlow.slnx --no-restore
         $env:ONBOARDFLOW_TEST_CONNECTION = $onboardflowConnection
         & $onboardflowDotnet test OnboardFlow.slnx --no-build --logger 'trx;LogFileName=foundation.trx' --results-directory .local/reports
 
-        # Browser checks own a separate database. Never migrate/reset the development database here.
-        $onboardflowBrowserDatabase = 'onboardflow_browser_test_' + [Guid]::NewGuid().ToString('N')
-        docker compose exec -T db psql -U onboardflow -d postgres -v ON_ERROR_STOP=1 -c "CREATE DATABASE $onboardflowBrowserDatabase"
+        # This test owns a disposable PostgreSQL database and injects a model double
+        # only into its Kestrel host. No test provider exists in the shipped app.
+        $env:ONBOARDFLOW_BROWSER_TEST = '1'
         try {
-            $env:ConnectionStrings__OnboardFlow = $onboardflowConnection.Replace('Database=onboardflow_dev;', "Database=$onboardflowBrowserDatabase;")
-            & $onboardflowDotnet ef database update --project src/OnboardFlow.Api --no-build
-            npx playwright test
+            & $onboardflowDotnet test OnboardFlow.slnx --no-build --filter 'Category=BrowserCI' --logger 'trx;LogFileName=browser.trx' --results-directory .local/reports
         }
         finally {
-            $env:ConnectionStrings__OnboardFlow = $onboardflowConnection
-            docker compose exec -T db psql -U onboardflow -d postgres -v ON_ERROR_STOP=1 -c "DROP DATABASE $onboardflowBrowserDatabase WITH (FORCE)"
+            Remove-Item Env:ONBOARDFLOW_BROWSER_TEST -ErrorAction SilentlyContinue
         }
     }
 }

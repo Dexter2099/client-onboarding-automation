@@ -1,8 +1,66 @@
 # OnboardFlow project plan
 
-Updated 19 October 2026. **Status: the hosted workspace failure is resolved; bounded Deplexo/Neon workflow and security checks pass.** The app uses the verified Cloudflare scheme from its exact configured proxy, retaining Production antiforgery and Secure cookies. Both accounts remain Free. Hour-idle/overnight entry, first-time human timing and employer-access reputation remain open. No card, paid upgrade or portfolio-site change is authorised. Dexter's subsequent instruction authorises GitHub source publication and CI/CD for the existing app. See [HARNESS.md](HARNESS.md).
+## Production release — authorised 25 October 2026
 
-Dexter subsequently requested the explanatory introduction and a focused quality/API review. That bounded slice passes 50 local API/security tests, eleven browser tests and 54 live workflow/API requests. It separates existing responsibilities without schema/dependency changes. At his request, do not prolong this handoff with hours of manual testing; retain long-idle, sustained uptime and first-time human timing as unmeasured limits. Portfolio edits/publication remain with the other chat, explicitly reconfirmed on 19 October 2026. He then explicitly requested GitHub deployment and meaningful employer-visible CI/CD: test the commit, package/build its source, deploy only after success and verify the live revision. This supersedes the earlier source-publication hold, without reopening product planning.
+Release the reviewed 23-item React/C#/PostgreSQL experience through the existing GitHub/Deplexo pipeline, with the separate OnboardFlow OpenAI project capped at US$5 and the shared database ledger stopping at US$4.50. Carry all October development usage and uncertain holds into production before enabling inference, then stop local paid inference against its separate ledger. Preserve the earlier release for rollback. Verify production packaging, protected routes, additive migrations, fonts/video, 128 MiB hosting capacity, saved progress, sources, clarification and human submissions over hosted HTTPS. Do not change the portfolio or replace the original recording in this release. Earlier local-only holds below are historical.
+
+## Current hosted-AI decision — 25 October 2026
+
+Dexter selected OpenAI with a **US$5 monthly cap** after comparing Cloudflare Free. A dedicated OpenAI project now enforces that cap and alerts at US$4; the C# app's persistent PostgreSQL ledger stops at US$4.50. Every inference call reserves an upper bound before generation; failed/uncertain calls retain the hold and completed calls settle conservatively from reported tokens. Keep this ledger across sandbox resets, restarts, test cleanup and release transitions. The evaluated snapshot is gpt-5.4-2026-03-05 with Standard processing after Mini failed quality checks. Dexter explicitly requested a Responses-only API key with no expiry. No automatic retries or provider/model fallback. Preserve six calls including continuation, 512 output tokens, 15 seconds, validated sources and human-only submissions/manual actions. Responses request at most eight drafts per turn; identifier drafts must match a fictional identifier actually present in the cited passage. A valid clarification pauses the pass even if the model's done flag is false. The existing nine evaluation cases remain authoritative before deployment. This paid-inference exception does not authorise hosting/database upgrades. Production remains unchanged at this checkpoint; HARNESS owns measured results. The following local checkpoint is baseline evidence.
+
+**Local implementation status — 25 October 2026:** C#/ASP.NET Core now owns the request API, PostgreSQL aggregate, source validation, bounded native-tool loop and call allowance. The reference UI calls this API; browser-only persistence and canned fill values have been removed. Installed Ollama qwen3.8:27b supplies real inference over loopback with cloud disabled. Fictional documents/actions remain labelled. Production does not map these local intake endpoints. The older preview-only/Cloudflare-provider statements below are historical; public hosted intake remains undeployed. HARNESS owns current verification results. No live app, site, hosting, CI release or deployment change was made.
+
+## Authorised local implementation — 25 October 2026
+
+Dexter has now authorised the C#/.NET request backend, real local AI and connection to the reviewed reference interface. Implement A0–A3 locally using installed Ollama (no cloud account or API fees), PostgreSQL and the existing .NET app. This supersedes earlier UI-only/source-change holds. Preserve the reference layout. No live app, website, hosting, CI release or deployment change is authorised. Public hosted inference remains future work.
+
+## Current decision: ground-up Content Snare rebuild — 25 October 2026
+
+Dexter rejected the four-field interpretation and requested a rebuild almost exactly mirroring [this Content Snare client demo](https://demo.contentsnare.com/shared/21481036-b8ca-4abb-ac0b-4d09b663333a/l/instructions), plus AI document filling. This supersedes the web-project scenario, project-manager visitor role, four-field limit and DF/AG contracts. Do not adapt the rejected UI again. Dexter also requested a rewritten README and reaffirmed C#/.NET.
+
+The full 11-field General Information page and 12-item Task List now use the real local C# request API, PostgreSQL and Ollama. Current work includes local implementation and verification; no app/website release is authorised.
+
+### Product boundary
+
+The visitor completes a client information request. Match Instructions, branded request sidebar/title/due/ACTIVE state, purple selection, nested groups/fields, large field cards, individual Submit for review / Save draft / Ask a question controls, previous/next navigation and Page Summary / Submit page for review. Use OnboardFlow branding and original fictional content. All 23 items define the rebuild.
+
+Add a compact client-document/Fill with AI strip inside that interface. Explicit filling visibly drafts supported values with inspectable sources. One missing fictional tax reference uses a prepared clarification and explicit resume. Four manual-only items remain: sample tax attachment, folder-access confirmation, fictional first-payment completion and fictional authorisation checklist. AI cannot claim an action happened, attach an absent file, grant access, transact, submit or approve.
+
+Default demo requires no typing, account or personal data. Prepared sources/reply/sample actions replace that work. Draft and submitted are distinct; page submission is a visitor action from the reference. End at Awaiting review, without automatic approval or old kickoff/handoff screens. No second manager flow, legacy project selector, credential collection, real finance, arbitrary upload/OCR, chat or form builder.
+
+### Acceptance
+
+| ID | Required outcome |
+| --- | --- |
+| CS-01 | Closely match exact reference Instructions, 11+12 fields/eight groups, sidebar, cards, navigation and summaries. Compare screenshots before user acceptance. |
+| CS-02 | Explicit AI fill drafts supported information; missing detail stays blank until one clarification and explicit resume. Label preview simulation; implemented agent uses real model/tools. |
+| CS-03 | Every AI draft has validated document/version/section/quote metadata. Source inspection identifies the correct passage. Edits remove extraction attribution; invalid output fails closed. Evaluate semantic support separately. |
+| CS-04 | AI never submits/approves or completes four manual tasks. Retain individual and explicit page submission. Submitted means awaiting review; edits require resubmission. |
+| CS-05 | Default no-typing demo. Working API persists revisions/status and handles ownership, refresh, concurrency/replays, changed sources, uncertainty, reset/expiry. Browser storage is not server proof. |
+| CS-06 | C#/ASP.NET Core, React/TypeScript and PostgreSQL; existing free hosting, OpenAI inference within US$5/month, fixed call limits and no automatic fallback. Prove provider/quality/usage before public inference. |
+| CS-07 | Review local UX and working .NET integration before release. Separate simulation, deterministic tests, live-model proof and old-app evidence. README/five working docs agree. |
+
+### Stack and employer evidence
+
+C# / ASP.NET Core owns APIs, request rules, bounded agent/tool loop, source validation and persistence. React/TypeScript owns the reference interface; PostgreSQL/EF Core stores owned request revisions. Reuse existing same-origin runtime/security/delivery infrastructure during integration. No Python service, agent framework, vector store or new hosting.
+
+The [9 October 100-ad research](../Job-Application-Workflow/outputs/01a11f91-a368-7453-9b8a-a9ed9a4ecd19/seek-research.json) counted C#/.NET in 20 ads, React in 26, APIs in 51, SQL/relational databases in 42, testing in 64 and CI/CD in 58. These dated all-seniority convenience-sample signals support a tested full-stack feature; they are not a market census or proof of role eligibility.
+
+### CS-06: free-demo defaults
+
+These are proposed implementation limits, not measured capacity: **six model calls total per run including continuation; 512 maximum output tokens per call; 15-second provider-call timeout; three new runs per sandbox lifetime; one active run per sandbox.** Persist reservations before inference, including failed/uncertain calls, and never replenish a run's budget on refresh or continuation. Use the existing ASP.NET rate-limiting approach. Reset creates a new sandbox; these are sandbox limits, not verified per-person limits.
+
+Workers Free's provider-enforced daily allowance is the global stop; do not add a separate daily-budget service/table. Cloudflare currently documents 10,000 neurons daily, failing further requests at the limit, and some models requiring paid billing. Free allocation is shared across the account and does not equal a known number of walkthroughs. Select and pin a free-compatible tool-calling model only after the A0 proof; verify its token-limit behaviour and actual no-card account access. Quota exhaustion or missing configuration shows an honest AI-unavailable state while manual onboarding remains usable. No automatic provider retry or silent replay presented as live AI.
+
+Sources checked 24 October 2026: [Workers AI pricing and hard limits](https://developers.cloudflare.com/workers-ai/platform/pricing/), [no-card offer](https://www.cloudflare.com/products/workers-ai/), [function calling](https://developers.cloudflare.com/workers-ai/features/function-calling/). Published terms are evidence for planning, not proof of this account's configuration or runtime performance. Recheck before enabling public inference.
+
+### Delivery and superseded scope
+
+Current source: preview/content-snare/, with separate Vite/TypeScript config and ignored output. Prior HTML wireframes are rejected history. README presents this rebuild first and labels the hosted app as the earlier version. Backend source and a local migration are authorised; hosting, CI/deployment and portfolio remain unchanged.
+
+Walkthrough owns visible reference/flow; architecture C# boundaries; HARNESS phases/checks; AGENTS AI work rules. README is the entry point, not a sixth plan. Sequence: review UX → C# provider proof → owned request/agent API → accepted UI integration → working-local evaluation/review. Release remains separate.
+
+Sections below retain historical existing-app scope/evidence. Their manager/Shop/kickoff requirements do not constrain this user-requested rebuild.
 
 ## Purpose and document ownership
 
@@ -70,7 +128,7 @@ Keep the real integration as a later milestone outside version-one acceptance. I
 
 No real customers, personal data, email sending, CRM, payments, e-signatures, uploads, additional clients/templates, general workflow builder or production business use. Do not carry old multi-client selectors, reminders or extra failure variants into the new scope automatically.
 
-AI-assisted brief drafting and broader scenarios remain backlog ideas. They have no implementation commitment. AI must never approve answers, change scope or decide readiness.
+The bounded scope-review extension above is now planned at Dexter's request. Other AI-assisted brief drafting and broader scenarios remain backlog ideas. AI must never approve answers, change scope or decide readiness.
 
 ### Employer UI pass: implemented for review
 

@@ -71,6 +71,7 @@ jobs:
           path: |
             .local/reports/*.trx
             .local/reports/*/*.png
+            .local/reports/intake-browser/**
             playwright-report
           if-no-files-found: ignore
           retention-days: 7
