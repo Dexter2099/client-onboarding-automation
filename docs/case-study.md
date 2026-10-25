@@ -1,4 +1,29 @@
-# OnboardFlow: from signed scope to an approved kickoff
+# OnboardFlow: source-backed AI onboarding
+
+25 October 2026 · Personal portfolio project
+
+## Current employer demo
+
+[Try OnboardFlow](https://onboardflow.hostless.app/). The client request has 23 information/task items. An AI agent reads two fictional documents through fixed read-only tools, drafts supported answers with inspectable passages, and pauses for one missing fictional tax reference. A prepared human reply enables an explicit continuation. Four sample attachment/confirmation tasks and all submissions remain human actions. Submitted means awaiting review.
+
+React/TypeScript provides the request interface; C#/ASP.NET Core owns validation, agent orchestration, command identities and limits; PostgreSQL persists progress and spending. Server-side OpenAI inference uses the evaluated pinned snapshot. The Instructions video is clearly labelled as the earlier local Ollama recording. No real payment, upload, access grant, booking or message is performed.
+
+## Engineering evidence
+
+| Choice | Concrete evidence |
+| --- | --- |
+| Proportionate SOLID | `IntakeAgentService` orchestrates, `IntakeRules` validates without I/O, `IntakeStore` owns request transactions/receipts and `IntakeSpendBudget` owns reserve/settle. The small `IIntakeModelClient` contract and shared protocol live independently of provider implementations. HTTP/time dependencies are injected. No generic repository or interface-per-class structure. |
+| Bounded AI | Two read-only tools, source/version/section validation, six calls including continuation, 512 output tokens, a 15-second call deadline and three runs per sandbox. Model output cannot submit, approve or execute external actions. |
+| Monetary controls | The dedicated US$5 project limit is supplemented by a shared PostgreSQL US$4.50 reservation cutoff. Short advisory-lock transactions reserve before generation; uncertain holds survive reset/restart. The portfolio chatbot key is separate. |
+| Security and persistence | Owned 24-hour sandboxes, Secure/HttpOnly cookies, CSRF, strict CSP, exact verified forwarding peer, request limits, command/version checks and provenance invalidation after edits. These are bounded controls, not a security certification. |
+| Delivery | GitHub Actions checks formatting, backend and three-engine browser behaviour, builds the container and publishes only its verified source archive to the Hostless release branch. Live HTTPS/storage/media checks and native macOS WebKit then exercise real hosted inference. Documentation-only updates preserve the tested runtime. |
+| Verifiable quality | Ordinary regression uses a model double only in the test assembly; the real nine-case evaluation is separate. HARNESS retains failures, actual timings and scope limits. Comments explain ownership, locks, uncertain holds and release integrity. |
+
+Hostless's verified allocation is free without a card: 0.25 vCPU, 512 MB, one always-running instance, maximum one, review apps off. The same Neon database retains saved progress and budget. [README](../README.md) is the entry point; [HARNESS](../HARNESS.md) records the checked release and measured speed, including entry after inactivity. A small fixed evaluation does not establish general AI reliability, and a single idle measurement is not an uptime or latency guarantee.
+
+## Previous workflow prototype — historical
+
+The sections below describe the 19 October manager/review prototype. They do not describe the current client-request interface, its test counts or its hosting.
 
 19 October 2026 · Personal portfolio project
 

@@ -9,6 +9,13 @@ export async function smokeDemo(revision, target) {
   const origin = checkedOrigin(target);
   assert.match(revision, /^[a-f0-9]{40}$/);
   let markerVerified = false;
+  let lastReadiness = '';
+  function observeReadiness(observation) {
+    // Report only public release/status evidence; never headers, cookies or response bodies.
+    const current = JSON.stringify(observation);
+    if (current !== lastReadiness) console.log(`Release readiness: ${current}`);
+    lastReadiness = current;
+  }
   const deadline = Date.now() + 8 * 60000;
   while (Date.now() < deadline) {
     try {
@@ -19,17 +26,22 @@ export async function smokeDemo(revision, target) {
       });
       if (response.ok) {
         const marker = await response.json();
+        observeReadiness({ status: response.status, revision: marker.revision });
         if (marker.revision === revision && marker.repository === repository) {
           markerVerified = true;
           break;
         }
-      }
-    } catch {
+      } else observeReadiness({ status: response.status });
+    } catch (error) {
+      observeReadiness({ error: error.name, code: error.cause?.code ?? null });
       /* Read-only readiness probes may retry while the container is replaced. */
     }
     await delay(5000);
   }
-  assert(markerVerified, 'The expected Git revision is not live.');
+  assert(
+    markerVerified,
+    `The expected Git revision is not live. Last observation: ${lastReadiness}`,
+  );
 
   const cookies = new Map();
   let token;

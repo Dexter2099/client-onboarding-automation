@@ -1,5 +1,17 @@
 # OnboardFlow agent instructions
 
+## Current authority — Hostless release, 25 October 2026
+
+Dexter authorised deploying the complete 23-item React/C#/PostgreSQL demo to Hostless, testing the full journey including entry after at least one hour without visitor traffic, and keeping README current. He explicitly approved saving the existing dedicated OnboardFlow OpenAI key and production Neon connection string in Hostless server settings. That transfer is complete; both sensitive values are write-only. Do not request the same approval again. No payment card or paid hosting is authorised.
+
+Hostless runs the free **0.25 vCPU / 512 MB / one always-running replica**, maximum one, review apps off. The production image reads `PORT`, uses a 256 MiB managed-heap ceiling, trusts only verified ingress peer `10.0.1.200`, and redirects HTTP to HTTPS. `deploy/hostless` receives only the checked source archive after main CI; documentation-only main changes do not restart the runtime. The previous Deplexo release remains available for rollback, sharing the same Neon database and budget ledger. Never re-import an older ledger, reset spending or roll back the additive schema.
+
+Preserve the dedicated US$5 OpenAI project limit and US$4.50 persistent shared reservation cutoff, pinned evaluated model, six calls including continuation, 512 output tokens, 15-second timeout, two read-only tools and human-only submissions/manual actions. No automatic retry/fallback. The separate portfolio chatbot key must remain untouched. Keep credentials out of code, images, client bundles, logs and evidence; retain the original ignored local key file.
+
+This is an employer showcase. Apply SOLID proportionately: focused orchestration, pure validation, transactional state/budget ownership and a narrow model boundary; use comments for decisions and invariants. Keep meaningful GitHub Actions, README and supporting engineering evidence aligned with actual code/results. Avoid speculative abstractions and tests that merely mirror code. Ordinary CI uses only a test-assembly model double; native macOS acceptance uses the real hosted adapter under the shared cap. Do not claim provider marketing, local fixtures or a warm request as proof of idle performance. Portfolio edits and a new hosted-app recording remain separate work.
+
+**Historical checkpoints below are superseded wherever they describe pending credentials, disabled production endpoints, a 128 MiB requirement or a deployment hold.** README and HARNESS identify current acceptance results.
+
 ## Current hosting requirements — 25 October 2026
 
 Dexter authorised deploying to Hostless, testing the complete demo and speed after inactivity, and keeping README current. Use the verified no-card free allocation and retain the US$5/US$4.50 OpenAI controls. Prepare a credential-free ingress check, keep GitHub verification ahead of provider builds, and leave the existing release available until acceptance. The new host's API/database credentials still need the concrete transfer review described below. Test at least one hour without visitor traffic; never use keep-alive traffic to claim an idle result.
