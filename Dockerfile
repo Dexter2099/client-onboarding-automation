@@ -18,6 +18,7 @@ RUN dotnet publish src/OnboardFlow.Api/OnboardFlow.Api.csproj \
 
 FROM mcr.microsoft.com/dotnet/aspnet:10.0-alpine@sha256:819bd3649d8bf53f35527c68d62e17b348ef6f24ae73073f497f00a878348062
 WORKDIR /app
+# Leave native/JIT/TLS headroom outside the managed heap on the 512 MB host.
 ENV ASPNETCORE_ENVIRONMENT=Production \
     ASPNETCORE_HTTP_PORTS=8080 \
     DOTNET_HOSTBUILDER__RELOADCONFIGONCHANGE=false \

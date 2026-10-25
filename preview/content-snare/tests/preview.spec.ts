@@ -39,7 +39,10 @@ test('no-typing request: supported drafts, explicit clarification, manual action
   page.on('pageerror', (error) => errors.push(error.message));
   await page.goto('/l/instructions');
   await expect(
-    page.getByRole('img', { name: 'Source-linked answers in the local preview', exact: true }),
+    page.getByRole('img', {
+      name: 'Source-linked answers in the recorded local walkthrough',
+      exact: true,
+    }),
   ).toHaveAttribute('src', '/onboardflow-local-ai-20261025.webp');
   await page.evaluate(() => document.fonts.ready);
   await page.screenshot({
@@ -177,7 +180,7 @@ test('editing clears provenance and submission; invalid values and questions rem
   await page.getByLabel('Question about this item', { exact: true }).fill('Which entity applies?');
   await page.getByRole('button', { name: 'SAVE QUESTION', exact: true }).click();
   await expect(
-    page.getByText('Question saved in this local preview. No message was sent.', { exact: true }),
+    page.getByText('Question saved in this demo. No message was sent.', { exact: true }),
   ).toBeVisible();
   await page.reload();
   await page.getByRole('button', { name: /^Entity draft/ }).click();
