@@ -69,6 +69,28 @@ if (useCloudflareVisitor) app.Use(async (http, next) =>
     }
     await next(http);
 });
+app.Use(async (http, next) =>
+{
+    if (http.Request.Path != "/release.json")
+    {
+        await next(http);
+        return;
+    }
+    // Capture before forwarding consumes headers; log only canonical schemes and the ingress peer.
+    var raw = http.Request.Headers["X-Forwarded-Proto"].ToString();
+    var schemes = raw.Length <= 128 ? string.Join(",", raw.Split(',', StringSplitOptions.TrimEntries)
+        .Take(4).Select(value => value is "http" or "https" ? value : "other")) : "oversized";
+    var visitor = http.Request.Headers["CF-Visitor"].ToString() switch
+    {
+        "{\"scheme\":\"https\"}" => "https",
+        "{\"scheme\":\"http\"}" => "http",
+        _ => "other"
+    };
+    await next(http);
+    if (!http.Request.IsHttps)
+        app.Logger.LogWarning("Release ingress scheme remained HTTP: peer {Peer}, forwarded {Schemes}, Cloudflare {VisitorScheme}",
+            http.Connection.RemoteIpAddress, schemes, visitor);
+});
 app.UseForwardedHeaders();
 // Determine HTTPS from the verified proxy before HSTS; preserve local HTTP development.
 if (!app.Environment.IsDevelopment())

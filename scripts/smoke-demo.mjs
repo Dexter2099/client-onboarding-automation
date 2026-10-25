@@ -21,7 +21,7 @@ export async function smokeDemo(revision, target) {
     try {
       const response = await fetch(`${origin}/release.json?revision=${revision}`, {
         signal: AbortSignal.timeout(10000),
-        redirect: 'error',
+        redirect: 'manual',
         cache: 'no-store',
       });
       if (response.ok) {
@@ -31,7 +31,14 @@ export async function smokeDemo(revision, target) {
           markerVerified = true;
           break;
         }
-      } else observeReadiness({ status: response.status });
+      } else {
+        const location = response.headers.get('location');
+        const target = location ? new URL(location, origin) : null;
+        observeReadiness({
+          status: response.status,
+          redirect: target ? target.origin + target.pathname : null,
+        });
+      }
     } catch (error) {
       observeReadiness({ error: error.name, code: error.cause?.code ?? null });
       /* Read-only readiness probes may retry while the container is replaced. */
