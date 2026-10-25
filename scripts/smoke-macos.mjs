@@ -2,11 +2,11 @@ import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
 import { appendFile, mkdir, writeFile } from 'node:fs/promises';
 import { release } from 'node:os';
+import { origin } from './demo-target.mjs';
 
 assert.equal(process.platform, 'darwin', 'Native macOS verification requires its macOS runner.');
 const revision = process.env.GITHUB_SHA;
 assert.match(revision ?? '', /^[a-f0-9]{40}$/);
-const origin = 'https://dexter-onboardflow.de.deplexo.com';
 const output = '.local/macos-browser-evidence';
 await mkdir(output, { recursive: true });
 const marker = await fetch(`${origin}/release.json?revision=${revision}`, {

@@ -99,7 +99,7 @@ jobs:
     needs: verify
     if: github.repository == 'Dexter2099/client-onboarding-automation' && github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && needs.verify.outputs.app_changed == 'true'
     runs-on: ubuntu-24.04
-    timeout-minutes: 12
+    timeout-minutes: 15
     environment:
       name: production
     permissions:
@@ -120,6 +120,9 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         shell: pwsh
         run: ./scripts/publish-hostless-source.ps1
+      - name: Verify the live Hostless release over HTTPS
+        if: vars.HOSTLESS_ACCEPTANCE_ENABLED == 'true'
+        run: node scripts/verify-hostless.mjs
 
   macos-browser:
     name: Verify live demo on macOS

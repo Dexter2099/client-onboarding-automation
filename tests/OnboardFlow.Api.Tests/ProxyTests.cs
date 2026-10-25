@@ -11,27 +11,27 @@ public sealed class ProxyTests
 {
     [Theory]
     [InlineData("192.0.2.10", "https", 200)]
-    [InlineData("192.0.2.11", "https", 500)]
-    [InlineData("192.0.2.10", null, 500)]
+    [InlineData("192.0.2.11", "https", 308)]
+    [InlineData("192.0.2.10", null, 308)]
     public async Task Production_csrf_requires_https_from_a_trusted_proxy(
         string remoteAddress, string? forwardedScheme, int expectedStatus)
         => await AssertCsrf(remoteAddress, forwardedScheme, expectedStatus);
 
     [Theory]
     [InlineData(true, "192.0.2.10", "{\"scheme\":\"https\"}", "http", 200)]
-    [InlineData(false, "192.0.2.10", "{\"scheme\":\"https\"}", "http", 500)]
-    [InlineData(true, "192.0.2.11", "{\"scheme\":\"https\"}", "https", 500)]
-    [InlineData(true, "192.0.2.10", null, "https", 500)]
-    [InlineData(true, "192.0.2.10", "{\"scheme\":\"http\"}", "https", 500)]
-    [InlineData(true, "192.0.2.10", "not-json", "https", 500)]
-    [InlineData(true, "192.0.2.10", "{}", "https", 500)]
-    [InlineData(true, "192.0.2.10", "[]", "https", 500)]
-    [InlineData(true, "192.0.2.10", "null", "https", 500)]
-    [InlineData(true, "192.0.2.10", "{\"scheme\":true}", "https", 500)]
-    [InlineData(true, "192.0.2.10", "{\"scheme\":\"ftp\"}", "https", 500)]
-    [InlineData(true, "192.0.2.10", "{\"scheme\":\"http\",\"scheme\":\"https\"}", "https", 500)]
-    [InlineData(true, "192.0.2.10", "{\"scheme\":\"https\",\"extra\":true}", "https", 500)]
-    [InlineData(true, "192.0.2.10", "{\"scheme\":\"http\"},{\"scheme\":\"https\"}", "https", 500)]
+    [InlineData(false, "192.0.2.10", "{\"scheme\":\"https\"}", "http", 308)]
+    [InlineData(true, "192.0.2.11", "{\"scheme\":\"https\"}", "https", 308)]
+    [InlineData(true, "192.0.2.10", null, "https", 308)]
+    [InlineData(true, "192.0.2.10", "{\"scheme\":\"http\"}", "https", 308)]
+    [InlineData(true, "192.0.2.10", "not-json", "https", 308)]
+    [InlineData(true, "192.0.2.10", "{}", "https", 308)]
+    [InlineData(true, "192.0.2.10", "[]", "https", 308)]
+    [InlineData(true, "192.0.2.10", "null", "https", 308)]
+    [InlineData(true, "192.0.2.10", "{\"scheme\":true}", "https", 308)]
+    [InlineData(true, "192.0.2.10", "{\"scheme\":\"ftp\"}", "https", 308)]
+    [InlineData(true, "192.0.2.10", "{\"scheme\":\"http\",\"scheme\":\"https\"}", "https", 308)]
+    [InlineData(true, "192.0.2.10", "{\"scheme\":\"https\",\"extra\":true}", "https", 308)]
+    [InlineData(true, "192.0.2.10", "{\"scheme\":\"http\"},{\"scheme\":\"https\"}", "https", 308)]
     public async Task Cloudflare_scheme_requires_opt_in_exact_peer_and_valid_evidence(
         bool enabled, string remoteAddress, string? visitor, string forwardedScheme, int expectedStatus)
         => await AssertCsrf(remoteAddress, forwardedScheme, expectedStatus, enabled, visitor);
