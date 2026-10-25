@@ -1,5 +1,11 @@
 # Employer walkthrough and request interface
 
+## Current hosted walkthrough — 25 October 2026
+
+Open [OnboardFlow](https://onboardflow.hostless.app/). Select Let's get started, Fill with AI, then View source on a draft. Use the labelled sample client reply for the missing fictional tax reference and explicitly continue. Submit the 11 information answers for human review. On the task page, complete the four manual sample attachment/confirmation items, then submit all 12 items. The saved request ends with all 23 awaiting human review; AI never submits or approves.
+
+The app runs React/TypeScript, C#/ASP.NET Core and PostgreSQL with real server-side OpenAI inference. Sources and external actions are fictional; the Instructions video is labelled as the original local Ollama recording. Questions are saved in the demo without sending a message. Hostless uses the free/no-card 512 MB allocation; the dedicated OpenAI US$5 limit and shared US$4.50 application cutoff remain. README/HARNESS link verification and measured performance. The earlier checkpoints below describe development history rather than current deployment restrictions.
+
 ## Production release journey — 25 October 2026
 
 The production build now uses this same interface and hosted OpenAI behind the C# API, with the verified US$5 project cap and US$4.50 shared ledger ceiling. A fresh visitor drafts from the fictional documents, opens supporting passages, supplies the prepared missing detail, explicitly resumes, completes the four manual sample tasks and submits for human review. Saved progress survives reload. No visitor needs a local model or access to Dexter's computer. The current Instructions video is explicitly the earlier local Ollama recording, packaged as a silent MP4 for browser compatibility; it does not claim to show the hosted release. Deployment acceptance is recorded in HARNESS and the Delivery run. Earlier local-only status paragraphs below are historical.

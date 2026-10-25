@@ -1,21 +1,21 @@
+import { Instructions } from './Instructions';
+import { RequestNavigation } from './RequestNavigation';
+import { RequestFieldInput } from './RequestFieldInput';
+import { SourceDocument } from './SourceDocument';
 import { useEffect, useRef, useState } from 'react';
 import {
   ArrowDown,
   ArrowLeft,
   ArrowRight,
   ArrowUp,
-  Check,
-  ChevronDown,
   ChevronRight,
   FileText,
   Home,
   Menu,
   MessageCircle,
-  Play,
   Sparkles,
-  X,
 } from 'lucide-react';
-import { documents, fieldList, fields, generalFields, taskFields, taxReply } from './demo-data';
+import { documents, fieldList, fields, taskFields, taxReply } from './demo-data';
 import type { Evidence, Page, RequestedField } from './demo-data';
 import { initialState, isAnswered, isSubmitted } from './state';
 import { IntakeApi } from './api';
@@ -46,7 +46,6 @@ export function App() {
   const [apiError, setApiError] = useState('');
   const [source, setSource] = useState<Evidence | null>(null);
   const [sourceField, setSourceField] = useState<string | null>(null);
-  const [walkthroughPlaying, setWalkthroughPlaying] = useState(false);
   const [questionOpen, setQuestionOpen] = useState(false);
   const [question, setQuestion] = useState('');
   const [message, setMessage] = useState('');
@@ -55,7 +54,6 @@ export function App() {
   const [traceOpen, setTraceOpen] = useState(false);
   const [notice, setNotice] = useState('');
   const [checks, setChecks] = useState<string[]>([]);
-  const sourceDialog = useRef<HTMLDialogElement>(null);
   const fillGeneration = useRef(0);
   const mainHeading = useRef<HTMLHeadingElement>(null);
   function inspectSource(value: Evidence, fieldName?: string) {
@@ -83,9 +81,6 @@ export function App() {
     };
   }, []);
   useEffect(() => {
-    setWalkthroughPlaying(false);
-  }, [state.page]);
-  useEffect(() => {
     document.querySelector('.field-link.selected')?.scrollIntoView({ block: 'nearest' });
   }, [state.selected]);
   useEffect(
@@ -105,9 +100,6 @@ export function App() {
     window.addEventListener('popstate', onPop);
     return () => window.removeEventListener('popstate', onPop);
   }, []);
-  useEffect(() => {
-    if (source && !sourceDialog.current?.open) sourceDialog.current?.showModal();
-  }, [source]);
   useEffect(() => {
     setQuestionOpen(false);
     setMessage('');
@@ -281,143 +273,7 @@ export function App() {
           : 'empty';
   const submittedCount = (page: Page) =>
     fieldList(page).filter((field) => isSubmitted(state.answers[field.id])).length;
-  const groupNames = [...new Set(taskFields.map((field) => field.group))];
 
-  function fieldNavigation(list: RequestedField[], number: string) {
-    return (
-      <ul className="field-tree">
-        {list.map((field, index) => (
-          <li key={field.id}>
-            <button
-              type="button"
-              className={'field-link ' + (state.selected === field.id ? 'selected' : '')}
-              aria-current={state.selected === field.id ? 'step' : undefined}
-              onClick={() => navigate(field.page, field.id)}
-              disabled={busy}
-            >
-              <span className="tree-branch" aria-hidden="true" />
-              <span className="field-name" title={field.label}>
-                {field.label}
-              </span>
-              <span className={'item-circle ' + statusFor(field)} aria-label={statusFor(field)}>
-                {statusFor(field) === 'submitted' ? (
-                  <Check size={11} />
-                ) : statusFor(field) === 'draft' ? (
-                  <span />
-                ) : null}
-              </span>
-              <span className="sr-only">
-                {number}.{index + 1}
-              </span>
-            </button>
-          </li>
-        ))}
-      </ul>
-    );
-  }
-
-  function fieldInput(field: RequestedField) {
-    const answer = state.answers[field.id];
-    const value = answer?.value || '';
-    const disabled = busy || answer?.status === 'submitted';
-    if (field.kind === 'choice') {
-      return (
-        <div className={field.id === 'entity' ? 'choices' : 'select-wrap'}>
-          {field.id === 'entity' ? (
-            field.options!.map((option) => (
-              <label className="choice" key={option}>
-                <input
-                  type="checkbox"
-                  checked={value === option}
-                  disabled={disabled}
-                  onChange={() => writeAnswer(field.id, value === option ? '' : option)}
-                />
-                {option}
-              </label>
-            ))
-          ) : (
-            <select
-              id={'input-' + field.id}
-              aria-label={field.label}
-              value={value}
-              disabled={disabled}
-              onChange={(event) => writeAnswer(field.id, event.target.value)}
-            >
-              <option value="">Select an option...</option>
-              {field.options!.map((option) => (
-                <option key={option}>{option}</option>
-              ))}
-            </select>
-          )}
-        </div>
-      );
-    }
-    if (field.kind === 'attachment')
-      return (
-        <div className="sample-upload">
-          <FileText size={27} strokeWidth={1.5} aria-hidden="true" />
-          <p>{value || 'Add a sample file'}</p>
-          <p className="muted small">Fictional attachment · no real upload</p>
-          <button
-            className="outline"
-            type="button"
-            disabled={disabled}
-            onClick={() => writeAnswer(field.id, field.sample!)}
-          >
-            Use sample attachment
-          </button>
-        </div>
-      );
-    if (field.kind === 'confirmation')
-      return (
-        <div className="choices">
-          {field.confirmation!.map((label) => (
-            <label className="choice" key={label}>
-              <input
-                type="checkbox"
-                checked={!!value || checks.includes(label)}
-                disabled={disabled}
-                onChange={(event) => {
-                  const next = event.target.checked
-                    ? [...checks, label]
-                    : checks.filter((item) => item !== label);
-                  setChecks(next);
-                  writeAnswer(
-                    field.id,
-                    next.length === field.confirmation!.length ? field.sample! : '',
-                  );
-                }}
-              />
-              {label}
-            </label>
-          ))}
-        </div>
-      );
-    if (field.kind === 'long')
-      return (
-        <textarea
-          id={'input-' + field.id}
-          aria-label={field.label}
-          rows={4}
-          value={value}
-          disabled={disabled}
-          placeholder="Enter text here..."
-          onChange={(event) => writeAnswer(field.id, event.target.value)}
-        />
-      );
-    return (
-      <input
-        id={'input-' + field.id}
-        aria-label={field.label}
-        type={field.kind}
-        value={value}
-        disabled={disabled}
-        placeholder="Enter text here..."
-        onChange={(event) => writeAnswer(field.id, event.target.value)}
-      />
-    );
-  }
-  const activeSource = source ? documents[source.document] : null;
   return (
     <div className="request-app">
       <div className="mobile-bar">
@@ -431,125 +287,15 @@ export function App() {
         <span>OnboardFlow</span>
         <span className="status-badge">ACTIVE</span>
       </div>
-      <aside
-        className={'sidebar ' + (mobileNav ? 'mobile-open' : '')}
-        aria-label="Client request navigation"
-      >
-        <div className="request-heading">
-          <div className="brand" aria-label="OnboardFlow">
-            <span className="brand-bracket">{'{'}</span>
-            <div>
-              <span>ONBOARD</span>
-              <strong>FLOW</strong>
-            </div>
-            <span className="brand-bracket">{'}'}</span>
-          </div>
-          <h1>
-            New Client Onboarding –<br />
-            OnboardFlow Demo
-          </h1>
-          <div className="request-meta">
-            <span>Due: 10/30/2026</span>
-            <span className="status-badge">{complete ? 'IN REVIEW' : 'ACTIVE'}</span>
-          </div>
-        </div>
-        <nav className="request-tree" aria-label="Request sections">
-          <button
-            type="button"
-            className={'page-link ' + (state.page === 'instructions' ? 'active' : '')}
-            onClick={() => navigate('instructions')}
-            disabled={busy}
-          >
-            <span>1. Instructions</span>
-          </button>
-          <button
-            type="button"
-            className={'page-link ' + (state.page === 'general' ? 'active' : '')}
-            onClick={() => navigate('general')}
-            disabled={busy}
-          >
-            <span className="page-title">
-              {state.page === 'general' ? <ChevronDown size={13} /> : <ChevronRight size={13} />}2.
-              General Information
-            </span>
-            <span className="page-count">
-              {submittedCount('general')}/11 <span className="item-circle" />
-            </span>
-          </button>
-          {state.page === 'general' && (
-            <div className="page-children">
-              <div className="group-label">
-                <span>2.1. General Information</span>
-                <span>{submittedCount('general')}/11</span>
-              </div>
-              {fieldNavigation(generalFields, '2.1')}
-              <button
-                type="button"
-                className={'summary-link ' + (state.selected === 'summary' ? 'selected' : '')}
-                onClick={() => navigate('general', 'summary')}
-                disabled={busy}
-              >
-                Page Summary
-              </button>
-            </div>
-          )}
-          <button
-            type="button"
-            className={'page-link ' + (state.page === 'tasks' ? 'active' : '')}
-            onClick={() => navigate('tasks')}
-            disabled={busy}
-          >
-            <span className="page-title">
-              {state.page === 'tasks' ? <ChevronDown size={13} /> : <ChevronRight size={13} />}3.
-              Onboarding Task List
-            </span>
-            <span className="page-count">
-              {submittedCount('tasks')}/12 <span className="item-circle" />
-            </span>
-          </button>
-          {state.page === 'tasks' && (
-            <div className="page-children">
-              {groupNames.map((group, index) => {
-                const groupFields = taskFields.filter((field) => field.group === group);
-                const done = groupFields.filter((field) =>
-                  isSubmitted(state.answers[field.id]),
-                ).length;
-                return (
-                  <div key={group}>
-                    <button
-                      type="button"
-                      className="group-label group-button"
-                      disabled={busy}
-                      onClick={() => navigate('tasks', groupFields[0].id)}
-                    >
-                      <span title={group}>
-                        3.{index + 1}. {group}
-                      </span>
-                      <span>
-                        {done}/{groupFields.length}
-                      </span>
-                    </button>
-                    {fieldNavigation(groupFields, '3.' + (index + 1))}
-                  </div>
-                );
-              })}
-              <button
-                type="button"
-                className={'summary-link ' + (state.selected === 'summary' ? 'selected' : '')}
-                onClick={() => navigate('tasks', 'summary')}
-                disabled={busy}
-              >
-                Page Summary
-              </button>
-            </div>
-          )}
-        </nav>
-        <div className="preview-note">
-          OnboardFlow · AI demo
-          <br />
-          <span>Fictional client data</span>
-        </div>
-      </aside>
+      <RequestNavigation
+        state={state}
+        mobileNav={mobileNav}
+        busy={busy}
+        complete={complete}
+        navigate={navigate}
+        statusFor={statusFor}
+        submittedCount={submittedCount}
+      />
       <main className="workspace">
         {apiError && (
           <div className="api-error" role="alert">
@@ -597,92 +343,10 @@ export function App() {
         )}
         <div className={'canvas ' + (state.page === 'instructions' ? 'instruction-canvas' : '')}>
           {state.page === 'instructions' ? (
-            <article className="welcome-card">
-              <h2 ref={mainHeading} tabIndex={-1}>
-                Welcome to your new client onboarding!
-              </h2>
-              <p>Let's get your business set up with Harbour Bookkeeping.</p>
-              <p>
-                We've prepared a fictional client information pack. Watch AI turn it into draft
-                answers, check the sources, then submit your information for review.
-              </p>
-              <div className="walkthrough-video">
-                {walkthroughPlaying ? (
-                  <video
-                    controls
-                    autoPlay
-                    muted
-                    playsInline
-                    poster="/onboardflow-local-ai-20261025.webp"
-                    aria-label="Recorded walkthrough using local AI"
-                  >
-                    <source src="/onboardflow-local-ai-20261025.mp4" type="video/mp4" />
-                    <source src="/onboardflow-local-ai-20261025.webm" type="video/webm" />
-                    Your browser does not support this preview recording.
-                  </video>
-                ) : (
-                  <button
-                    type="button"
-                    className="video-cover"
-                    aria-label="Play walkthrough"
-                    onClick={() => setWalkthroughPlaying(true)}
-                  >
-                    <img
-                      src="/onboardflow-local-ai-20261025.webp"
-                      alt="Source-linked answers in the recorded local walkthrough"
-                    />
-                    <span className="play-icon">
-                      <Play size={30} fill="currentColor" />
-                    </span>
-                  </button>
-                )}
-                <span>Recorded local AI · Ollama</span>
-              </div>
-              <p className="intro-platform">Complete your request at your own pace.</p>
-              <div className="instruction-row">
-                <FileText size={25} />
-                <div>
-                  <strong>Your answers are saved.</strong>
-                  <p>Leave and return to this preview without starting again.</p>
-                </div>
-              </div>
-              <div className="instruction-row">
-                <Sparkles size={25} />
-                <div>
-                  <strong>AI fills from the sample documents.</strong>
-                  <p>Every AI draft links back to its supporting passage.</p>
-                </div>
-              </div>
-              <div className="instruction-row">
-                <Check size={25} />
-                <div>
-                  <strong>You review and submit.</strong>
-                  <p>AI leaves missing information and confirmations for you.</p>
-                </div>
-              </div>
-              <div className="instruction-legend">
-                <span>
-                  <i className="legend-dot draft" />
-                  Draft
-                </span>
-                <span>
-                  <i className="legend-dot submitted" />
-                  Awaiting review
-                </span>
-                <span>
-                  <i className="legend-dot missing" />
-                  Needs information
-                </span>
-              </div>
-              <button
-                type="button"
-                className="primary start-button"
-                onClick={() => navigate('general', 'legal', true)}
-              >
-                LET'S GET STARTED
-                <ChevronRight size={15} />
-              </button>
-            </article>
+            <Instructions
+              mainHeading={mainHeading}
+              onStart={() => navigate('general', 'legal', true)}
+            />
           ) : (
             <>
               <section className="ai-bar" aria-label="AI document filling">
@@ -929,7 +593,14 @@ export function App() {
                           )}
                         </div>
                         {selected.hint && <p className="field-hint">{selected.hint}</p>}
-                        {fieldInput(selected)}
+                        <RequestFieldInput
+                          field={selected}
+                          answer={state.answers[selected.id]}
+                          busy={busy}
+                          checks={checks}
+                          setChecks={setChecks}
+                          writeAnswer={writeAnswer}
+                        />
                         {state.answers[selected.id]?.evidence && (
                           <button
                             type="button"
@@ -1056,73 +727,13 @@ export function App() {
           )}
         </div>
       </main>
-      <dialog
-        ref={sourceDialog}
-        className="source-drawer"
-        aria-label="Client source document"
-        onCancel={() => setSource(null)}
+      <SourceDocument
+        source={source}
+        sourceField={sourceField}
+        replyReady={state.replyReady}
+        inspectSource={inspectSource}
         onClose={() => setSource(null)}
-      >
-        <div className="source-toolbar">
-          <div>
-            <h2>{activeSource?.name}</h2>
-            <p>Simulated document · provided by Maya Chen</p>
-          </div>
-          <button
-            type="button"
-            aria-label="Close source document"
-            onClick={() => {
-              sourceDialog.current?.close();
-              setSource(null);
-            }}
-          >
-            <X size={21} />
-          </button>
-        </div>
-        <nav className="source-documents" aria-label="Documents in client pack">
-          {(['profile', 'setup', ...(state.replyReady ? ['reply'] : [])] as const).map((id) => {
-            const documentId = id as keyof typeof documents;
-            const document = documents[documentId];
-            const first = document.sections[0];
-            return (
-              <button
-                type="button"
-                key={id}
-                aria-pressed={source?.document === id}
-                onClick={() =>
-                  inspectSource({ document: documentId, section: first.id, quote: first.text })
-                }
-              >
-                {id === 'profile'
-                  ? 'Company profile'
-                  : id === 'setup'
-                    ? 'Onboarding notes'
-                    : 'Client reply'}
-              </button>
-            );
-          })}
-        </nav>
-        <div className="source-paper">
-          <p className="source-page">Page {activeSource?.page} · Fixture version 1</p>
-          {activeSource?.sections.map((section) => (
-            <section
-              className={
-                source?.section === section.id ? 'source-passage highlighted' : 'source-passage'
-              }
-              key={section.id}
-            >
-              <h3>{section.title}</h3>
-              <p>{section.text}</p>
-            </section>
-          ))}
-        </div>
-        {source && (
-          <div className="source-quote">
-            <h3>{sourceField ? 'Passage used for ' + sourceField : 'Selected passage'}</h3>
-            <blockquote>{source.quote}</blockquote>
-          </div>
-        )}
-      </dialog>
+      />
       <div className="sr-only" aria-live="polite" aria-atomic="true">
         {busy
           ? fillingLabel

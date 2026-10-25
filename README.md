@@ -38,6 +38,8 @@ The agent depends on the small [IIntakeModelClient](src/OnboardFlow.Api/ClientRe
 
 [IntakeAgentService](src/OnboardFlow.Api/ClientRequests/IntakeAgentService.cs) owns orchestration, [IntakeRules](src/OnboardFlow.Api/ClientRequests/IntakeRules.cs) owns pure validation, [IntakeStore](src/OnboardFlow.Api/ClientRequests/IntakeStore.cs) owns transactional state/command receipts, and [IntakeSpendBudget](src/OnboardFlow.Api/ClientRequests/IntakeSpendBudget.cs) owns the shared monetary policy. Injected HTTP clients and time make these boundaries testable. Comments explain security decisions, transaction locks, uncertain holds and release integrity. The tests and release evidence below demonstrate these choices in practice.
 
+The frontend separates [request navigation](preview/content-snare/src/RequestNavigation.tsx), [typed field rendering](preview/content-snare/src/RequestFieldInput.tsx), [Instructions/media](preview/content-snare/src/Instructions.tsx) and [source inspection](preview/content-snare/src/SourceDocument.tsx) from application state and commands. The source view owns native dialog focus/Escape behaviour; Instructions owns playback state. [IntakeApi](preview/content-snare/src/api.ts) serializes commands and handles session/CSRF/version state. Components receive explicit data and callbacks rather than creating their own API clients.
+
 Content-hashed assets use immutable public caching; HTML is revalidated and private API responses are never cached. A regression check enforces those separate policies. Performance checks measure loaded request data and a saved edit in a fresh browser, with the raw timings retained.
 
 ## Run locally
