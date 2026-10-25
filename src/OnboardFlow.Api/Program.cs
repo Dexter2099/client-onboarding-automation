@@ -8,6 +8,12 @@ using Npgsql;
 using OnboardFlow.Api;
 
 var builder = WebApplication.CreateBuilder(args);
+if (Environment.GetEnvironmentVariable("PORT") is { } hostedPort)
+{
+    if (!int.TryParse(hostedPort, out var port) || port is < 1 or > 65535)
+        throw new InvalidOperationException("PORT must be a valid TCP port.");
+    builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
+}
 builder.AddApiSafety();
 const string cloudflareProtoHeader = "X-OnboardFlow-Proto";
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
@@ -95,6 +101,7 @@ app.Use(async (http, next) =>
 });
 app.UseDefaultFiles();
 app.UseStaticFiles();
+app.MapGet("/health", () => Results.Ok(new { status = "ok" }));
 app.MapGet("/api/csrf", (HttpContext http, IAntiforgery antiforgery) =>
     Results.Ok(new { token = antiforgery.GetAndStoreTokens(http).RequestToken }));
 app.MapSandboxEndpoints();

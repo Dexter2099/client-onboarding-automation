@@ -1,5 +1,9 @@
 **
 !Dockerfile
+!deploy/
+!deploy/hostless-probe/
+!deploy/hostless-probe/**
+!hostless.yaml
 !deplexo.yaml
 !package.json
 !package-lock.json
