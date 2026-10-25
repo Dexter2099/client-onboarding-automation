@@ -1,7 +1,8 @@
 import assert from 'node:assert/strict';
 import { setTimeout as delay } from 'node:timers/promises';
 import { randomUUID } from 'node:crypto';
-import { checkedOrigin } from './demo-target.mjs';
+import { checkedOrigin, origin as hostedOrigin } from './demo-target.mjs';
+import { verifyHostlessIngress } from './verify-ingress.mjs';
 
 const repository = 'https://github.com/Dexter2099/client-onboarding-automation';
 
@@ -50,9 +51,10 @@ export async function smokeDemo(revision, target) {
     `The expected Git revision is not live. Last observation: ${lastReadiness}`,
   );
 
+  const ingressRequests = origin === hostedOrigin ? await verifyHostlessIngress(revision) : 0;
   const cookies = new Map();
   let token;
-  let requests = 0;
+  let requests = ingressRequests;
   function checkBrowserHeaders(response) {
     const policy = response.headers.get('content-security-policy') ?? '';
     for (const rule of [
@@ -148,6 +150,7 @@ export async function smokeDemo(revision, target) {
     localVideoAndRangeRequests: true,
     fixedLifetime: true,
     browserSecurityHeaders: true,
+    ingressBoundary: ingressRequests === 4,
     requests,
   };
 }
