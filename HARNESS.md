@@ -1,5 +1,17 @@
 # Development harness
 
+## Current Hostless release acceptance — 25 October 2026
+
+The current app is `https://onboardflow.hostless.app/`, main revision **bb0bba6ef1fa917b46d5cdaa47b1437bb7a7c754**, published from verified source by [Delivery 40159368379](https://github.com/Dexter2099/client-onboarding-automation/actions/runs/40159368379). Hostless deployment `6add7c29746d0b48d0c683e8` serves that revision from managed release commit `62ec50f6a85b85fa8f72e7abd08c9f0319289816`. The account reports **Free status: Running**; 0.25 vCPU / 512 MB / one always-running replica, maximum one, review apps off, no card. The preceding full release's visible 13:45 Brisbane memory sample was **106.407 MiB** within this allocation; it is an observation, not a peak or load guarantee.
+
+Dexter explicitly approved the existing dedicated Responses key and production Neon connection string being saved in this Hostless app. The 11 server settings are saved, with both sensitive fields write-only; a reloaded UI check found no raw credential values. The same database and spending ledger continue across both hosts; no schema migration, import or reset occurred. The pre-Hostless snapshot below is historical, not the current spend total. The portfolio chatbot project/key and old Deplexo deployment remain untouched.
+
+Final application checks passed locally (**131 backend + 12 browser**) and in the main CI verification/package job. The original nine real-model cases remain **9/9**; provider/model/schema/limits were unchanged by the engineering cleanup. Additional production Chromium checks passed all **four** scenarios in **1.7 minutes**: full real-AI source/clarification/manual submission/reload, editing/provenance/invalid value/saved question behaviour, and 390px/320px source inspection without horizontal overflow. Desktop/source/phone screenshots were visually reviewed. Actual HTTPS tests confirm HTTP 308/no cookie even with forged HTTPS headers, revalidated HTML and immutable content-hashed assets. Evidence is in `.local/hostless-final-browser/`, `.local/reports/hostless-final-browser.log` and `.local/hostless-feasibility-20261025/final-headers.json`.
+
+The first main live-verification attempt timed out after eight minutes waiting for the expected marker, although direct public requests and the full browser suite served that exact revision. Its log contains no response-status/network detail, so the cause remains unconfirmed. The failed deployment job was retried once against the same verified artifact; the acceptance gate was not removed. Native macOS acceptance, provider restart persistence and the final hour-idle measurement are still pending at this checkpoint. Do not present the preliminary warm timings below as an idle result.
+
+Earlier dated sections retain historical checkpoints. Pending-approval, disabled-production and inherited 128 MiB statements below do not describe this Hostless release.
+
 ## Current deployment and hosting clarification — 25 October 2026
 
 Release **22ee10f156ede44a98ccbb278a1a9b334d50311a** is live at https://dexter-onboardflow.de.deplexo.com/. [Delivery run 40153103525](https://github.com/Dexter2099/client-onboarding-automation/actions/runs/40153103525) passed verification, deployment, HTTPS/security/storage/media checks and a real hosted-AI journey on native macOS WebKit. Additional hosted 390px/320px checks passed. Chrome source inspection, clarification, explicit submission and reload were also verified. Deployment ID: a4558fc9-feb8-48bd-985f-b40461870205.

@@ -1,5 +1,11 @@
 # OnboardFlow project plan
 
+## Current delivery — Hostless, 25 October 2026
+
+The current employer demo uses Hostless's verified free/no-card 0.25 vCPU, 512 MB allocation, one always-running replica, maximum one and review apps disabled. It retains the same production Neon database and shared US$4.50 reservation cutoff beneath the separate US$5 OpenAI project limit. Dexter approved the server-secret transfer; it is complete. GitHub verifies and packages main before publishing the checked source to `deploy/hostless`. HTTPS acceptance and native macOS real-AI checks follow deployment. README and HARNESS own the final release, restart/mobile and hour-idle results.
+
+Preserve the reviewed 23-item interface, source inspection, explicit clarification, four manual sample actions and human submission. Engineering presentation includes focused responsibilities, the narrow model adapter, useful decision comments and reproducible CI evidence. Portfolio changes and a new recording remain separate. The dated checkpoints below retain history; their earlier release holds and inherited 128 MiB assumptions do not govern this release.
+
 ## Hosting clarification — 25 October 2026
 
 The current version must be sized independently of the legacy 128 MiB hosting allocation. Dexter reaffirmed free hosting and a fast employer-facing demo; a roughly minute-long Render Free startup is unacceptable. Evaluate suitable free, fast-starting or always-on capacity before migration, preserving the current live app and the shared US$5/US$4.50 inference controls throughout. No paid hosting upgrade is authorised.
