@@ -1,0 +1,3898 @@
+{
+  "researchDate": "2026-10-18",
+  "timezone": "Australia/Brisbane",
+  "purpose": "Software developer-related roles with 1-3 years experience, posted within SEEK's Last 30 days filter; separate Brisbane, Australia-wide and Remote search samples.",
+  "method": "Live rendered SEEK search pages and full advertisement descriptions. Selected Last 30 days in the UI (URL daterange=31) and Remote work arrangement (URL /remote). Convenience sample in displayed search order, not a random sample or vacancy census. Early cached search-engine/withdrawn results excluded.",
+  "definitions": {
+    "E": "Developer or hands-on software-delivery/SRE ad with an explicit numerical experience requirement or alternative compatible with some point in 1-3 years. Includes 1+, 2+, 3+ lower bounds. This is not confirmation that an applicant meets all requirements.",
+    "J": "Explicit junior, graduate, associate, early-career or mixed-level opening including juniors, but no numerical professional-experience requirement establishing a 1-3-year threshold.",
+    "B": "Wider advertised range overlaps 1-3 years (e.g. 2-4, 2-5, 3-8). Excluded from the main E skill denominator.",
+    "X": "Not confirmed for the target: higher experience, unquantified professional/senior requirements, adjacent non-development work or irrelevant keyword expansion. No assumption that every X ad demands more than three years."
+  },
+  "searchSources": [
+    {
+      "cohort": "Brisbane",
+      "url": "https://au.seek.com/junior-developer-jobs/in-All-Brisbane-QLD?daterange=31",
+      "pages": "1-4",
+      "use": "97 distinct ads; supplemented with broad software-developer results to 100"
+    },
+    {
+      "cohort": "Brisbane",
+      "url": "https://au.seek.com/software-developer-jobs/in-All-Brisbane-QLD?daterange=31",
+      "pages": "1-2 inspected",
+      "use": "Supplement only"
+    },
+    {
+      "cohort": "Australia",
+      "url": "https://au.seek.com/junior-software-developer-jobs/in-All-Australia?daterange=31",
+      "pages": "1-4",
+      "use": "First 100 distinct encountered ads"
+    },
+    {
+      "cohort": "Remote",
+      "url": "https://au.seek.com/software-developer-jobs/in-All-Australia/remote?daterange=31",
+      "pages": "1-3",
+      "use": "71 distinct ads"
+    },
+    {
+      "cohort": "Remote",
+      "url": "https://au.seek.com/junior-software-developer-jobs/in-All-Australia/remote?daterange=31",
+      "use": "Checked; added no new distinct IDs"
+    },
+    {
+      "cohort": "Remote",
+      "url": "https://au.seek.com/software-engineer-jobs/in-All-Australia/remote?daterange=31",
+      "pages": "1-3",
+      "use": "Expanded remote sample to 100 distinct ads"
+    }
+  ],
+  "cohorts": {
+    "Brisbane": [
+      "95158006",
+      "95234347",
+      "95264505",
+      "95158567",
+      "95293506",
+      "94915354",
+      "94974957",
+      "95110025",
+      "95252396",
+      "95301790",
+      "94723914",
+      "94916461",
+      "95274734",
+      "95302173",
+      "95154274",
+      "94932262",
+      "95282018",
+      "94796145",
+      "94665482",
+      "94988916",
+      "95220494",
+      "95130812",
+      "94986712",
+      "95237142",
+      "95258294",
+      "95234091",
+      "94723795",
+      "94768050",
+      "94914931",
+      "94929563",
+      "95071616",
+      "94905637",
+      "95231667",
+      "94908023",
+      "94816727",
+      "95152713",
+      "94934056",
+      "95134614",
+      "94985492",
+      "95021142",
+      "94985570",
+      "95299570",
+      "95085104",
+      "95138946",
+      "95100426",
+      "94969768",
+      "95219353",
+      "95187164",
+      "94879548",
+      "95172305",
+      "95284703",
+      "94946183",
+      "94797099",
+      "94890841",
+      "94904523",
+      "94883225",
+      "95076712",
+      "94915485",
+      "95098568",
+      "94751403",
+      "94844653",
+      "95137612",
+      "94903175",
+      "94991636",
+      "94726189",
+      "95037041",
+      "95119234",
+      "95261412",
+      "95135627",
+      "95230134",
+      "94931709",
+      "94966285",
+      "94961207",
+      "95131416",
+      "95220951",
+      "94959991",
+      "95234381",
+      "94954403",
+      "95326344",
+      "95162305",
+      "95084704",
+      "94994487",
+      "94851562",
+      "94879080",
+      "95018392",
+      "95315168",
+      "95084241",
+      "95270552",
+      "94847914",
+      "95197406",
+      "95113799",
+      "94794582",
+      "94951955",
+      "94758906",
+      "94847910",
+      "95125049",
+      "94858113",
+      "95237902",
+      "95140380",
+      "94944436"
+    ],
+    "Australia": [
+      "95153832",
+      "95158006",
+      "95110759",
+      "95003612",
+      "95110025",
+      "95264505",
+      "95158567",
+      "95262058",
+      "94758919",
+      "95306518",
+      "95304162",
+      "94974957",
+      "94723914",
+      "94756812",
+      "95171312",
+      "95234347",
+      "95293506",
+      "95278039",
+      "94857276",
+      "94758805",
+      "94817777",
+      "94907978",
+      "95154734",
+      "95198058",
+      "94791334",
+      "94978606",
+      "94915354",
+      "95284591",
+      "95231762",
+      "94721572",
+      "94726985",
+      "94916461",
+      "95069872",
+      "95202559",
+      "95263333",
+      "95301790",
+      "95271703",
+      "95252396",
+      "95192947",
+      "95079531",
+      "94759030",
+      "95260509",
+      "95049289",
+      "95231802",
+      "94786561",
+      "94832726",
+      "95007512",
+      "94933963",
+      "94842960",
+      "95221100",
+      "94960280",
+      "94768050",
+      "95274269",
+      "95082866",
+      "94866711",
+      "95173293",
+      "95205332",
+      "95174348",
+      "94665482",
+      "95274734",
+      "95229403",
+      "94992497",
+      "94791902",
+      "95123601",
+      "95079529",
+      "94879928",
+      "94932262",
+      "95099926",
+      "95231749",
+      "95081106",
+      "95112854",
+      "95167622",
+      "94948427",
+      "95237142",
+      "94802379",
+      "95219767",
+      "95162006",
+      "95046252",
+      "94795412",
+      "95299702",
+      "94936239",
+      "94851367",
+      "95154274",
+      "94796145",
+      "94854335",
+      "95153342",
+      "95302173",
+      "95226926",
+      "95094122",
+      "94842628",
+      "95231858",
+      "95141874",
+      "95130812",
+      "95220494",
+      "95229260",
+      "94914931",
+      "95284685",
+      "95026584",
+      "94816727",
+      "94938599"
+    ],
+    "Remote": [
+      "94813225",
+      "95128741",
+      "95213158",
+      "94974957",
+      "95284591",
+      "94938599",
+      "95237902",
+      "95299570",
+      "95187327",
+      "95081106",
+      "95187164",
+      "94931695",
+      "95187343",
+      "95156813",
+      "95233948",
+      "95169105",
+      "94974720",
+      "94769916",
+      "94765814",
+      "95040113",
+      "95049948",
+      "95137956",
+      "95220951",
+      "94943317",
+      "95104276",
+      "95234139",
+      "94871402",
+      "94959547",
+      "94959343",
+      "94966285",
+      "95180645",
+      "95015236",
+      "94803067",
+      "94804206",
+      "94813547",
+      "94885562",
+      "95233414",
+      "95237446",
+      "95084885",
+      "95084067",
+      "94960073",
+      "95084704",
+      "95084405",
+      "95084615",
+      "95258365",
+      "95325819",
+      "95084241",
+      "95011415",
+      "95027883",
+      "95011365",
+      "95011257",
+      "94922949",
+      "94714225",
+      "95011303",
+      "95221095",
+      "94963009",
+      "94355755",
+      "94738579",
+      "95247382",
+      "94066883",
+      "94967648",
+      "95312790",
+      "94910215",
+      "95088980",
+      "95312797",
+      "94955907",
+      "95088973",
+      "95244722",
+      "94800182",
+      "95004050",
+      "95088975",
+      "94851347",
+      "95001293",
+      "94843416",
+      "94991636",
+      "95121282",
+      "95055863",
+      "95121341",
+      "95075955",
+      "95247178",
+      "94845374",
+      "95111616",
+      "94907331",
+      "94972096",
+      "94809025",
+      "95208712",
+      "95003923",
+      "95135161",
+      "95216250",
+      "95134644",
+      "95299352",
+      "95141773",
+      "95135157",
+      "94729268",
+      "94997351",
+      "94989055",
+      "95038796",
+      "94861358",
+      "95141117",
+      "94960449"
+    ]
+  },
+  "counts": {
+    "Brisbane": {
+      "screened": 100,
+      "E": 16,
+      "J": 9,
+      "B": 5,
+      "X": 70,
+      "skills": {
+        "NET_CSharp": 5,
+        "SQL": 8,
+        "Python": 5,
+        "Azure": 5,
+        "AI": 5,
+        "Communication": 15,
+        "Angular": 2,
+        "DataStore": 11,
+        "Cloud": 8,
+        "JS_TS": 7,
+        "APIs": 9,
+        "React": 3,
+        "Node": 2,
+        "PHP": 1,
+        "HTML_CSS": 4,
+        "Testing": 14,
+        "PowerPlatform": 3,
+        "Debugging": 9,
+        "Git": 7,
+        "CI_CD": 7,
+        "AWS": 3,
+        "Java": 5,
+        "GCP": 0,
+        "Docker": 3,
+        "C_CPP": 3,
+        "Agile": 7,
+        "Security": 3,
+        "Vue": 1,
+        "NamedCloud": 7
+      }
+    },
+    "Australia": {
+      "screened": 100,
+      "E": 17,
+      "J": 19,
+      "B": 4,
+      "X": 60,
+      "skills": {
+        "NET_CSharp": 5,
+        "SQL": 7,
+        "Python": 7,
+        "Azure": 6,
+        "AI": 8,
+        "Communication": 17,
+        "Angular": 3,
+        "DataStore": 12,
+        "Cloud": 9,
+        "JS_TS": 7,
+        "APIs": 13,
+        "React": 5,
+        "Node": 4,
+        "PHP": 1,
+        "HTML_CSS": 5,
+        "Testing": 9,
+        "PowerPlatform": 1,
+        "Debugging": 10,
+        "Git": 7,
+        "CI_CD": 4,
+        "AWS": 5,
+        "Java": 3,
+        "GCP": 2,
+        "Docker": 2,
+        "C_CPP": 1,
+        "Agile": 3,
+        "Security": 3,
+        "Vue": 2,
+        "NamedCloud": 9
+      }
+    },
+    "Remote": {
+      "screened": 100,
+      "E": 5,
+      "J": 0,
+      "B": 2,
+      "X": 93,
+      "skills": {
+        "NET_CSharp": 2,
+        "SQL": 2,
+        "Python": 2,
+        "Azure": 1,
+        "AI": 4,
+        "Communication": 4,
+        "Angular": 0,
+        "DataStore": 3,
+        "Cloud": 1,
+        "JS_TS": 4,
+        "APIs": 2,
+        "React": 1,
+        "Node": 0,
+        "PHP": 1,
+        "HTML_CSS": 2,
+        "Testing": 4,
+        "PowerPlatform": 1,
+        "Debugging": 2,
+        "Git": 3,
+        "CI_CD": 2,
+        "AWS": 1,
+        "Java": 2,
+        "GCP": 0,
+        "Docker": 1,
+        "C_CPP": 1,
+        "Agile": 0,
+        "Security": 0,
+        "Vue": 0,
+        "NamedCloud": 1
+      }
+    },
+    "Distinct": {
+      "screened": 264,
+      "E": 33,
+      "J": 22,
+      "B": 8,
+      "X": 201,
+      "skills": {
+        "NET_CSharp": 10,
+        "SQL": 15,
+        "Python": 12,
+        "Azure": 9,
+        "AI": 14,
+        "Communication": 32,
+        "Angular": 4,
+        "DataStore": 22,
+        "Cloud": 15,
+        "JS_TS": 15,
+        "APIs": 21,
+        "React": 8,
+        "Node": 5,
+        "PHP": 2,
+        "HTML_CSS": 9,
+        "Testing": 23,
+        "PowerPlatform": 4,
+        "Debugging": 19,
+        "Git": 15,
+        "CI_CD": 12,
+        "AWS": 8,
+        "Java": 9,
+        "GCP": 2,
+        "Docker": 5,
+        "C_CPP": 4,
+        "Agile": 10,
+        "Security": 6,
+        "Vue": 3,
+        "NamedCloud": 14
+      }
+    },
+    "WiderEarlyCareer": {
+      "screened": 55,
+      "skills": {
+        "NET_CSharp": 21,
+        "SQL": 29,
+        "Python": 18,
+        "Azure": 14,
+        "AI": 22,
+        "Communication": 52,
+        "Angular": 5,
+        "DataStore": 36,
+        "Cloud": 25,
+        "JS_TS": 27,
+        "APIs": 33,
+        "React": 16,
+        "Node": 8,
+        "PHP": 6,
+        "HTML_CSS": 14,
+        "Testing": 39,
+        "PowerPlatform": 6,
+        "Debugging": 32,
+        "Git": 29,
+        "CI_CD": 18,
+        "AWS": 15,
+        "Java": 11,
+        "GCP": 4,
+        "Docker": 10,
+        "C_CPP": 4,
+        "Agile": 14,
+        "Security": 8,
+        "Vue": 4
+      }
+    }
+  },
+  "skillLabels": {
+    "JS_TS": "JavaScript / TypeScript",
+    "NET_CSharp": "C# / .NET",
+    "SQL": "SQL / relational databases",
+    "APIs": "APIs / REST / webhooks",
+    "React": "React / Next.js",
+    "Node": "Node.js",
+    "Python": "Python",
+    "Java": "Java",
+    "PHP": "PHP",
+    "HTML_CSS": "HTML / CSS",
+    "Testing": "Testing",
+    "Git": "Git / version control",
+    "CI_CD": "CI/CD",
+    "AWS": "AWS",
+    "Azure": "Azure",
+    "GCP": "GCP / Google Cloud",
+    "Docker": "Docker",
+    "AI": "AI tools, development or delivery",
+    "Agile": "Agile / Scrum",
+    "Communication": "Communication / collaboration",
+    "PowerPlatform": "Power Platform",
+    "Vue": "Vue",
+    "Angular": "Angular",
+    "C_CPP": "C / C++",
+    "DataStore": "Databases / data stores",
+    "Cloud": "Cloud platforms or cloud delivery",
+    "Security": "Security / authentication",
+    "Debugging": "Debugging / troubleshooting",
+    "NamedCloud": "AWS / Azure / GCP"
+  },
+  "codingRules": [
+    "One mention per ad per skill family; duties, requirements, desirable skills and listed alternatives all count.",
+    "Skills were tagged from full rendered descriptions with synonym patterns and checked for relevance; not weighted by mandatory vs desirable.",
+    "React combines React and Next.js; JavaScript and TypeScript are combined; C# and .NET are combined.",
+    "SQL includes named relational engines; DataStore is broader and includes generic databases and MongoDB.",
+    "AI includes coding tools, AI-enabled delivery and interest/exposure; generic company-only AI boilerplate excluded for Google Payments ID 95271703.",
+    "NamedCloud is the union of AWS, Azure and GCP mentions, not a sum.",
+    "No attached position descriptions were fetched; absence of a tag does not prove absence of a requirement.",
+    "Duplicate job IDs are collapsed in Distinct totals. Separate IDs for the same campaign can remain: Sensei IDs 94959991 and 94960073 are near-identical.",
+    "Virgin Australia 95220494 excluded as primarily production support after checking duties, despite its developer-sounding title. Axon and Google SRE ads retained because explicit software development is a core duty."
+  ],
+  "adverts": [
+    {
+      "id": "95158006",
+      "url": "https://au.seek.com/job/95158006",
+      "cohorts": [
+        "Brisbane",
+        "Australia"
+      ],
+      "classification": "J",
+      "fullDescriptionRead": true,
+      "title": "Software Engineer / Full Stack Engineer (All Levels, Several Positions)",
+      "employer": "Stanford Innovations",
+      "skills": [
+        "JS_TS",
+        "SQL",
+        "React",
+        "Node",
+        "Python",
+        "PHP",
+        "Testing",
+        "CI_CD",
+        "AWS",
+        "Azure",
+        "GCP",
+        "AI",
+        "DataStore",
+        "Cloud",
+        "Debugging"
+      ]
+    },
+    {
+      "id": "95234347",
+      "url": "https://au.seek.com/job/95234347",
+      "cohorts": [
+        "Brisbane",
+        "Australia"
+      ],
+      "classification": "J",
+      "fullDescriptionRead": true,
+      "title": "Front End Developer",
+      "employer": "Auto & General",
+      "skills": [
+        "JS_TS",
+        "React",
+        "Testing",
+        "Git",
+        "CI_CD",
+        "AWS",
+        "Docker",
+        "Agile",
+        "Communication",
+        "Vue",
+        "Angular",
+        "Cloud",
+        "Security"
+      ]
+    },
+    {
+      "id": "95264505",
+      "url": "https://au.seek.com/job/95264505",
+      "cohorts": [
+        "Brisbane",
+        "Australia"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95158567",
+      "url": "https://au.seek.com/job/95158567",
+      "cohorts": [
+        "Brisbane",
+        "Australia"
+      ],
+      "classification": "E",
+      "fullDescriptionRead": true,
+      "title": "Junior Agentic Software Developer | I.T Services",
+      "employer": "Robert Half",
+      "location": "Brisbane QLD",
+      "arrangement": "Unspecified",
+      "postedDaysAgo": 8,
+      "experienceSummary": "Degree and strong projects OR 1-2 years commercial development.",
+      "skills": [
+        "NET_CSharp",
+        "SQL",
+        "Python",
+        "Azure",
+        "AI",
+        "Communication",
+        "Angular",
+        "DataStore",
+        "Cloud"
+      ]
+    },
+    {
+      "id": "95293506",
+      "url": "https://au.seek.com/job/95293506",
+      "cohorts": [
+        "Brisbane",
+        "Australia"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "94915354",
+      "url": "https://au.seek.com/job/94915354",
+      "cohorts": [
+        "Brisbane",
+        "Australia"
+      ],
+      "classification": "E",
+      "fullDescriptionRead": true,
+      "title": "Graduate Software Engineer 2 year fixed term contract",
+      "employer": "Independent Schools Queensland",
+      "location": "Brisbane QLD",
+      "arrangement": "Hybrid",
+      "postedDaysAgo": 19,
+      "experienceSummary": "Two years Dynamics 365/Power Apps/Power Automate plus one year cloud.",
+      "skills": [
+        "JS_TS",
+        "APIs",
+        "React",
+        "Node",
+        "PHP",
+        "HTML_CSS",
+        "Testing",
+        "Azure",
+        "Communication",
+        "PowerPlatform",
+        "DataStore",
+        "Cloud",
+        "Debugging"
+      ]
+    },
+    {
+      "id": "94974957",
+      "url": "https://au.seek.com/job/94974957",
+      "cohorts": [
+        "Brisbane",
+        "Australia",
+        "Remote"
+      ],
+      "classification": "B",
+      "fullDescriptionRead": true,
+      "title": "Software Developer",
+      "employer": "Pitch Black Group",
+      "experienceSummary": "3-8 years"
+    },
+    {
+      "id": "95110025",
+      "url": "https://au.seek.com/job/95110025",
+      "cohorts": [
+        "Brisbane",
+        "Australia"
+      ],
+      "classification": "J",
+      "fullDescriptionRead": true,
+      "title": "Junior Programmer – Entry Level",
+      "employer": "Real Time Monitoring",
+      "skills": [
+        "JS_TS",
+        "Python",
+        "Testing",
+        "Communication"
+      ]
+    },
+    {
+      "id": "95252396",
+      "url": "https://au.seek.com/job/95252396",
+      "cohorts": [
+        "Brisbane",
+        "Australia"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95301790",
+      "url": "https://au.seek.com/job/95301790",
+      "cohorts": [
+        "Brisbane",
+        "Australia"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "94723914",
+      "url": "https://au.seek.com/job/94723914",
+      "cohorts": [
+        "Brisbane",
+        "Australia"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "94916461",
+      "url": "https://au.seek.com/job/94916461",
+      "cohorts": [
+        "Brisbane",
+        "Australia"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95274734",
+      "url": "https://au.seek.com/job/95274734",
+      "cohorts": [
+        "Brisbane",
+        "Australia"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95302173",
+      "url": "https://au.seek.com/job/95302173",
+      "cohorts": [
+        "Brisbane",
+        "Australia"
+      ],
+      "classification": "J",
+      "fullDescriptionRead": true,
+      "title": "Senior & Junior Application Developers – SharePoint Online & Power Platform",
+      "employer": "Private Advertiser",
+      "skills": [
+        "Testing",
+        "Communication",
+        "PowerPlatform",
+        "Security",
+        "Debugging"
+      ]
+    },
+    {
+      "id": "95154274",
+      "url": "https://au.seek.com/job/95154274",
+      "cohorts": [
+        "Brisbane",
+        "Australia"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "94932262",
+      "url": "https://au.seek.com/job/94932262",
+      "cohorts": [
+        "Brisbane",
+        "Australia"
+      ],
+      "classification": "E",
+      "fullDescriptionRead": true,
+      "title": "Software Developer",
+      "employer": "Dovida",
+      "location": "Toowong, Brisbane QLD",
+      "arrangement": "Hybrid",
+      "postedDaysAgo": 18,
+      "experienceSummary": "At least 2-3 years software development.",
+      "skills": [
+        "JS_TS",
+        "NET_CSharp",
+        "SQL",
+        "APIs",
+        "HTML_CSS",
+        "Testing",
+        "Git",
+        "CI_CD",
+        "AWS",
+        "Azure",
+        "Communication",
+        "DataStore",
+        "Cloud"
+      ]
+    },
+    {
+      "id": "95282018",
+      "url": "https://au.seek.com/job/95282018",
+      "cohorts": [
+        "Brisbane"
+      ],
+      "classification": "B",
+      "fullDescriptionRead": true,
+      "title": "Developer",
+      "employer": "PEP Transport",
+      "experienceSummary": "3-5+ years; Perth role surfaced in Brisbane search"
+    },
+    {
+      "id": "94796145",
+      "url": "https://au.seek.com/job/94796145",
+      "cohorts": [
+        "Brisbane",
+        "Australia"
+      ],
+      "classification": "J",
+      "fullDescriptionRead": true,
+      "title": "Graduate AI & Technology Developer",
+      "employer": "Private Advertiser",
+      "skills": [
+        "APIs",
+        "PHP",
+        "Git",
+        "AI",
+        "Communication",
+        "Debugging"
+      ]
+    },
+    {
+      "id": "94665482",
+      "url": "https://au.seek.com/job/94665482",
+      "cohorts": [
+        "Brisbane",
+        "Australia"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "94988916",
+      "url": "https://au.seek.com/job/94988916",
+      "cohorts": [
+        "Brisbane"
+      ],
+      "classification": "E",
+      "fullDescriptionRead": true,
+      "title": "GEN Developer",
+      "employer": "M&T Resources",
+      "location": "Brisbane QLD",
+      "arrangement": "Hybrid",
+      "postedDaysAgo": 16,
+      "experienceSummary": "Minimum two years Gen development; leadership duties and Baseline eligibility.",
+      "skills": [
+        "APIs",
+        "Testing",
+        "Communication",
+        "Debugging"
+      ]
+    },
+    {
+      "id": "95220494",
+      "url": "https://au.seek.com/job/95220494",
+      "cohorts": [
+        "Brisbane",
+        "Australia"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true,
+      "title": "Software Engineer",
+      "employer": "Virgin Australia",
+      "exclusionReason": "Body explicitly identifies this as primarily BAU/Level 3 API and integration production support, despite Software Engineer title; excluded from developer skill denominator."
+    },
+    {
+      "id": "95130812",
+      "url": "https://au.seek.com/job/95130812",
+      "cohorts": [
+        "Brisbane",
+        "Australia"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "94986712",
+      "url": "https://au.seek.com/job/94986712",
+      "cohorts": [
+        "Brisbane"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95237142",
+      "url": "https://au.seek.com/job/95237142",
+      "cohorts": [
+        "Brisbane",
+        "Australia"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95258294",
+      "url": "https://au.seek.com/job/95258294",
+      "cohorts": [
+        "Brisbane"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95234091",
+      "url": "https://au.seek.com/job/95234091",
+      "cohorts": [
+        "Brisbane"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "94723795",
+      "url": "https://au.seek.com/job/94723795",
+      "cohorts": [
+        "Brisbane"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "94768050",
+      "url": "https://au.seek.com/job/94768050",
+      "cohorts": [
+        "Brisbane",
+        "Australia"
+      ],
+      "classification": "E",
+      "fullDescriptionRead": true,
+      "title": "Software Engineer — Satellite Imagery & Geospatial Systems",
+      "employer": "Geoimage Pty Ltd",
+      "location": "Fortitude Valley, Brisbane QLD",
+      "arrangement": "Unspecified",
+      "postedDaysAgo": 26,
+      "experienceSummary": "Two or more years and production delivery evidence.",
+      "skills": [
+        "APIs",
+        "Testing",
+        "AI",
+        "Communication",
+        "Debugging"
+      ]
+    },
+    {
+      "id": "94914931",
+      "url": "https://au.seek.com/job/94914931",
+      "cohorts": [
+        "Brisbane",
+        "Australia"
+      ],
+      "classification": "B",
+      "fullDescriptionRead": true,
+      "title": "Full Stack Developer",
+      "employer": "Canstar",
+      "experienceSummary": "3-5 years"
+    },
+    {
+      "id": "94929563",
+      "url": "https://au.seek.com/job/94929563",
+      "cohorts": [
+        "Brisbane"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95071616",
+      "url": "https://au.seek.com/job/95071616",
+      "cohorts": [
+        "Brisbane"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "94905637",
+      "url": "https://au.seek.com/job/94905637",
+      "cohorts": [
+        "Brisbane"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95231667",
+      "url": "https://au.seek.com/job/95231667",
+      "cohorts": [
+        "Brisbane"
+      ],
+      "classification": "B",
+      "fullDescriptionRead": true,
+      "title": "Software Engineer",
+      "employer": "APNIC",
+      "experienceSummary": "2-5 years"
+    },
+    {
+      "id": "94908023",
+      "url": "https://au.seek.com/job/94908023",
+      "cohorts": [
+        "Brisbane"
+      ],
+      "classification": "J",
+      "fullDescriptionRead": true,
+      "title": "Developer/Support",
+      "employer": "Emanate Technology",
+      "skills": [
+        "NET_CSharp",
+        "SQL",
+        "APIs",
+        "Git",
+        "Azure",
+        "Communication",
+        "DataStore",
+        "Cloud",
+        "Debugging"
+      ]
+    },
+    {
+      "id": "94816727",
+      "url": "https://au.seek.com/job/94816727",
+      "cohorts": [
+        "Brisbane",
+        "Australia"
+      ],
+      "classification": "J",
+      "fullDescriptionRead": true,
+      "title": "Software Developer - Graduate",
+      "employer": "The Recruitment Alternative",
+      "skills": [
+        "NET_CSharp",
+        "SQL",
+        "Testing",
+        "Communication",
+        "DataStore",
+        "Debugging"
+      ]
+    },
+    {
+      "id": "95152713",
+      "url": "https://au.seek.com/job/95152713",
+      "cohorts": [
+        "Brisbane"
+      ],
+      "classification": "J",
+      "fullDescriptionRead": true,
+      "title": "Software Developer",
+      "employer": "MinDet",
+      "skills": [
+        "APIs",
+        "Python",
+        "Testing",
+        "Git",
+        "CI_CD",
+        "Docker",
+        "AI",
+        "Communication",
+        "Debugging"
+      ]
+    },
+    {
+      "id": "94934056",
+      "url": "https://au.seek.com/job/94934056",
+      "cohorts": [
+        "Brisbane"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95134614",
+      "url": "https://au.seek.com/job/95134614",
+      "cohorts": [
+        "Brisbane"
+      ],
+      "classification": "J",
+      "fullDescriptionRead": true,
+      "title": "Graduate Developer / Developer - DXP Platform",
+      "employer": "TechnologyOne",
+      "skills": [
+        "JS_TS",
+        "NET_CSharp",
+        "APIs",
+        "React",
+        "Testing",
+        "Git",
+        "AWS",
+        "Docker",
+        "Communication",
+        "Cloud"
+      ]
+    },
+    {
+      "id": "94985492",
+      "url": "https://au.seek.com/job/94985492",
+      "cohorts": [
+        "Brisbane"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95021142",
+      "url": "https://au.seek.com/job/95021142",
+      "cohorts": [
+        "Brisbane"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "94985570",
+      "url": "https://au.seek.com/job/94985570",
+      "cohorts": [
+        "Brisbane"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95299570",
+      "url": "https://au.seek.com/job/95299570",
+      "cohorts": [
+        "Brisbane",
+        "Remote"
+      ],
+      "classification": "E",
+      "fullDescriptionRead": true,
+      "title": "Senior Software Engineer, AI Coding Tasks (Contract)",
+      "employer": "Askable",
+      "location": "Brisbane QLD",
+      "arrangement": "Remote",
+      "postedDaysAgo": 1,
+      "experienceSummary": "Two or more years; AI coding evaluation contract, minimum ten hours weekly.",
+      "skills": [
+        "JS_TS",
+        "Python",
+        "Java",
+        "Testing",
+        "Git",
+        "Docker",
+        "AI",
+        "C_CPP",
+        "DataStore"
+      ]
+    },
+    {
+      "id": "95085104",
+      "url": "https://au.seek.com/job/95085104",
+      "cohorts": [
+        "Brisbane"
+      ],
+      "classification": "E",
+      "fullDescriptionRead": true,
+      "title": "MQ-28 Software Engineer",
+      "employer": "Boeing",
+      "location": "Brisbane QLD",
+      "arrangement": "Unspecified",
+      "postedDaysAgo": 11,
+      "experienceSummary": "Minimum two years in industry; autonomous systems/robotics; citizenship and NV1 eligibility.",
+      "skills": [
+        "Python",
+        "Agile",
+        "Communication"
+      ]
+    },
+    {
+      "id": "95138946",
+      "url": "https://au.seek.com/job/95138946",
+      "cohorts": [
+        "Brisbane"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95100426",
+      "url": "https://au.seek.com/job/95100426",
+      "cohorts": [
+        "Brisbane"
+      ],
+      "classification": "E",
+      "fullDescriptionRead": true,
+      "title": "Digital Solutions Engineer",
+      "employer": "McIlwain Civil Engineering",
+      "location": "Brisbane QLD",
+      "arrangement": "Unspecified",
+      "postedDaysAgo": 10,
+      "experienceSummary": "Two or more years building and shipping working solutions.",
+      "skills": [
+        "SQL",
+        "APIs",
+        "React",
+        "Python",
+        "Testing",
+        "Azure",
+        "AI",
+        "Communication",
+        "PowerPlatform",
+        "DataStore",
+        "Cloud",
+        "Debugging"
+      ]
+    },
+    {
+      "id": "94969768",
+      "url": "https://au.seek.com/job/94969768",
+      "cohorts": [
+        "Brisbane"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95219353",
+      "url": "https://au.seek.com/job/95219353",
+      "cohorts": [
+        "Brisbane"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95187164",
+      "url": "https://au.seek.com/job/95187164",
+      "cohorts": [
+        "Brisbane",
+        "Remote"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "94879548",
+      "url": "https://au.seek.com/job/94879548",
+      "cohorts": [
+        "Brisbane"
+      ],
+      "classification": "E",
+      "fullDescriptionRead": true,
+      "title": "Software engineer",
+      "employer": "Cloud pro Technologies",
+      "location": "Brisbane QLD",
+      "arrangement": "Unspecified",
+      "postedDaysAgo": 22,
+      "experienceSummary": "Minimum one year in software development.",
+      "skills": [
+        "SQL",
+        "APIs",
+        "Java",
+        "Testing",
+        "Git",
+        "CI_CD",
+        "Docker",
+        "Agile",
+        "Communication",
+        "DataStore",
+        "Cloud",
+        "Debugging"
+      ]
+    },
+    {
+      "id": "95172305",
+      "url": "https://au.seek.com/job/95172305",
+      "cohorts": [
+        "Brisbane"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95284703",
+      "url": "https://au.seek.com/job/95284703",
+      "cohorts": [
+        "Brisbane"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "94946183",
+      "url": "https://au.seek.com/job/94946183",
+      "cohorts": [
+        "Brisbane"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "94797099",
+      "url": "https://au.seek.com/job/94797099",
+      "cohorts": [
+        "Brisbane"
+      ],
+      "classification": "E",
+      "fullDescriptionRead": true,
+      "title": "Java Developers",
+      "employer": "Auto & General",
+      "location": "Toowong, Brisbane QLD",
+      "arrangement": "Hybrid",
+      "postedDaysAgo": 25,
+      "experienceSummary": "Two or more years development or relevant industry experience.",
+      "skills": [
+        "SQL",
+        "Java",
+        "Testing",
+        "Git",
+        "CI_CD",
+        "AWS",
+        "Docker",
+        "Agile",
+        "Communication",
+        "DataStore",
+        "Cloud",
+        "Security"
+      ]
+    },
+    {
+      "id": "94890841",
+      "url": "https://au.seek.com/job/94890841",
+      "cohorts": [
+        "Brisbane"
+      ],
+      "classification": "E",
+      "fullDescriptionRead": true,
+      "title": "Engineer - Software",
+      "employer": "Insitu Pacific",
+      "location": "Brisbane QLD",
+      "arrangement": "Hybrid",
+      "postedDaysAgo": 22,
+      "experienceSummary": "Two or more years electronic/software product engineering; Australian citizenship and clearance eligibility.",
+      "skills": [
+        "NET_CSharp",
+        "Python",
+        "Java",
+        "Testing",
+        "Git",
+        "CI_CD",
+        "Communication",
+        "C_CPP",
+        "Security",
+        "Debugging"
+      ]
+    },
+    {
+      "id": "94904523",
+      "url": "https://au.seek.com/job/94904523",
+      "cohorts": [
+        "Brisbane"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "94883225",
+      "url": "https://au.seek.com/job/94883225",
+      "cohorts": [
+        "Brisbane"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95076712",
+      "url": "https://au.seek.com/job/95076712",
+      "cohorts": [
+        "Brisbane"
+      ],
+      "classification": "E",
+      "fullDescriptionRead": true,
+      "title": "Embedded Software Developer",
+      "employer": "NOJA Power",
+      "location": "Murarrie, Brisbane QLD",
+      "arrangement": "Unspecified",
+      "postedDaysAgo": 11,
+      "experienceSummary": "Three or more years embedded C/C++ Linux; specialised hardware/software skills.",
+      "skills": [
+        "APIs",
+        "Testing",
+        "Git",
+        "CI_CD",
+        "Agile",
+        "Communication",
+        "C_CPP",
+        "Security",
+        "Debugging"
+      ]
+    },
+    {
+      "id": "94915485",
+      "url": "https://au.seek.com/job/94915485",
+      "cohorts": [
+        "Brisbane"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95098568",
+      "url": "https://au.seek.com/job/95098568",
+      "cohorts": [
+        "Brisbane"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "94751403",
+      "url": "https://au.seek.com/job/94751403",
+      "cohorts": [
+        "Brisbane"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "94844653",
+      "url": "https://au.seek.com/job/94844653",
+      "cohorts": [
+        "Brisbane"
+      ],
+      "classification": "E",
+      "fullDescriptionRead": true,
+      "title": "Full Stack Developer",
+      "employer": "Auto & General",
+      "location": "Toowong, Brisbane QLD",
+      "arrangement": "Hybrid",
+      "postedDaysAgo": 23,
+      "experienceSummary": "Three or more years; explicitly welcomes less experienced applicants for junior opportunities.",
+      "skills": [
+        "JS_TS",
+        "SQL",
+        "React",
+        "Java",
+        "Testing",
+        "CI_CD",
+        "AWS",
+        "Agile",
+        "Communication",
+        "Vue",
+        "Angular",
+        "DataStore",
+        "Cloud"
+      ]
+    },
+    {
+      "id": "95137612",
+      "url": "https://au.seek.com/job/95137612",
+      "cohorts": [
+        "Brisbane"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "94903175",
+      "url": "https://au.seek.com/job/94903175",
+      "cohorts": [
+        "Brisbane"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "94991636",
+      "url": "https://au.seek.com/job/94991636",
+      "cohorts": [
+        "Brisbane",
+        "Remote"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "94726189",
+      "url": "https://au.seek.com/job/94726189",
+      "cohorts": [
+        "Brisbane"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95037041",
+      "url": "https://au.seek.com/job/95037041",
+      "cohorts": [
+        "Brisbane"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95119234",
+      "url": "https://au.seek.com/job/95119234",
+      "cohorts": [
+        "Brisbane"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95261412",
+      "url": "https://au.seek.com/job/95261412",
+      "cohorts": [
+        "Brisbane"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95135627",
+      "url": "https://au.seek.com/job/95135627",
+      "cohorts": [
+        "Brisbane"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95230134",
+      "url": "https://au.seek.com/job/95230134",
+      "cohorts": [
+        "Brisbane"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "94931709",
+      "url": "https://au.seek.com/job/94931709",
+      "cohorts": [
+        "Brisbane"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "94966285",
+      "url": "https://au.seek.com/job/94966285",
+      "cohorts": [
+        "Brisbane",
+        "Remote"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "94961207",
+      "url": "https://au.seek.com/job/94961207",
+      "cohorts": [
+        "Brisbane"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95131416",
+      "url": "https://au.seek.com/job/95131416",
+      "cohorts": [
+        "Brisbane"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95220951",
+      "url": "https://au.seek.com/job/95220951",
+      "cohorts": [
+        "Brisbane",
+        "Remote"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "94959991",
+      "url": "https://au.seek.com/job/94959991",
+      "cohorts": [
+        "Brisbane"
+      ],
+      "classification": "E",
+      "fullDescriptionRead": true,
+      "title": "Technical Consultant",
+      "employer": "Sensei",
+      "location": "Brisbane QLD",
+      "arrangement": "Hybrid",
+      "postedDaysAgo": 17,
+      "experienceSummary": "Two or more years consulting or solution delivery; hands-on Power Platform code and integrations.",
+      "skills": [
+        "JS_TS",
+        "NET_CSharp",
+        "SQL",
+        "APIs",
+        "HTML_CSS",
+        "Testing",
+        "AI",
+        "Communication",
+        "PowerPlatform",
+        "DataStore"
+      ]
+    },
+    {
+      "id": "95234381",
+      "url": "https://au.seek.com/job/95234381",
+      "cohorts": [
+        "Brisbane"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "94954403",
+      "url": "https://au.seek.com/job/94954403",
+      "cohorts": [
+        "Brisbane"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95326344",
+      "url": "https://au.seek.com/job/95326344",
+      "cohorts": [
+        "Brisbane"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95162305",
+      "url": "https://au.seek.com/job/95162305",
+      "cohorts": [
+        "Brisbane"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95084704",
+      "url": "https://au.seek.com/job/95084704",
+      "cohorts": [
+        "Brisbane",
+        "Remote"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "94994487",
+      "url": "https://au.seek.com/job/94994487",
+      "cohorts": [
+        "Brisbane"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "94851562",
+      "url": "https://au.seek.com/job/94851562",
+      "cohorts": [
+        "Brisbane"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "94879080",
+      "url": "https://au.seek.com/job/94879080",
+      "cohorts": [
+        "Brisbane"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95018392",
+      "url": "https://au.seek.com/job/95018392",
+      "cohorts": [
+        "Brisbane"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95315168",
+      "url": "https://au.seek.com/job/95315168",
+      "cohorts": [
+        "Brisbane"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95084241",
+      "url": "https://au.seek.com/job/95084241",
+      "cohorts": [
+        "Brisbane",
+        "Remote"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95270552",
+      "url": "https://au.seek.com/job/95270552",
+      "cohorts": [
+        "Brisbane"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "94847914",
+      "url": "https://au.seek.com/job/94847914",
+      "cohorts": [
+        "Brisbane"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95197406",
+      "url": "https://au.seek.com/job/95197406",
+      "cohorts": [
+        "Brisbane"
+      ],
+      "classification": "B",
+      "fullDescriptionRead": true,
+      "title": "Rail Software and Systems Engineer",
+      "employer": "Inhabit Group",
+      "experienceSummary": "Ideally 3-5 years"
+    },
+    {
+      "id": "95113799",
+      "url": "https://au.seek.com/job/95113799",
+      "cohorts": [
+        "Brisbane"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "94794582",
+      "url": "https://au.seek.com/job/94794582",
+      "cohorts": [
+        "Brisbane"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "94951955",
+      "url": "https://au.seek.com/job/94951955",
+      "cohorts": [
+        "Brisbane"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "94758906",
+      "url": "https://au.seek.com/job/94758906",
+      "cohorts": [
+        "Brisbane"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "94847910",
+      "url": "https://au.seek.com/job/94847910",
+      "cohorts": [
+        "Brisbane"
+      ],
+      "classification": "E",
+      "fullDescriptionRead": true,
+      "title": "Software Engineer",
+      "employer": "KBR",
+      "location": "Brisbane QLD",
+      "arrangement": "Unspecified",
+      "postedDaysAgo": 23,
+      "experienceSummary": "Minimum three years; active NV1 or above required.",
+      "skills": [
+        "JS_TS",
+        "NET_CSharp",
+        "SQL",
+        "HTML_CSS",
+        "Testing",
+        "Git",
+        "Azure",
+        "Agile",
+        "Communication",
+        "DataStore",
+        "Cloud",
+        "Debugging"
+      ]
+    },
+    {
+      "id": "95125049",
+      "url": "https://au.seek.com/job/95125049",
+      "cohorts": [
+        "Brisbane"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "94858113",
+      "url": "https://au.seek.com/job/94858113",
+      "cohorts": [
+        "Brisbane"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95237902",
+      "url": "https://au.seek.com/job/95237902",
+      "cohorts": [
+        "Brisbane",
+        "Remote"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95140380",
+      "url": "https://au.seek.com/job/95140380",
+      "cohorts": [
+        "Brisbane"
+      ],
+      "classification": "E",
+      "fullDescriptionRead": true,
+      "title": "Software Engineer - South Bank, QLD",
+      "employer": "Flight Centre Travel Group",
+      "location": "South Bank, Brisbane QLD",
+      "arrangement": "Unspecified",
+      "postedDaysAgo": 9,
+      "experienceSummary": "At least three years professional software development.",
+      "skills": [
+        "JS_TS",
+        "APIs",
+        "Node",
+        "Testing",
+        "CI_CD",
+        "Agile",
+        "Communication",
+        "DataStore",
+        "Debugging"
+      ]
+    },
+    {
+      "id": "94944436",
+      "url": "https://au.seek.com/job/94944436",
+      "cohorts": [
+        "Brisbane"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95153832",
+      "url": "https://au.seek.com/job/95153832",
+      "cohorts": [
+        "Australia"
+      ],
+      "classification": "J",
+      "fullDescriptionRead": true,
+      "title": "Junior Software Engineer",
+      "employer": "Tyree Group",
+      "skills": [
+        "NET_CSharp",
+        "SQL",
+        "Testing",
+        "Communication",
+        "DataStore",
+        "Debugging"
+      ]
+    },
+    {
+      "id": "95110759",
+      "url": "https://au.seek.com/job/95110759",
+      "cohorts": [
+        "Australia"
+      ],
+      "classification": "J",
+      "fullDescriptionRead": true,
+      "title": "Junior Software Engineer",
+      "employer": "Green Innovation Systems",
+      "skills": [
+        "JS_TS",
+        "NET_CSharp",
+        "SQL",
+        "APIs",
+        "Python",
+        "Java",
+        "Testing",
+        "Git",
+        "Communication",
+        "DataStore",
+        "Debugging"
+      ]
+    },
+    {
+      "id": "95003612",
+      "url": "https://au.seek.com/job/95003612",
+      "cohorts": [
+        "Australia"
+      ],
+      "classification": "J",
+      "fullDescriptionRead": true,
+      "title": "Junior Software Developer",
+      "employer": "Quality People",
+      "skills": []
+    },
+    {
+      "id": "95262058",
+      "url": "https://au.seek.com/job/95262058",
+      "cohorts": [
+        "Australia"
+      ],
+      "classification": "J",
+      "fullDescriptionRead": true,
+      "title": "Associate Software Engineer",
+      "employer": "Quartex",
+      "skills": [
+        "JS_TS",
+        "NET_CSharp",
+        "SQL",
+        "React",
+        "Node",
+        "Testing",
+        "Git",
+        "CI_CD",
+        "AI",
+        "Agile",
+        "Communication",
+        "DataStore",
+        "Cloud"
+      ]
+    },
+    {
+      "id": "94758919",
+      "url": "https://au.seek.com/job/94758919",
+      "cohorts": [
+        "Australia"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95306518",
+      "url": "https://au.seek.com/job/95306518",
+      "cohorts": [
+        "Australia"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95304162",
+      "url": "https://au.seek.com/job/95304162",
+      "cohorts": [
+        "Australia"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "94756812",
+      "url": "https://au.seek.com/job/94756812",
+      "cohorts": [
+        "Australia"
+      ],
+      "classification": "E",
+      "fullDescriptionRead": true,
+      "title": "Junior Software Developer - Integration",
+      "employer": "Austcorp Executive",
+      "location": "Melbourne Airport, Melbourne VIC",
+      "arrangement": "Hybrid",
+      "postedDaysAgo": 26,
+      "experienceSummary": "One to three years commercial experience OR strong graduate/project experience.",
+      "skills": [
+        "JS_TS",
+        "SQL",
+        "APIs",
+        "React",
+        "Node",
+        "Python",
+        "HTML_CSS",
+        "Git",
+        "Communication",
+        "DataStore",
+        "Debugging"
+      ]
+    },
+    {
+      "id": "95171312",
+      "url": "https://au.seek.com/job/95171312",
+      "cohorts": [
+        "Australia"
+      ],
+      "classification": "B",
+      "fullDescriptionRead": true,
+      "title": "Junior-Mid Full-Stack Developer",
+      "employer": "LAPM",
+      "experienceSummary": "Approximately 2-4 years; commercial OR strong practical-project portfolio"
+    },
+    {
+      "id": "95278039",
+      "url": "https://au.seek.com/job/95278039",
+      "cohorts": [
+        "Australia"
+      ],
+      "classification": "E",
+      "fullDescriptionRead": true,
+      "title": "Software Developer",
+      "employer": "South Pacific Seeds Pty Limited",
+      "location": "Sydney NSW",
+      "arrangement": "Hybrid",
+      "postedDaysAgo": 2,
+      "experienceSummary": "At least two years development in a similar role.",
+      "skills": [
+        "NET_CSharp",
+        "SQL",
+        "APIs",
+        "Git",
+        "AI",
+        "Communication",
+        "DataStore",
+        "Debugging"
+      ]
+    },
+    {
+      "id": "94857276",
+      "url": "https://au.seek.com/job/94857276",
+      "cohorts": [
+        "Australia"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "94758805",
+      "url": "https://au.seek.com/job/94758805",
+      "cohorts": [
+        "Australia"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "94817777",
+      "url": "https://au.seek.com/job/94817777",
+      "cohorts": [
+        "Australia"
+      ],
+      "classification": "J",
+      "fullDescriptionRead": true,
+      "title": "Junior Software Developer",
+      "employer": "ASTA Solutions",
+      "skills": [
+        "JS_TS",
+        "NET_CSharp",
+        "SQL",
+        "APIs",
+        "React",
+        "Testing",
+        "Git",
+        "AWS",
+        "Azure",
+        "AI",
+        "Communication",
+        "DataStore",
+        "Cloud"
+      ]
+    },
+    {
+      "id": "94907978",
+      "url": "https://au.seek.com/job/94907978",
+      "cohorts": [
+        "Australia"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95154734",
+      "url": "https://au.seek.com/job/95154734",
+      "cohorts": [
+        "Australia"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95198058",
+      "url": "https://au.seek.com/job/95198058",
+      "cohorts": [
+        "Australia"
+      ],
+      "classification": "J",
+      "fullDescriptionRead": true,
+      "title": "Junior C# Developer – AWS, DevOps & AI Automation",
+      "employer": "FTI Group",
+      "skills": [
+        "JS_TS",
+        "NET_CSharp",
+        "SQL",
+        "APIs",
+        "HTML_CSS",
+        "Git",
+        "AWS",
+        "AI",
+        "Communication",
+        "DataStore",
+        "Cloud",
+        "Debugging"
+      ]
+    },
+    {
+      "id": "94791334",
+      "url": "https://au.seek.com/job/94791334",
+      "cohorts": [
+        "Australia"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "94978606",
+      "url": "https://au.seek.com/job/94978606",
+      "cohorts": [
+        "Australia"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95284591",
+      "url": "https://au.seek.com/job/95284591",
+      "cohorts": [
+        "Australia",
+        "Remote"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95231762",
+      "url": "https://au.seek.com/job/95231762",
+      "cohorts": [
+        "Australia"
+      ],
+      "classification": "J",
+      "fullDescriptionRead": true,
+      "title": "Graduate Software and Power Platform Developer",
+      "employer": "Intuit Technologies",
+      "skills": [
+        "NET_CSharp",
+        "SQL",
+        "APIs",
+        "React",
+        "HTML_CSS",
+        "Git",
+        "Azure",
+        "Communication",
+        "PowerPlatform",
+        "DataStore",
+        "Cloud",
+        "Debugging"
+      ]
+    },
+    {
+      "id": "94721572",
+      "url": "https://au.seek.com/job/94721572",
+      "cohorts": [
+        "Australia"
+      ],
+      "classification": "J",
+      "fullDescriptionRead": true,
+      "title": "Junior Software Developer",
+      "employer": "DingGo",
+      "skills": [
+        "SQL",
+        "APIs",
+        "React",
+        "PHP",
+        "Testing",
+        "Git",
+        "AI",
+        "Communication",
+        "DataStore",
+        "Debugging"
+      ]
+    },
+    {
+      "id": "94726985",
+      "url": "https://au.seek.com/job/94726985",
+      "cohorts": [
+        "Australia"
+      ],
+      "classification": "E",
+      "fullDescriptionRead": true,
+      "title": "Software Engineer",
+      "employer": "NWI Group",
+      "location": "Underdale, Adelaide SA",
+      "arrangement": "Hybrid",
+      "postedDaysAgo": 29,
+      "experienceSummary": "Two or more years, focused on full-stack SaaS.",
+      "skills": [
+        "NET_CSharp",
+        "APIs",
+        "Python",
+        "Testing",
+        "Git",
+        "CI_CD",
+        "AWS",
+        "Azure",
+        "AI",
+        "Agile",
+        "Communication",
+        "Angular",
+        "DataStore",
+        "Cloud"
+      ]
+    },
+    {
+      "id": "95069872",
+      "url": "https://au.seek.com/job/95069872",
+      "cohorts": [
+        "Australia"
+      ],
+      "classification": "B",
+      "fullDescriptionRead": true,
+      "title": "Junior Data Engineer",
+      "employer": "BizCover",
+      "experienceSummary": "Ideally 3-4 years; adjacent data-engineering role"
+    },
+    {
+      "id": "95202559",
+      "url": "https://au.seek.com/job/95202559",
+      "cohorts": [
+        "Australia"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95263333",
+      "url": "https://au.seek.com/job/95263333",
+      "cohorts": [
+        "Australia"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95271703",
+      "url": "https://au.seek.com/job/95271703",
+      "cohorts": [
+        "Australia"
+      ],
+      "classification": "E",
+      "fullDescriptionRead": true,
+      "title": "Software Engineer, Payments Identity Verification",
+      "employer": "Google",
+      "location": "Sydney NSW",
+      "arrangement": "Unspecified",
+      "postedDaysAgo": 3,
+      "experienceSummary": "One year software development; degree or equivalent practical experience.",
+      "skills": [
+        "JS_TS",
+        "Python",
+        "Java",
+        "Communication",
+        "C_CPP"
+      ]
+    },
+    {
+      "id": "95192947",
+      "url": "https://au.seek.com/job/95192947",
+      "cohorts": [
+        "Australia"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95079531",
+      "url": "https://au.seek.com/job/95079531",
+      "cohorts": [
+        "Australia"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "94759030",
+      "url": "https://au.seek.com/job/94759030",
+      "cohorts": [
+        "Australia"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95260509",
+      "url": "https://au.seek.com/job/95260509",
+      "cohorts": [
+        "Australia"
+      ],
+      "classification": "J",
+      "fullDescriptionRead": true,
+      "title": "2027 DXC Technology Graduate - AI Engineer - Melbourne",
+      "employer": "SEEK Grad",
+      "skills": [
+        "JS_TS",
+        "SQL",
+        "APIs",
+        "Node",
+        "Python",
+        "HTML_CSS",
+        "Testing",
+        "Git",
+        "CI_CD",
+        "AWS",
+        "Azure",
+        "GCP",
+        "Docker",
+        "AI",
+        "Agile",
+        "Communication",
+        "DataStore",
+        "Cloud",
+        "Debugging"
+      ]
+    },
+    {
+      "id": "95049289",
+      "url": "https://au.seek.com/job/95049289",
+      "cohorts": [
+        "Australia"
+      ],
+      "classification": "J",
+      "fullDescriptionRead": true,
+      "title": "AURIN Associate Software Engineer",
+      "employer": "University of Melbourne",
+      "skills": [
+        "JS_TS",
+        "SQL",
+        "APIs",
+        "Python",
+        "Java",
+        "Testing",
+        "Git",
+        "CI_CD",
+        "Docker",
+        "Agile",
+        "Communication",
+        "DataStore"
+      ]
+    },
+    {
+      "id": "95231802",
+      "url": "https://au.seek.com/job/95231802",
+      "cohorts": [
+        "Australia"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "94786561",
+      "url": "https://au.seek.com/job/94786561",
+      "cohorts": [
+        "Australia"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "94832726",
+      "url": "https://au.seek.com/job/94832726",
+      "cohorts": [
+        "Australia"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95007512",
+      "url": "https://au.seek.com/job/95007512",
+      "cohorts": [
+        "Australia"
+      ],
+      "classification": "E",
+      "fullDescriptionRead": true,
+      "title": "Software Engineer, Backend, Photos",
+      "employer": "Google",
+      "location": "Sydney NSW",
+      "arrangement": "Unspecified",
+      "postedDaysAgo": 16,
+      "experienceSummary": "Two years backend development plus Android/iOS client experience.",
+      "skills": [
+        "AI",
+        "Communication",
+        "Debugging"
+      ]
+    },
+    {
+      "id": "94933963",
+      "url": "https://au.seek.com/job/94933963",
+      "cohorts": [
+        "Australia"
+      ],
+      "classification": "J",
+      "fullDescriptionRead": true,
+      "title": "Graduate Software Engineer",
+      "employer": "SEEK",
+      "skills": [
+        "JS_TS",
+        "APIs",
+        "React",
+        "AWS",
+        "Communication",
+        "Cloud"
+      ]
+    },
+    {
+      "id": "94842960",
+      "url": "https://au.seek.com/job/94842960",
+      "cohorts": [
+        "Australia"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95221100",
+      "url": "https://au.seek.com/job/95221100",
+      "cohorts": [
+        "Australia"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "94960280",
+      "url": "https://au.seek.com/job/94960280",
+      "cohorts": [
+        "Australia"
+      ],
+      "classification": "J",
+      "fullDescriptionRead": true,
+      "title": "Junior Software Developer - .Net / C#",
+      "employer": "Clockon",
+      "skills": [
+        "JS_TS",
+        "NET_CSharp",
+        "SQL",
+        "HTML_CSS",
+        "Testing",
+        "Git",
+        "Communication",
+        "DataStore"
+      ]
+    },
+    {
+      "id": "95274269",
+      "url": "https://au.seek.com/job/95274269",
+      "cohorts": [
+        "Australia"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95082866",
+      "url": "https://au.seek.com/job/95082866",
+      "cohorts": [
+        "Australia"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "94866711",
+      "url": "https://au.seek.com/job/94866711",
+      "cohorts": [
+        "Australia"
+      ],
+      "classification": "E",
+      "fullDescriptionRead": true,
+      "title": "Software Engineer – Web, Mobile & FinTech Platform",
+      "employer": "Quikky Move",
+      "location": "Hume, Canberra ACT",
+      "arrangement": "Unspecified",
+      "postedDaysAgo": 23,
+      "experienceSummary": "Three or more years web/mobile software development.",
+      "skills": [
+        "JS_TS",
+        "APIs",
+        "React",
+        "Python",
+        "Java",
+        "Git",
+        "AWS",
+        "Azure",
+        "GCP",
+        "Communication",
+        "Vue",
+        "Angular",
+        "DataStore",
+        "Cloud",
+        "Debugging"
+      ]
+    },
+    {
+      "id": "95173293",
+      "url": "https://au.seek.com/job/95173293",
+      "cohorts": [
+        "Australia"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95205332",
+      "url": "https://au.seek.com/job/95205332",
+      "cohorts": [
+        "Australia"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95174348",
+      "url": "https://au.seek.com/job/95174348",
+      "cohorts": [
+        "Australia"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95229403",
+      "url": "https://au.seek.com/job/95229403",
+      "cohorts": [
+        "Australia"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "94992497",
+      "url": "https://au.seek.com/job/94992497",
+      "cohorts": [
+        "Australia"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "94791902",
+      "url": "https://au.seek.com/job/94791902",
+      "cohorts": [
+        "Australia"
+      ],
+      "classification": "J",
+      "fullDescriptionRead": true,
+      "title": "Early-Career Software Developer",
+      "employer": "Semaphore Consulting",
+      "skills": [
+        "NET_CSharp",
+        "SQL",
+        "PHP",
+        "HTML_CSS",
+        "Testing",
+        "Communication",
+        "DataStore",
+        "Debugging"
+      ]
+    },
+    {
+      "id": "95123601",
+      "url": "https://au.seek.com/job/95123601",
+      "cohorts": [
+        "Australia"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95079529",
+      "url": "https://au.seek.com/job/95079529",
+      "cohorts": [
+        "Australia"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "94879928",
+      "url": "https://au.seek.com/job/94879928",
+      "cohorts": [
+        "Australia"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95099926",
+      "url": "https://au.seek.com/job/95099926",
+      "cohorts": [
+        "Australia"
+      ],
+      "classification": "E",
+      "fullDescriptionRead": true,
+      "title": "Software Engineer",
+      "employer": "Evse Australia",
+      "location": "Silverwater, Sydney NSW",
+      "arrangement": "Unspecified",
+      "postedDaysAgo": 10,
+      "experienceSummary": "Two or more years engineering or related technical field.",
+      "skills": [
+        "SQL",
+        "APIs",
+        "Python",
+        "Testing",
+        "CI_CD",
+        "AWS",
+        "Communication",
+        "DataStore",
+        "Cloud"
+      ]
+    },
+    {
+      "id": "95231749",
+      "url": "https://au.seek.com/job/95231749",
+      "cohorts": [
+        "Australia"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95081106",
+      "url": "https://au.seek.com/job/95081106",
+      "cohorts": [
+        "Australia",
+        "Remote"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95112854",
+      "url": "https://au.seek.com/job/95112854",
+      "cohorts": [
+        "Australia"
+      ],
+      "classification": "E",
+      "fullDescriptionRead": true,
+      "title": "Software Engineer",
+      "employer": "Austal Ships",
+      "location": "Fremantle, Perth WA",
+      "arrangement": "Unspecified",
+      "postedDaysAgo": 10,
+      "experienceSummary": "Two-year technical requirements; degree/certifications OR five years equivalent experience.",
+      "skills": [
+        "NET_CSharp",
+        "APIs",
+        "Python",
+        "Testing",
+        "Git",
+        "CI_CD",
+        "Azure",
+        "AI",
+        "Agile",
+        "Communication",
+        "DataStore",
+        "Cloud",
+        "Security",
+        "Debugging"
+      ]
+    },
+    {
+      "id": "95167622",
+      "url": "https://au.seek.com/job/95167622",
+      "cohorts": [
+        "Australia"
+      ],
+      "classification": "E",
+      "fullDescriptionRead": true,
+      "title": "Software Engineer - Full Stack AI",
+      "employer": "Docuscan Australia Pty Ltd",
+      "location": "Cremorne, Melbourne VIC",
+      "arrangement": "Unspecified",
+      "postedDaysAgo": 8,
+      "experienceSummary": "Ad contains both 2+ and 3+ requirements; treated as three years; Melbourne-based required.",
+      "skills": [
+        "SQL",
+        "APIs",
+        "React",
+        "Node",
+        "HTML_CSS",
+        "Testing",
+        "Git",
+        "AWS",
+        "Docker",
+        "AI",
+        "Communication",
+        "DataStore",
+        "Cloud",
+        "Security"
+      ]
+    },
+    {
+      "id": "94948427",
+      "url": "https://au.seek.com/job/94948427",
+      "cohorts": [
+        "Australia"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "94802379",
+      "url": "https://au.seek.com/job/94802379",
+      "cohorts": [
+        "Australia"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95219767",
+      "url": "https://au.seek.com/job/95219767",
+      "cohorts": [
+        "Australia"
+      ],
+      "classification": "E",
+      "fullDescriptionRead": true,
+      "title": "Developer",
+      "employer": "Pronto Software",
+      "location": "Mulgrave, Melbourne VIC",
+      "arrangement": "Hybrid",
+      "postedDaysAgo": 4,
+      "experienceSummary": "At least two years in a development team.",
+      "skills": [
+        "JS_TS",
+        "APIs",
+        "React",
+        "HTML_CSS",
+        "Testing",
+        "AI",
+        "Communication",
+        "Vue",
+        "Debugging"
+      ]
+    },
+    {
+      "id": "95162006",
+      "url": "https://au.seek.com/job/95162006",
+      "cohorts": [
+        "Australia"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95046252",
+      "url": "https://au.seek.com/job/95046252",
+      "cohorts": [
+        "Australia"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "94795412",
+      "url": "https://au.seek.com/job/94795412",
+      "cohorts": [
+        "Australia"
+      ],
+      "classification": "E",
+      "fullDescriptionRead": true,
+      "title": "Software Developer (Java)",
+      "employer": "MiClub Services",
+      "location": "Osborne Park, Perth WA",
+      "arrangement": "Unspecified",
+      "postedDaysAgo": 25,
+      "experienceSummary": "Three or more years commercial Java, completed degree, web security skills.",
+      "skills": [
+        "SQL",
+        "APIs",
+        "Java",
+        "Testing",
+        "Communication",
+        "DataStore",
+        "Security"
+      ]
+    },
+    {
+      "id": "95299702",
+      "url": "https://au.seek.com/job/95299702",
+      "cohorts": [
+        "Australia"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "94936239",
+      "url": "https://au.seek.com/job/94936239",
+      "cohorts": [
+        "Australia"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "94851367",
+      "url": "https://au.seek.com/job/94851367",
+      "cohorts": [
+        "Australia"
+      ],
+      "classification": "E",
+      "fullDescriptionRead": true,
+      "title": "Junior Software Engineer",
+      "employer": "Tabcorp",
+      "location": "Sydney NSW",
+      "arrangement": "Unspecified",
+      "postedDaysAgo": 23,
+      "experienceSummary": "1.5-2 years commercial backend Node.js and TypeScript.",
+      "skills": [
+        "JS_TS",
+        "APIs",
+        "Node",
+        "Docker",
+        "Agile",
+        "Communication",
+        "DataStore",
+        "Debugging"
+      ]
+    },
+    {
+      "id": "94854335",
+      "url": "https://au.seek.com/job/94854335",
+      "cohorts": [
+        "Australia"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95153342",
+      "url": "https://au.seek.com/job/95153342",
+      "cohorts": [
+        "Australia"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95226926",
+      "url": "https://au.seek.com/job/95226926",
+      "cohorts": [
+        "Australia"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95094122",
+      "url": "https://au.seek.com/job/95094122",
+      "cohorts": [
+        "Australia"
+      ],
+      "classification": "E",
+      "fullDescriptionRead": true,
+      "title": "Software Engineer, Android SRE",
+      "employer": "Google",
+      "location": "Sydney NSW",
+      "arrangement": "Unspecified",
+      "postedDaysAgo": 11,
+      "experienceSummary": "Two years software development; two years distributed-systems experience is preferred.",
+      "skills": [
+        "GCP",
+        "Communication",
+        "Cloud",
+        "Debugging"
+      ]
+    },
+    {
+      "id": "94842628",
+      "url": "https://au.seek.com/job/94842628",
+      "cohorts": [
+        "Australia"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95231858",
+      "url": "https://au.seek.com/job/95231858",
+      "cohorts": [
+        "Australia"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95141874",
+      "url": "https://au.seek.com/job/95141874",
+      "cohorts": [
+        "Australia"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95229260",
+      "url": "https://au.seek.com/job/95229260",
+      "cohorts": [
+        "Australia"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95284685",
+      "url": "https://au.seek.com/job/95284685",
+      "cohorts": [
+        "Australia"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95026584",
+      "url": "https://au.seek.com/job/95026584",
+      "cohorts": [
+        "Australia"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "94938599",
+      "url": "https://au.seek.com/job/94938599",
+      "cohorts": [
+        "Australia",
+        "Remote"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "94813225",
+      "url": "https://au.seek.com/job/94813225",
+      "cohorts": [
+        "Remote"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95128741",
+      "url": "https://au.seek.com/job/95128741",
+      "cohorts": [
+        "Remote"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95213158",
+      "url": "https://au.seek.com/job/95213158",
+      "cohorts": [
+        "Remote"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95187327",
+      "url": "https://au.seek.com/job/95187327",
+      "cohorts": [
+        "Remote"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "94931695",
+      "url": "https://au.seek.com/job/94931695",
+      "cohorts": [
+        "Remote"
+      ],
+      "classification": "B",
+      "fullDescriptionRead": true,
+      "title": "Software Engineer",
+      "employer": "Sidekicker",
+      "experienceSummary": "Preferred 3-6 years"
+    },
+    {
+      "id": "95187343",
+      "url": "https://au.seek.com/job/95187343",
+      "cohorts": [
+        "Remote"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95156813",
+      "url": "https://au.seek.com/job/95156813",
+      "cohorts": [
+        "Remote"
+      ],
+      "classification": "E",
+      "fullDescriptionRead": true,
+      "title": "Full Stack PHP Developer | AI & Automation | Fully Remote",
+      "employer": "Jet Convert Pty Ltd",
+      "location": "Noosa Heads, Sunshine Coast QLD",
+      "arrangement": "Remote",
+      "postedDaysAgo": 8,
+      "experienceSummary": "At least two years professional development; remote within Australia; ownership expected.",
+      "skills": [
+        "JS_TS",
+        "SQL",
+        "APIs",
+        "React",
+        "PHP",
+        "Testing",
+        "Git",
+        "AI",
+        "Communication",
+        "DataStore",
+        "Debugging"
+      ]
+    },
+    {
+      "id": "95233948",
+      "url": "https://au.seek.com/job/95233948",
+      "cohorts": [
+        "Remote"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95169105",
+      "url": "https://au.seek.com/job/95169105",
+      "cohorts": [
+        "Remote"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "94974720",
+      "url": "https://au.seek.com/job/94974720",
+      "cohorts": [
+        "Remote"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "94769916",
+      "url": "https://au.seek.com/job/94769916",
+      "cohorts": [
+        "Remote"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "94765814",
+      "url": "https://au.seek.com/job/94765814",
+      "cohorts": [
+        "Remote"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95040113",
+      "url": "https://au.seek.com/job/95040113",
+      "cohorts": [
+        "Remote"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95049948",
+      "url": "https://au.seek.com/job/95049948",
+      "cohorts": [
+        "Remote"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95137956",
+      "url": "https://au.seek.com/job/95137956",
+      "cohorts": [
+        "Remote"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "94943317",
+      "url": "https://au.seek.com/job/94943317",
+      "cohorts": [
+        "Remote"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95104276",
+      "url": "https://au.seek.com/job/95104276",
+      "cohorts": [
+        "Remote"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95234139",
+      "url": "https://au.seek.com/job/95234139",
+      "cohorts": [
+        "Remote"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "94871402",
+      "url": "https://au.seek.com/job/94871402",
+      "cohorts": [
+        "Remote"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "94959547",
+      "url": "https://au.seek.com/job/94959547",
+      "cohorts": [
+        "Remote"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "94959343",
+      "url": "https://au.seek.com/job/94959343",
+      "cohorts": [
+        "Remote"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95180645",
+      "url": "https://au.seek.com/job/95180645",
+      "cohorts": [
+        "Remote"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95015236",
+      "url": "https://au.seek.com/job/95015236",
+      "cohorts": [
+        "Remote"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "94803067",
+      "url": "https://au.seek.com/job/94803067",
+      "cohorts": [
+        "Remote"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "94804206",
+      "url": "https://au.seek.com/job/94804206",
+      "cohorts": [
+        "Remote"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "94813547",
+      "url": "https://au.seek.com/job/94813547",
+      "cohorts": [
+        "Remote"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "94885562",
+      "url": "https://au.seek.com/job/94885562",
+      "cohorts": [
+        "Remote"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95233414",
+      "url": "https://au.seek.com/job/95233414",
+      "cohorts": [
+        "Remote"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95237446",
+      "url": "https://au.seek.com/job/95237446",
+      "cohorts": [
+        "Remote"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95084885",
+      "url": "https://au.seek.com/job/95084885",
+      "cohorts": [
+        "Remote"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95084067",
+      "url": "https://au.seek.com/job/95084067",
+      "cohorts": [
+        "Remote"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "94960073",
+      "url": "https://au.seek.com/job/94960073",
+      "cohorts": [
+        "Remote"
+      ],
+      "classification": "E",
+      "fullDescriptionRead": true,
+      "title": "Technical Consultant",
+      "employer": "Sensei",
+      "location": "Perth WA",
+      "arrangement": "Remote",
+      "postedDaysAgo": 17,
+      "experienceSummary": "Two or more years consulting or solution delivery; near-identical campaign to 94959991.",
+      "skills": [
+        "JS_TS",
+        "NET_CSharp",
+        "SQL",
+        "APIs",
+        "HTML_CSS",
+        "Testing",
+        "AI",
+        "Communication",
+        "PowerPlatform",
+        "DataStore"
+      ]
+    },
+    {
+      "id": "95084405",
+      "url": "https://au.seek.com/job/95084405",
+      "cohorts": [
+        "Remote"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95084615",
+      "url": "https://au.seek.com/job/95084615",
+      "cohorts": [
+        "Remote"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95258365",
+      "url": "https://au.seek.com/job/95258365",
+      "cohorts": [
+        "Remote"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95325819",
+      "url": "https://au.seek.com/job/95325819",
+      "cohorts": [
+        "Remote"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95011415",
+      "url": "https://au.seek.com/job/95011415",
+      "cohorts": [
+        "Remote"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95027883",
+      "url": "https://au.seek.com/job/95027883",
+      "cohorts": [
+        "Remote"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95011365",
+      "url": "https://au.seek.com/job/95011365",
+      "cohorts": [
+        "Remote"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95011257",
+      "url": "https://au.seek.com/job/95011257",
+      "cohorts": [
+        "Remote"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "94922949",
+      "url": "https://au.seek.com/job/94922949",
+      "cohorts": [
+        "Remote"
+      ],
+      "classification": "E",
+      "fullDescriptionRead": true,
+      "title": "Senior Salesforce Developer",
+      "employer": "Shura",
+      "location": "Sydney NSW",
+      "arrangement": "Remote",
+      "postedDaysAgo": 19,
+      "experienceSummary": "Three or more years Salesforce; Australian citizenship and minimum NV1.",
+      "skills": [
+        "JS_TS",
+        "HTML_CSS",
+        "Testing",
+        "Git",
+        "CI_CD",
+        "Communication"
+      ]
+    },
+    {
+      "id": "94714225",
+      "url": "https://au.seek.com/job/94714225",
+      "cohorts": [
+        "Remote"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95011303",
+      "url": "https://au.seek.com/job/95011303",
+      "cohorts": [
+        "Remote"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95221095",
+      "url": "https://au.seek.com/job/95221095",
+      "cohorts": [
+        "Remote"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "94963009",
+      "url": "https://au.seek.com/job/94963009",
+      "cohorts": [
+        "Remote"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "94355755",
+      "url": "https://au.seek.com/job/94355755",
+      "cohorts": [
+        "Remote"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "94738579",
+      "url": "https://au.seek.com/job/94738579",
+      "cohorts": [
+        "Remote"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95247382",
+      "url": "https://au.seek.com/job/95247382",
+      "cohorts": [
+        "Remote"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "94066883",
+      "url": "https://au.seek.com/job/94066883",
+      "cohorts": [
+        "Remote"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "94967648",
+      "url": "https://au.seek.com/job/94967648",
+      "cohorts": [
+        "Remote"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95312790",
+      "url": "https://au.seek.com/job/95312790",
+      "cohorts": [
+        "Remote"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "94910215",
+      "url": "https://au.seek.com/job/94910215",
+      "cohorts": [
+        "Remote"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95088980",
+      "url": "https://au.seek.com/job/95088980",
+      "cohorts": [
+        "Remote"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95312797",
+      "url": "https://au.seek.com/job/95312797",
+      "cohorts": [
+        "Remote"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "94955907",
+      "url": "https://au.seek.com/job/94955907",
+      "cohorts": [
+        "Remote"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95088973",
+      "url": "https://au.seek.com/job/95088973",
+      "cohorts": [
+        "Remote"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95244722",
+      "url": "https://au.seek.com/job/95244722",
+      "cohorts": [
+        "Remote"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "94800182",
+      "url": "https://au.seek.com/job/94800182",
+      "cohorts": [
+        "Remote"
+      ],
+      "classification": "E",
+      "fullDescriptionRead": true,
+      "title": "Graduate Site Reliability Engineer (Australia)",
+      "employer": "Axon",
+      "location": "Sydney NSW",
+      "arrangement": "Remote",
+      "postedDaysAgo": 25,
+      "experienceSummary": "About one year software/SRE/infrastructure; Australian citizenship and clearance eligibility.",
+      "skills": [
+        "NET_CSharp",
+        "Python",
+        "Java",
+        "CI_CD",
+        "AWS",
+        "Azure",
+        "AI",
+        "Communication",
+        "Cloud",
+        "Debugging"
+      ]
+    },
+    {
+      "id": "95004050",
+      "url": "https://au.seek.com/job/95004050",
+      "cohorts": [
+        "Remote"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95088975",
+      "url": "https://au.seek.com/job/95088975",
+      "cohorts": [
+        "Remote"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "94851347",
+      "url": "https://au.seek.com/job/94851347",
+      "cohorts": [
+        "Remote"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95001293",
+      "url": "https://au.seek.com/job/95001293",
+      "cohorts": [
+        "Remote"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "94843416",
+      "url": "https://au.seek.com/job/94843416",
+      "cohorts": [
+        "Remote"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95121282",
+      "url": "https://au.seek.com/job/95121282",
+      "cohorts": [
+        "Remote"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95055863",
+      "url": "https://au.seek.com/job/95055863",
+      "cohorts": [
+        "Remote"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95121341",
+      "url": "https://au.seek.com/job/95121341",
+      "cohorts": [
+        "Remote"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95075955",
+      "url": "https://au.seek.com/job/95075955",
+      "cohorts": [
+        "Remote"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95247178",
+      "url": "https://au.seek.com/job/95247178",
+      "cohorts": [
+        "Remote"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "94845374",
+      "url": "https://au.seek.com/job/94845374",
+      "cohorts": [
+        "Remote"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95111616",
+      "url": "https://au.seek.com/job/95111616",
+      "cohorts": [
+        "Remote"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "94907331",
+      "url": "https://au.seek.com/job/94907331",
+      "cohorts": [
+        "Remote"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "94972096",
+      "url": "https://au.seek.com/job/94972096",
+      "cohorts": [
+        "Remote"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "94809025",
+      "url": "https://au.seek.com/job/94809025",
+      "cohorts": [
+        "Remote"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95208712",
+      "url": "https://au.seek.com/job/95208712",
+      "cohorts": [
+        "Remote"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95003923",
+      "url": "https://au.seek.com/job/95003923",
+      "cohorts": [
+        "Remote"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95135161",
+      "url": "https://au.seek.com/job/95135161",
+      "cohorts": [
+        "Remote"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95216250",
+      "url": "https://au.seek.com/job/95216250",
+      "cohorts": [
+        "Remote"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95134644",
+      "url": "https://au.seek.com/job/95134644",
+      "cohorts": [
+        "Remote"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95299352",
+      "url": "https://au.seek.com/job/95299352",
+      "cohorts": [
+        "Remote"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95141773",
+      "url": "https://au.seek.com/job/95141773",
+      "cohorts": [
+        "Remote"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95135157",
+      "url": "https://au.seek.com/job/95135157",
+      "cohorts": [
+        "Remote"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "94729268",
+      "url": "https://au.seek.com/job/94729268",
+      "cohorts": [
+        "Remote"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "94997351",
+      "url": "https://au.seek.com/job/94997351",
+      "cohorts": [
+        "Remote"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "94989055",
+      "url": "https://au.seek.com/job/94989055",
+      "cohorts": [
+        "Remote"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95038796",
+      "url": "https://au.seek.com/job/95038796",
+      "cohorts": [
+        "Remote"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "94861358",
+      "url": "https://au.seek.com/job/94861358",
+      "cohorts": [
+        "Remote"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "95141117",
+      "url": "https://au.seek.com/job/95141117",
+      "cohorts": [
+        "Remote"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    },
+    {
+      "id": "94960449",
+      "url": "https://au.seek.com/job/94960449",
+      "cohorts": [
+        "Remote"
+      ],
+      "classification": "X",
+      "fullDescriptionRead": true
+    }
+  ]
+}

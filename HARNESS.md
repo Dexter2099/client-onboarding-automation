@@ -1,0 +1,713 @@
+# Development harness
+
+## Current deployment and hosting clarification — 25 October 2026
+
+Release **22ee10f156ede44a98ccbb278a1a9b334d50311a** is live at https://dexter-onboardflow.de.deplexo.com/. [Delivery run 40153103525](https://github.com/Dexter2099/client-onboarding-automation/actions/runs/40153103525) passed verification, deployment, HTTPS/security/storage/media checks and a real hosted-AI journey on native macOS WebKit. Additional hosted 390px/320px checks passed. Chrome source inspection, clarification, explicit submission and reload were also verified. Deployment ID: a4558fc9-feb8-48bd-985f-b40461870205.
+
+The final host observation was 119 MiB / 128 MiB. Dexter clarified that this inherited allocation must not define the new version's requirements. He reaffirmed free hosting and fast employer startup, and rejected Render Free's approximately minute-long cold start. Render sign-in was withdrawn and its agent-created tab closed; no Render service, credentials, account or deployment was created. A local 48 MiB managed-heap experiment was stopped and its uncommitted Docker change reverted; it was never deployed. It used the shared production spending ledger, not a separate counter. The original 64 MiB managed-heap setting remains in the current image pending a properly sized replacement deployment. Actual provider eligibility and startup must be checked before proposing another move.
+
+The new application remains live during that assessment. The separate OnboardFlow OpenAI project/key, its US$5 monthly limit, the US$4.50 shared spending ledger and the untouched portfolio chatbot key remain in place. No paid hosting upgrade is authorised. Earlier provider choices and capacity bounds below are historical.
+
+**Replacement-host eligibility check:** [Northflank's current public pricing](https://northflank.com/pricing) advertises a free Sandbox with no idle sleep and says no card is needed. The existing signed-in Free Team's actual service-creation form contradicts the card claim: it explicitly requires a payment method before creating a service, says the card is for verification/abuse prevention, and says the Developer Sandbox service will not be charged. No service, repository integration, payment method or secret was created. Dexter's earlier no-card preference remains in force pending his answer about verification; the public pricing claim alone is not proof that this account can deploy without a card. ClawCloud's recurring-credit documentation was found, but current resource pricing, account eligibility and startup behaviour were not verified, and its public landing hostname did not resolve during this check; it is not an accepted replacement.
+
+**No-card claim recheck:** Dexter supplied a screenshot of the advertised no-card Sandbox. The signed-in Billing → Plans screen confirms **Developer Sandbox / Active / Free / Current plan**; there is no verified alternative no-card plan or migration path in that screen. The [official billing documentation](https://northflank.com/docs/v1/application/billing/pricing-on-northflank) explicitly says all users must add a payment method before creating resources, regardless of plan, for identity/abuse verification. This supports the observed account gate and contradicts the public pricing page. The reason for that inconsistency is unconfirmed. Dexter's screenshot/question is not permission to add a card, upgrade, create another account or contact the provider.
+
+## Hostless no-card feasibility — 25 October 2026
+
+**Deployment now authorised:** Dexter requested Hostless deployment, the complete hosted journey, measured entry after inactivity and an updated README. Preparation adds support for the host-provided `PORT`, a database-independent `/health`, and a 256 MiB managed heap within the new 512 MB runtime. A separate credential-free ASP.NET ingress probe records only forwarding/scheme/peer information; it does not run the application or inference. CI exports its checked source archive to the fast-forward-only `deploy/hostless` release branch, excluding workflow definitions. Documentation-only main changes do not publish a new runtime. Local regression passed **130 backend checks and all 12 browser checks**, and formatting passes. The real-model adapter and its 9/9 evaluation are unchanged; no new paid calls have been made in this preparation.
+
+Dexter explicitly requested another free, always-on host with enough memory and no card, while preserving the US$5 OpenAI cap. [Hostless pricing](https://hostless.cloud/pricing), [Apps](https://hostless.cloud/products/apps), [free-tier limits](https://docs.hostless.cloud/plans/free-tier) and [resource limits](https://docs.hostless.cloud/plans/limits) publish an ongoing shared pool of 0.5 vCPU/1 GiB RAM/512 MiB database storage, no payment card within the pool and no idle sleeping. Docker and [ASP.NET Core](https://docs.hostless.cloud/dotnet/aspnet-core) are documented. Some documentation calls the shared policy upcoming; this account's actual wizard was therefore checked rather than relying only on that claim. No new database is needed because the existing Neon database owns saved progress and the shared spend ledger.
+
+Dexter approved creating the free Hostless account via GitHub identity/email and accepting its terms. The account was created, ordinary developer/solo/production onboarding completed, and the default project exists. Billing displays no payment method and no usage. Dexter separately approved the GitHub app's metadata-read and code/checks/statuses/deployments/pull-request/hooks read/write permissions on **only Dexter2099/client-onboarding-automation**, then completed GitHub reauthentication. The repository selector subsequently exposed that one repository and reported access ready. No app, card, paid plan, Hostless API key, database credential or OpenAI secret was created/shared.
+
+**Account-form acceptance:** the wizard reached **Review & Create**, with **Create App enabled**, Docker/root Dockerfile, app name `onboardflow` (available), branch `main`, **0.25 vCPU / 512 MB**, **1 always-running instance**, maximum **1 instance**, and automatic review apps **disabled**. Both the configuration estimate and final review showed **US$0.00–US$0.00/month**. The breakdown reported **0.25 vCPU / 512 MB / 0.5 GB storage still free** after this allocation. An initial billing-details-not-ready message resolved when the selected runtime's estimate loaded. There was no card step or payment-method requirement for this reviewed allocation. The unsubmitted form and screenshot are retained; `.local/hostless-feasibility-20261025/` contains the safe evidence. The free account/configuration fit is confirmed. App startup, actual memory usage, HTTPS/proxy handling, CI deployment and measured entry after inactivity remain unverified: **Create App was not clicked**. Preserve the working Deplexo release while preparing those checks.
+
+The Hostless budget dialog explicitly says a limit of zero **disables** its limit, and that existing resources can continue billing after a nonzero limit. The dialog was cancelled unchanged. Do not treat this control as a hard $0 cap: confirm the applied free entitlement and keep total configured capacity within it, without a payment card, credit, worker, extra replica or automatic review app. The original OpenAI $5 project cap/$4.50 application ledger are separate and unchanged.
+
+## Production release preparation — 25 October 2026
+
+Dexter authorised deployment with the existing capped OnboardFlow project. This supersedes the earlier local-only holds below; the portfolio/new hosted-app recording remain separate. The normal build and multi-stage container now package the reviewed UI, local font files/licences and labelled original local recording (silent H.264 MP4 plus preserved WebM). Production intake is opt-in and refuses the wrong provider, project or unverified setup.
+
+Local release checks: **130 backend checks passed**, two opt-in tests skipped in the ordinary run; the browser integration test then passed all **12 Chromium/Firefox/WebKit checks** against the packaged UI, real Kestrel API and disposable PostgreSQL. Its model double is test-assembly-only, not production code. The unchanged real-model matrix remains 9/9, with evidence below. Formatting, TypeScript and the Docker build pass.
+
+The actual Production container ran with **128 MiB memory, no swap and 0.25 CPU**, workstation GC and a 64 MiB managed-heap ceiling. One real OpenAI no-typing visitor completed sources, missing-detail continuation, manual tasks, submissions, reload and restart in **20.1 seconds**. Six additional concurrent visitors passed session/CSRF/storage/reload with no model calls. Observed cgroup peak was **112,799,744 bytes (107.6 MiB)**, with zero OOM/max events and the process still running. This small capacity check does not guarantee arbitrary load. The local container fixture emulated the trusted TLS ingress peer over loopback; final hosted verification must use actual HTTPS without a scheme override.
+
+Preparation found and fixed three packaging/test issues: the frontend Docker stage needed the shared JSON specification; the original WebM/automatic playback did not complete on Windows WebKit, so the release adds silent H.264 MP4 with muted inline playback; Kestrel browser tests must use the dynamically bound address. The first direct HTTP Production probe correctly failed antiforgery's SSL requirement; only the local proxy fixture was configured, without relaxing production cookie/TLS checks.
+
+Deployment order: back up the existing Neon database, apply only ClientRequests/IntakeSpend additive migrations, stop local paid inference, import every current spend reservation including uncertain holds, configure the existing Deplexo app with the separate server-side OnboardFlow key, and deploy the checked committed archive through Delivery. Retain the previous release **145ef2e15031be5c342e76ebcb9121928095fe9d** and provider history for rollback. Do not roll back the additive schema or spending ledger. Production rollout status is evidenced by the Delivery run and hosted release.json; preparation alone is not live acceptance.
+
+## OpenAI capped inference checkpoint — 25 October 2026
+
+Dexter selected OpenAI after the Cloudflare Free comparison. The separate **OnboardFlow** project has a verified **US$5/month enforced limit**, with an 80% / US$4 alert. The existing **Dexter Portfolio Chatbot** project and its active key were not edited, replaced or revoked. Dexter explicitly requested **no expiry** on the new restricted Responses read/write key. It is stored only in ignored `.local/openai.env`, restricted to the local Windows user. No secret is included in evaluation evidence.
+
+`OpenAiIntakeClient` uses direct server-side Responses HTTP, exact input counting, strict output and only the existing two read tools. GPT-5.4 Mini failed the missing-information/choice cases; the evaluated snapshot is **gpt-5.4-2026-03-05**, reasoning `none`, temperature 0, Standard processing. Generation remains bounded by six calls including continuation, 512 output tokens and 15 seconds per call. Batches allow up to eight drafts within the existing validator limit; a full batch must continue rather than invent a clarification.
+
+**Current live matrix: 9/9 passed**, complete/missing/conflict × 3, in `.local/intake-evaluation/openai-20261025-113713-1caf6b38/` (per-case JSON, summary and TRX). Complete/conflict runs used four calls and 7.994–8.885 seconds; missing-detail plus reply used six calls and 11.357–12.178 seconds. All manual items stayed absent, quotes matched retrieved passages, conflicts paused on the legal-name question, the missing reference came only from the supplied reply, and planned access/sharing stayed in future tense. Human review of normalized values agreed with the fixtures. This small fixed matrix does not prove general reliability.
+
+Conservative uncached accounting for the matrix totalled **US$0.276884**, or US$0.025766–0.040317 per evaluated journey. These are token-priced estimates used by the spending controls, not an invoice or allowance guarantee; cache discounts may reduce billing. At this measured range, a fresh US$4.50 app allowance would cover roughly 110–170 similar single-run journeys, before other usage, retries started by visitors or uncertainty holds. Current October development ledger after matrix and regression tests: US$0.561767 accounted, including US$0.005998 in two retained uncertain holds. It persisted after live-test database cleanup.
+
+The persistent PostgreSQL spending ledger reserves counted input plus a 256-token buffer and the full output allowance **before** inference. It stops at **US$4.50/month**; uncertain/failed requests keep their holds. Settlement uses ordinary uncached input/output rates conservatively. Tests of actual OpenAI calls use the persistent loopback ledger even though their request databases are disposable. Reset, expiry, process restart and test cleanup cannot refund spending. The ledger must be carried into the shared hosted database before release. The provider hard limit can have enforcement delay; the separate application ceiling leaves headroom. Neither boundary applies to the existing chatbot project.
+
+~~~text
+Intake__OpenAI__ProjectId=<dedicated-project-id>
+Intake__OpenAI__BudgetVerified=true
+Intake__OpenAI__ApiKey=<server-side-secret>
+~~~
+
+~~~powershell
+pwsh -NoProfile -File scripts/intake-local.ps1 test
+pwsh -NoProfile -File scripts/intake-local.ps1 evaluate -Provider OpenAI
+pwsh -NoProfile -File scripts/intake-local.ps1 api -Provider OpenAI
+~~~
+
+Ordinary tests disable live AI. The evaluation command runs the unchanged nine complete/missing/conflict cases, three repetitions each. Optional `-EvaluationFilter` selects a labelled development probe; it does not establish the full matrix. Unique ignored `.local/intake-evaluation/openai-*` directories retain normalized answers, source documents, call counts, input/output tokens, conservatively accounted USD, timings and safe response shapes. Hidden reasoning and credentials are excluded. Ollama is still the explicit default local provider; there is no automatic retry or provider/model fallback.
+
+**Earlier OpenAI attempts:** the initial Mini full matrix passed 3/9; it copied an absence statement into a tax draft, while a correct legal clarification with `done=false` was initially ignored. The server now rejects identifiers absent from their cited passage and respects a valid clarification independently of that flag. Later Mini matrices/probes still produced unsupported absence values or unnecessary call-preference questions; they remain failures. Early temperature probes were rejected by the input-counting endpoint because it does not accept that generation parameter. Temperature is now added only after counting the identical input/tools/schema; removing it previously allowed generation but did not solve Mini quality. The current stronger-model comparison is explicit, not runtime fallback.
+
+**Cloudflare measured comparison:** Workers Free and account/model eligibility were verified using the approved, account-scoped Workers AI Read token. Llama 3.3 70B passed 0/9. Qwen 3.8 27B passed 8/9, then 7/9; 15-second call timeouts prevented acceptance. Qwen 3 30B returned reasoning-only responses within the same 512-token bound and failed its probes. Development tests then exhausted the daily free allocation: actual HTTP 429 / code **4006** explicitly reported the 10,000-neuron allowance exhausted. The adapter recognizes that specific message as well as documented code 3036, without retry or paid upgrade. This was many development runs, not five employer visits. Token-derived neuron estimates are separate from observed dashboard usage; no final exact dashboard total was captured after exhaustion.
+
+**Regression verification:** **126 passed, one opt-in theory skipped**, after the final model/protocol change and whole-identifier boundary test. Exact input/tool/schema counting excludes generation-only temperature, which is added after counting. Budget concurrency, uncertain reservations, duplicate settlement, provider errors and output truncation remain covered. TypeScript, scoped Prettier and `git diff --check` passed. The stricter identifier boundary rejects a prefix such as DEMO-EIN as a substitute for the full source identifier.
+
+**Local browser journey:** the existing no-typing Playwright journey passed against the real C# API, PostgreSQL and selected OpenAI snapshot (20.0 seconds). It checked 18 initial drafts, explicit fictional reply/continuation, the actual source passage, four human-only sample actions, both page submissions, all 23 saved submitted items, reload and restart. Screenshots are in `.local/content-snare-evidence/`; the completed desktop image was visually inspected. This uses loopback HTTP, not hosted HTTPS, and does not establish production acceptance. The local API and Vite remain available at http://127.0.0.1:5622/l/instructions for review. October conservative accounting after this journey is **US$0.602084**, including the unchanged two uncertain holds.
+
+**Release boundary:** no production endpoint, hosted database migration, deployment, CI release, portfolio or video update. Production intake routes remain disabled. Local browser verification is recorded separately from the nine real-model API cases.
+
+Official references: [GPT-5.4 model, snapshot and pricing](https://developers.openai.com/api/docs/models/gpt-5.4), [input counting](https://developers.openai.com/api/docs/guides/token-counting), [spend limits](https://developers.openai.com/api/docs/guides/spend-limits), [Cloudflare pricing](https://developers.cloudflare.com/workers-ai/platform/pricing/). PMB tools are not exposed in this session; no prepare/recall/record call is claimed.
+
+## Historical Cloudflare setup plan — superseded by the measured checkpoint above
+
+Dexter withdrew the proposed paid OpenAI option and selected Cloudflare Workers AI Free. The direct C# adapter is implemented locally behind IIntakeModelClient; no production endpoint, release, hosting, CI or portfolio change. The candidate is pinned to @cf/meta/llama-3.3-70b-instruct-fp8-fast, documented with native tools and JSON Mode. Live account/model eligibility and the nine-case matrix remain pending credentials. The earlier Ollama 9/9 is baseline only.
+
+Deterministic verification: **105 passed, one opt-in live theory skipped**; includes 13 new adapter cases for limits, current tool allowlist/history translation, usage, safe errors, no outbound call without configuration, quota/capacity/access failures without retry, and bounded input/response reads. The additional pipeline case proves that quota failure after accepted drafts preserves them, consumes the outbound call, replays without inference and allows manual completion. TypeScript, isolated Vite build, scoped Prettier and git diff --check passed. One initial build attempt encountered the already-running API's Windows assembly lock; the exact project API process was verified/stopped and the successful run followed. Do not count that failed build as a model evaluation.
+
+### Cloudflare setup and evaluation
+
+1. Verify this account uses **Workers Free**, without a billing upgrade or prepaid AI Gateway credits. Domain Free is not evidence of the Workers plan. The published free limit is 10,000 neurons/day, resetting at 00:00 UTC. Quota error 3036 must stop inference, never upgrade/retry/fallback. A future plan change requires rechecking the $0 boundary.
+2. Provision an account-scoped, least-privilege Workers AI inference token through Cloudflare. Credential creation requires the applicable browser action-time confirmation. Never put a real token in chat, repository config, screenshots or evaluation evidence.
+3. Store only the following settings in ignored .local/cloudflare.env (or server-side environment variables); replace the placeholders locally:
+
+~~~text
+Intake__Cloudflare__AccountId=<account-id>
+Intake__Cloudflare__ApiToken=<workers-ai-token>
+~~~
+
+~~~powershell
+pwsh -NoProfile -File scripts/intake-local.ps1 evaluate -Provider Cloudflare
+pwsh -NoProfile -File scripts/intake-local.ps1 api -Provider Cloudflare
+~~~
+
+The script explicitly selects the provider, imports only those two allowed settings and forces the project loopback PostgreSQL connection. Ordinary tests disable live inference. API credentials stay in C#; the browser never calls Cloudflare directly. Missing configuration fails without inference. Ollama remains the default local mode, not a hosted failure fallback. Production intake routes remain unmapped.
+
+Record all nine outcomes (complete/missing/conflict × 3), latency, persisted call counts, source/manual-action assertions and input/output tokens in a unique .local/intake-evaluation/cloudflare-* directory. Capture dashboard allowance before/after where available. Per-call estimatedNeurons uses published 26,668 input / 204,805 output neurons per million tokens for this model, checked 25 October 2026; it is an estimate, not observed dashboard usage. Do not substitute token-derived estimates for measured allowance consumption or claim a pass while credentials/access are missing.
+
+Official provider references: [REST API](https://developers.cloudflare.com/workers-ai/get-started/rest-api/), [candidate model](https://developers.cloudflare.com/workers-ai/models/llama-3.3-70b-instruct-fp8-fast/), [JSON Mode](https://developers.cloudflare.com/workers-ai/features/json-mode/), [traditional tools](https://developers.cloudflare.com/workers-ai/features/function-calling/traditional/), [pricing](https://developers.cloudflare.com/workers-ai/platform/pricing/), [quota/access errors](https://developers.cloudflare.com/workers-ai/platform/errors/). PMB tools are not exposed in this session; no prepare/recall/record call is claimed.
+
+## Local C# / real AI checkpoint — 25 October 2026
+
+Dexter authorised the local backend and real AI connection to this reference interface, with no live app/website change. The local feature now uses C#/ASP.NET Core, PostgreSQL and installed Ollama qwen3.8:27b. Native tool calls and schema-constrained extraction replace canned filling; browser storage was removed. Production does not map the new intake endpoints. Existing UI layout and fictional external actions are preserved.
+
+| Phase | Current evidence / boundary |
+| --- | --- |
+| A0 | Real local model/tool/schema capability verified. No key/cloud/billing account; public hosted provider remains future work. |
+| A1 | Owned PostgreSQL aggregate, command/version checks, budgets/claims, source validation, model adapter and explicit submission rules implemented. |
+| A2 | Reference interface connected by same-origin Vite proxy to the local API; server drafts/status/source inspection/reply continuation/edits/submissions. |
+| A3 | Deterministic and live evaluations below; browser/visual checks completed before handoff. User review and deployment remain separate. |
+
+### Exact local commands
+
+~~~powershell
+pwsh -NoProfile -File scripts/intake-local.ps1 setup
+pwsh -NoProfile -File scripts/intake-local.ps1 api
+node node_modules/vite/bin/vite.js --config preview/content-snare/vite.config.ts
+~~~
+
+Ollama must run on loopback 11434 with cloud disabled and the installed model available. API uses 5080, Vite 5622, project PostgreSQL 54329. Open [local Instructions](http://127.0.0.1:5622/l/instructions). The setup helper creates ignored random local database credentials if missing and applies the additive migration only to the fixed loopback database; it never inherits a hosting connection.
+
+On Windows, stop the API before .NET rebuild/test because its assemblies are locked while running. Start it again afterwards. Keep API, Vite and Ollama running for user review.
+
+~~~powershell
+pwsh -NoProfile -File scripts/intake-local.ps1 test
+pwsh -NoProfile -File scripts/intake-local.ps1 evaluate
+node node_modules/typescript/bin/tsc -p preview/content-snare/tsconfig.json --noEmit
+node node_modules/@playwright/test/cli.js test --config preview/content-snare/playwright.config.ts
+node node_modules/vite/bin/vite.js build --config preview/content-snare/vite.config.ts
+~~~
+
+Normal .NET tests explicitly disable live inference and use disposable project-local databases. Evaluate is an explicit local-model call, never normal CI. The separate browser suite calls this live local API/model and requires services. UI output stays in ignored preview/content-snare/dist/ and does not replace the published app's static files.
+
+### Verification and failed attempts
+
+- Deterministic .NET suite: **91 passed**, one opt-in live theory skipped. New cases cover tool/source/manual boundaries, exact source reconstruction, CSRF/ownership/expiry, command replay/conflicting inputs, version checks, invalid submission, source changes, timeout, six-call limits, concurrent starts, dead-claim expiry/late completion and Production route absence. Older workflow/security tests remain passing.
+- Final live evaluation: **9/9 passed** in .local/intake-evaluation/20261025-103400-5b8b82e4/. Three complete, three missing-detail/resume and three conflicting-source cases. Complete/conflict runs used four calls, resumed runs six. Observed warm end-to-end evaluation times: 4.10–6.40 seconds on this computer. Initial model warm-up was 12.94 seconds; this is not a general latency guarantee.
+- Source inspection confirmed correct fixture values/passages, recurring year-end without an invented year, conflict clarification instead of guessing, and plans retained as future actions. All outputs remained drafts; the four manual tasks were absent until explicit user actions. Small fixed-fixture evaluation does not establish general reliability or automatic semantic verification.
+- Earlier attempts are retained: initial full matrix 6/9 (invented year in annual date); next 3/9 (malformed structured output); schema-constrained output then 9/9; final future-tense assertions also 9/9. Initial ad-hoc tool probe was rejected by automatic approval review with only 'blocked by policy'; actual verification then used the application-enforced read-only tools. The implementation first found wasted tool rereads and omitted negative/default facts; single-read availability and explicit required-field continuation corrected them without raising the six-call budget.
+- Per-case snapshots, trace/tokens/timing and prompt/source metadata are under unique ignored evaluation directories. A build-locked attempt produced no evaluation cases. TRX reports in .local/reports describe the last command; unique JSON directories retain earlier runs. No hidden thinking, provider keys or browser/session credentials are included in those evaluation snapshots.
+
+**Browser verification:** four Chromium journeys passed against the actual local C# API, PostgreSQL and Ollama, including the 23-item no-typing flow, source/edit/submission and question persistence, refresh/restart, keyboard/modal operation and 390px/320px layouts. An early preview-era five-second wait and undefined-vs-null assertion were corrected for asynchronous persisted API responses; the UI required no alternate flow. A new recording captures actual six-call local inference and source inspection; the welcome caption now labels it as real local AI. Screenshots and the recorded local walkthrough are under .local/content-snare-evidence/ and preview/content-snare/public/. Prior HTML wireframes and the earlier simulated recording are historical, not agent evidence. PMB tools were unavailable; no prepare/recall/record call is claimed.
+
+### Scope and engineering audit
+
+One fixed field/source specification; one owned request table with bounded JSON state/version; existing sandbox/security infrastructure; narrow model HttpClient contract; pure validation and aggregate transactions; inference outside locks; application-owned writes; visitor-owned submissions. No agent framework, separate Python service, generic repository, scheduler, chat mode or financial integration. No deployment, hosting/CI setting, portfolio or remote database change.
+
+The dated sections below concern the earlier application and are preserved as historical infrastructure evidence.
+
+## Purpose
+
+The harness is the repeatable way an agent starts the project, changes one bounded piece, checks it and leaves reviewable evidence. It combines repository instructions, reproducible fictional data, local tools, executable checks and a short handoff. It is separate from the onboarding automation inside the product.
+
+[PLAN.md](PLAN.md) owns acceptance IDs and scope; [AGENTS.md](AGENTS.md) defines working rules. Do not create parallel GOALS, PROMPTS, per-phase plans or status files for the same information.
+
+## Work loop
+
+1. Read the relevant plan/acceptance IDs and applicable agent instructions. Inspect repository status and preserve unrelated user changes.
+2. State the bounded outcome and relevant paths. Record pre-existing failures separately from the proposed change.
+3. Use isolated fictional fixtures. Implement only the authorised slice; keep optional ideas in the plan's backlog.
+4. Run the smallest meaningful checks, then the slice's required integration/browser checks. Inspect changed UI at desktop and phone widths when applicable.
+5. Review the diff for scope, regressions, credentials and claims. Record what actually ran, its outcome and any limitation.
+6. Leave a concise checkpoint: completed acceptance IDs, changed files, evidence, unresolved issues and the next permitted step. Stop at the agreed milestone boundary; passing checks does not authorise deployment.
+
+Dexter authorised source assessment/foundation, the workflow/reliability/UI slices, final local review, the source package and hosting/setup checks on 19 October 2026. He rejected card verification and later authorised Deplexo Free + Neon Free setup and hosted acceptance, with no card or paid upgrade. He completed signup/sign-in after the warning checkpoint. That bounded deployment is permitted; source publication, employer distribution and website linking are not. Alwaysdata remains unsubmitted. Local checks or published pricing do not establish account/runtime acceptance.
+
+## Planning exit: CP-1
+
+This is the final scheduled planning pass, following Dexter's instruction on 19 October 2026 to avoid indefinite planning. The checkpoint has five completion conditions:
+
+1. PLAN.md fixes the version-one scope, exclusions and acceptance IDs.
+2. The walkthrough defines the main project screen and correction-to-kickoff journey.
+3. The architecture defines the accepted stack and working data/state design, including approvals, repeats, three attempts total and fixed 24-hour expiry.
+4. This harness defines the first implementation slice and required evidence.
+5. The five documents agree, their links work and no material requirement remains contradictory.
+
+**CP-1 is complete; no further general planning round is scheduled.** A working build, exact migration/route definitions, package versions, final spacing and hosting-account proof are not planning-exit requirements. Resolve them in their execution milestone. Reopen planning only for a concrete material blocker or Dexter's changed scope, using one focused decision in the existing documents.
+
+Dexter's subsequent instructions authorised the foundation, main slice, reliability/simulated handoff, UI/demo-readiness, source package and hosting checks below, followed by alwaysdata Free setup/hosted acceptance. Stop for review before employer distribution or source publication.
+
+## Milestones
+
+These are execution boundaries. Foundation, the main slice, reliability/simulated handoff and UI/demo readiness were authorised. Public release and deployment remain gated by Dexter's instruction after review.
+
+| Milestone | Exit evidence | Status |
+| --- | --- | --- |
+| CP-1 planning checkpoint | Consistent five-document scope, walkthrough, data/state rules, acceptance and foundation boundary. | Specification complete on 19 October 2026. No further general planning pass scheduled. |
+| Baseline and foundation | Safely restored baseline and recorded reuse decisions; real React/API/PostgreSQL session/project slice with verified setup, isolation, reset and expiry checks. | Completed earlier on 19 October 2026; its twelve API/database and three browser checks remain in the harness. |
+| Main vertical slice | The complete review/correction/kickoff journey genuinely uses the selected UI/API/database, with relevant checks passing. | Completed earlier on 19 October 2026: 21 API/database and five browser tests at that checkpoint. |
+| Reliability and simulated handoff | Repeated/overlapping actions reuse outputs, three-attempt welcome recovery/exhaustion works, and the persisted simulated register survives reload without false confirmation. | Completed earlier on 19 October 2026; checks remain in the combined suite. |
+| Employer UI and demo readiness | One bounded readability pass, keyboard/phone review and first-time human timing meet AC-08/AC-10. | UI implementation and local checks complete on 19 October 2026; stop for review. AC-10 human understanding/timing remains open, so full demo readiness is not claimed. |
+| Version-one source/presentation preparation | Commit reviewed source locally; add clear setup instructions and short case-study/recording-script drafts. Stop for review. | Authorised on 19 October 2026; package below. No push, video recording, public release or deployment. |
+| Hosting validation | Check ongoing free operation without card verification for one app and PostgreSQL, plus usable startup. Stop for review. | Alwaysdata's published plan and local resource probe pass on 19 October 2026; actual free-account eligibility, quotas/filtering and hosted startup remain open. Northflank is excluded and self-hosting needs unavailable hardware. No workload deployed. |
+| Version-one publication review | Retain application/simulated-handoff evidence, human timing, free-plan/account fit, source and completed demonstration media. A real Make/Sheets connection is not required. | Remaining release gates below; deployment is a later explicit instruction. |
+| Later connected proof | Separately scope and verify owner-run Make/Sheets execution with matching destination evidence. | Deferred beyond version one by Dexter on 19 October 2026. |
+
+### Foundation milestone boundary: completed
+
+The authorised slice contained these outcomes and stops here for review:
+
+- Restore/inspect the preserved prototype without overwriting the five current documents. Record what its build/checks actually do, pre-existing failures and concrete retain/repair/replace/retire decisions.
+- Establish the accepted React/TypeScript and same-origin ASP.NET Core/PostgreSQL foundation. Verify compatible installed versions; retain useful frontend work and the existing lockfile approach where appropriate.
+- Implement only sandbox creation/load/reset, server-enforced fixed 24-hour expiry, two seeded projects and real project reads displayed by React through the C# API/database.
+- Record exact local setup/start/stop/check commands. Retain frontend type/build and C# build results, plus PostgreSQL-backed checks for persistence, isolation, reset and expiry. Confirm the browser shows persisted project data after refresh.
+- Stop with evidence and unresolved baseline issues. Approvals, welcome recovery, the complete workflow, simulated publication and deployment belong to later milestones.
+
+Do not delay this slice to select a public host, polish the entire interface or design every endpoint. If a baseline cannot run, retain the failure evidence and make the smallest in-scope repair needed for the foundation.
+
+### Main vertical slice boundary: completed
+
+The authorised slice adds normal Start onboarding; the fixed information request and review task; successful simulated welcome preparation; the original sample reply; revision-specific approvals; Pages correction with a required comment and simulated Outbox message; a new Pages revision requiring approval; and explicit Mark ready with a saved approved brief and closed review task. Activity records actor, outcome and time throughout.
+
+The prepared correction is Pages-only. Earlier Goals/Assets approvals survive that correction. After Ready, replies/reviews are read-only; the brief reloads from its stored snapshot. Basic uniqueness, expected-version and ownership guards are part of these business operations. They do not establish the dedicated repeat/concurrency/recovery acceptance milestone.
+
+This historical slice stopped before recovery/publication work. Dexter subsequently authorised reliability and the simulated handoff below. Existing successful welcomes must count as the initial attempt during upgrade; restoration/migration cannot give them a fresh budget.
+
+### Reliability and simulated handoff boundary
+
+Implement only repeated/overlapping Start and Publish, the OF-1043 welcome failure/recovery, three total attempts including the first, explicit Restore/Try welcome, and a persisted simulated register snapshot. Preserve existing approved work and the fixed sandbox boundary. Add only WelcomeAttempt and RegisterEntry, with a small availability field on Onboarding; keep the existing app/test projects, direct EF and package set.
+
+Required evidence covers exact retry replay, conflicting reuse/expected counts, exhaustion after Restore, transaction rollback, lost HTTP confirmation, migration preservation and ownership/expiry/reset for the new routes. Stop for review after these checks and local visual inspection. Plan the user-requested UI simplification in the walkthrough; do not fold a full redesign or deployment into this milestone.
+
+### Employer UI/demo-readiness boundary
+
+Dexter authorised the planned UI pass on 19 October 2026: shorter copy, larger text, contextual next actions and secondary details on demand. Reuse the existing React/CSS and native details, with no new business feature, dependency or API/schema change. Retain scope blockers, simulation labels, uncertainty/reload feedback, expiry and the consequence of resetting both projects.
+
+Verify the existing review/correction/ready/handoff and recovery journeys against the revised UI. Check keyboard disclosures/focus, desktop/phone legibility, no page overflow and reaching a useful review state in two actions. Stop for local review after those checks. A first-time human walkthrough and usable post-inactivity hosting measurement are separate evidence; automated interaction time cannot substitute for them.
+
+## Command registry
+
+Run from the repository root in **PowerShell 7**. Prerequisites are Node 24/npm, .NET SDK 10.0.402 (pinned in global.json), and Docker Desktop running Linux containers. This machine uses the verified .NET 10 SDK under `.local/dotnet`; the script prefers it, otherwise it uses installed `dotnet`. A fresh checkout needs the pinned SDK from [Microsoft's .NET downloads](https://dotnet.microsoft.com/en-us/download/dotnet/10.0). No global SDK was replaced.
+
+Install, initialise the local database, build the screen and run the preview:
+
+```powershell
+npm ci
+npm run setup
+npm run build
+npm run api
+```
+
+The C# application serves the built React screen and API together at **http://127.0.0.1:5080**. For frontend editing, keep `npm run api` in one terminal and run `npm run dev` in another; Vite uses **http://127.0.0.1:5173** and proxies `/api` to port 5080. Keep the same hostname throughout so browser cookies stay scoped consistently.
+
+Both startup commands were exercised. The built preview returned HTTP 200; a Vite-proxied CSRF/session/project smoke check returned OF-1042 and OF-1043 from the C# API. Setup was rerun after migration creation and reported an already-current database. At handoff the built preview remains running on port 5080; the Vite smoke-check process was stopped.
+
+`setup` creates a random local database password in ignored `.local/database.env`, starts only this project's PostgreSQL container, restores the solution/EF tool, applies the checked-in migration and installs Playwright Chromium. It preserves an existing development database. PostgreSQL is bound to `127.0.0.1:54329`; its persistent development database is `onboardflow_dev`. Do not publish the local credentials or commit `.local`.
+
+Verification entrypoint and formatting check:
+
+```powershell
+npm run verify
+npm run format:check
+```
+
+`verify` builds/types-checks React, builds the C# solution, runs PostgreSQL-backed API checks, then runs the browser suite against the built application on port 5081. API tests create/drop a uniquely named `onboardflow_test_*` database. Browser checks create/migrate/drop a separate `onboardflow_browser_test_*` database and refuse to reuse an already running server. Neither suite resets the development database. API tests also refuse a connection outside this project's loopback PostgreSQL endpoint. Browser configuration refuses a missing/non-test connection; its refusal was checked separately. No in-memory/SQLite substitute is used.
+
+Retained local output: `.local/reports/foundation.trx` contains combined API/database results; `playwright-report/index.html` contains browser results. Counts are recorded below. Captures under `.local/reports` include employer-entry, employer-review, foundation, main-review, main-brief, handoff and welcome-recovery desktop/phone states. Reports, local state, SDK and generated assets are ignored by Git. The source package now records the application in a local commit; the legacy tree stays preserved separately. CI has not run; reuse these same checks when CI is added within an authorised slice.
+
+Stop the API/Vite terminal with Ctrl+C. `npm run stop:db` stops the project's container while retaining its volume. Restart it with `npm run setup`. The on-screen **Reset both sample projects** button replaces only the current visitor's sandbox; it is the supported demo reset, not a database-wide command.
+
+The legacy npm commands apply only inside `.local/legacy-baseline`; no old deployment scripts were restored into the current application. Preserve npm and its lockfile for the reused frontend.
+
+## Fixture and evidence contract
+
+- Seed only Juniper Studio, OF-1042, OF-1043 and the required fictional replies/assets. Tests use a separate disposable local database and cannot reset the development database or a shared remote database.
+- Make provider behaviour deterministic: normal completion, the selected welcome failure, recovery, repeated action and uncertain handoff confirmation where applicable. Keep tests independent of provider quotas and timing tricks.
+- Reference the acceptance IDs from PLAN.md rather than restating the requirements here. Every claimed pass identifies the actual check and target it exercised.
+- Distinguish domain/API/database checks, browser checks against the running application, visual review and human timing. A canned mockup cannot satisfy AC-11.
+- Measure a fresh visit after hosting inactivity as well as the warm walkthrough. Dexter ruled out a minute-long startup wait; a quickly rendered shell does not establish that the application is usable.
+- Record the source revision or snapshot, command, result and relevant report/capture location. Keep detailed generated reports out of narrative documents; retain only evidence needed to assess the change.
+
+### Required scenarios and retained workflow checks
+
+These specify version-one checks. The evidence below distinguishes verified local workflow/reliability behaviour from pending human timing, UI readability and public hosting acceptance.
+
+| Acceptance | Evidence to produce in the relevant slice |
+| --- | --- |
+| AC-01, AC-06 | Repeated/overlapping Start and Publish preserve identities and counts. After a lost response, reload/replay finds the committed output; rollback cannot produce false confirmation. |
+| AC-02, AC-03 | Accept the original sample reply into review but reject approval of Shop. Require a correction comment. A corrected Pages reply creates one new revision, retains the old decision and leaves unchanged Goals/Assets approvals intact. Reject stale/conflicting decisions; exact replays do not duplicate effects. |
+| AC-04 | Reject premature readiness. Mark ready snapshots current approved revision IDs and closes the review task. Repeats return the same brief/time; later reply/review edits are blocked. |
+| AC-05 | Fail welcome attempt one, restore service and succeed on attempt two. Replaying one command consumes no further attempt; overlapping commands cannot overrun the expected count. Three failures exhaust the project budget; restore does not permit a fourth. Other-project work and its budget remain independent. |
+| AC-07 | Use two isolated visitor sessions. Refresh retains active work without extending expiry. Check immediately before and at the fixed deadline. Reset replaces only that visitor's two projects, invalidates old credentials and prevents late responses restoring old state. Delayed physical cleanup never permits expired access. |
+| AC-08, AC-09 | Inspect keyboard/phone states, correction and retry feedback, explicit expiry restart, simulation labels and Activity. Restart never automatically replays an expired mutation. |
+| AC-10, AC-11 | Run the actual target stack, then retain first-time walkthrough and usable post-inactivity timing before publication. |
+
+## Current evidence and limitations
+
+On 19 October 2026 the original Git tree `01505e94b0c309ba8138dffe8bb4ce7846ab1d54` remained protected by `codex/legacy-prototype-2026-10-19`. It was restored to `.local/legacy-baseline` for assessment without overwriting the current documents. In that copy, `npm ci` and `npm run verify` succeeded (two test files, 33 tests); `npm run format:check` failed in 37 files. This is retained as a pre-existing formatting issue. The source/reuse assessment is in the architecture document.
+
+| Current check | Result and practical limit |
+| --- | --- |
+| Frontend build/type check | `npm run build` passes with retained React/Vite/TypeScript dependencies; output is served by ASP.NET Core. |
+| C# solution build | Passes with zero warnings and zero errors using .NET SDK 10.0.402 and aligned EF 10.0.13 packages. |
+| AC-07 foundation/API/database checks | The twelve foundation tests continue to pass against PostgreSQL 17.11: seeded identity, fixed lifetime, isolation, reset, old-cookie rejection, expiry, hash/cookie/CSRF protections and database constraints. Workflow-specific ownership/expiry/reset checks were added below. |
+| AC-11 foundation/browser checks | The three original Chromium checks remain: persisted data/refresh/project switching, two-visitor reset/isolation, phone layout and keyboard operation. |
+| Target frontend formatting | `npm run format:check` passes for the current frontend/browser/config scope. It does not claim the archived prototype's formatting was fixed. |
+| Visual review | Current employer entry/review, correction, brief/handoff and welcome recovery captures were inspected on desktop 1280px and phone 390px. Larger type, collapsed metadata, visible scope context and contextual actions fit without horizontal page overflow. Final employer judgement and first-time timing remain part of review. |
+
+### Main-slice evidence on 19 October 2026
+
+At the earlier main-slice checkpoint, `npm run verify` passed **21 API/database tests and five browser tests**. Formatting and both builds passed. The current combined results are below. No package or infrastructure was added for either workflow slice.
+
+| Acceptance coverage | Evidence retained |
+| --- | --- |
+| AC-01 normal setup | Two projects for the same client obtain distinct Onboarding/request/task identities. At this earlier checkpoint both welcomes succeeded; new OF-1043 onboardings now deliberately fail their first welcome. |
+| AC-02 through AC-04 | API tests reject approval of Shop, missing correction comments, old revisions/versions and premature readiness. Correction retains other approvals and old decisions; explicit readiness stores only approved content, closes the task and freezes replies/reviews. Reload and repeated Mark ready retain the stored brief. |
+| AC-07 current workflow operations | Each workflow endpoint rejects another visitor's project and expired credentials. Reset cascades replies, decisions, Outbox and Activity while another visitor remains intact. |
+| Main-path AC-08/AC-09/AC-11 | Both desktop and phone browser cases execute Start, simulated reply, Goals/Assets approvals, Shop correction, corrected Pages approval and Mark ready. They inspect Outbox/Activity, validate brief persistence on refresh and report no page runtime errors. Phone checks also exercise tab keyboard navigation. This is not a full accessibility/readiness audit or a human timing result. |
+
+### Reliability/handoff evidence on 19 October 2026
+
+The additive schema now contains nine business tables. WelcomeAttempt and RegisterEntry extend the seven-table main slice; the brief remains a JSONB snapshot. No queue, job framework, new dependency or external infrastructure was added.
+
+At the reliability checkpoint, `npm run verify` passed **30 API/database tests and eight Chromium browser tests**, with both builds and formatting passing. Handoff/recovery captures at 1280px desktop and 390px phone were inspected. The subsequent UI pass below addresses Dexter's feedback about dense context and small supporting type.
+
+| Acceptance coverage | Evidence retained |
+| --- | --- |
+| AC-01 repeated/overlapping setup | Five concurrent Start requests and a later replay retain onboarding/request/task/item identities, one successful welcome, one attempt and unchanged history. Failed welcome repeats retain setup and consume no additional attempt. |
+| AC-05 welcome accounting | API checks cover attempt-one failure, idempotent Restore and success on attempt two; exact command replay, conflicting command inputs, same-command overlap and distinct overlapping retries. Three failures exhaust only that project, Restore cannot permit a fourth, and Reset creates a fresh sandbox budget. |
+| AC-05 upgrade/rollback | A genuine old-schema-to-current migration preserves the existing welcome identity/time and backfills attempt one. PostgreSQL failure during the final Activity insert rolls back the entire welcome attempt/message while retaining previously committed core setup. The same command can then succeed without an extra budget charge. |
+| AC-06 simulated register | Premature Publish is rejected. Five overlapping publishes, a read after discarded confirmation and later replay retain one row/reference/time and the frozen approved brief. Database failure during final Activity insert leaves Ready/brief intact and no false register confirmation. |
+| AC-07 expanded boundary checks | Restore, Try welcome and Publish reject another visitor's project and exact-expiry credentials. Reset cascades attempt/register records as well as workflow data, while another visitor retains their work. |
+| AC-08/AC-09/AC-11 browser coverage | Desktop and phone main journeys reach persisted handoff. Browser interception commits the desktop handoff, loses its response and verifies actions stay blocked until Load saved state finds the real confirmation. Recovery cases cover repeat Start, keyboard Restore, attempt-two success and reload; the desktop welcome response is also lost and recovered by reading. Exhaustion/Restore/Reset has its own case. |
+
+The first browser run exposed a test timing issue: keyboard focus was sent to Restore while Repeat Start was still saving. The test now waits for the visible control to become enabled before focusing and pressing Enter; no arbitrary delay was added.
+
+`npm run setup` applied the additive Reliability migration to the existing development database without resetting saved work. The preview is running at http://127.0.0.1:5080. Already-successful OF-1043 welcomes remain successful after upgrade; use Reset both sample projects if a fresh failure/recovery exercise is wanted. Reset also clears the current visitor's OF-1042 work, as labelled.
+
+At the reliability checkpoint Northflank was only a candidate; it is now excluded by the no-card requirement below. Hosted capacity/startup, first-time walkthrough timing, connected integration, CI and live deployment remain unverified. No application was deployed or connected provider write performed.
+
+### Employer UI evidence on 19 October 2026
+
+The pass changes only App.tsx, OnboardingPanel.tsx, styles.css, relevant browser checks and the existing five documents. No dependency, schema, API or infrastructure change was needed. The full existing business/reliability suite remains required, not substituted by visual snapshots.
+
+`npm run verify` passes **30 API/database tests and eleven Chromium browser tests**. Frontend type/build, C# build (zero warnings/errors) and `npm run format:check` pass. Current `.local/reports/employer-entry-*`, `employer-review-*`, `main-review-*`, `handoff-*` and `welcome-recovery-*` desktop/phone captures were inspected. Reports remain `.local/reports/foundation.trx` and `playwright-report/index.html`.
+
+The two employer UI browser cases check an immediately visible Start action, collapsed project details accessible by keyboard, 16px action type and a 14px minimum for visible supporting text. Both reach review in two business actions with one prominent action, no premature Mark ready, and keyboard focus on the selected answer. Phone checks also cover reflow at 320px. An uncertain-review-response case verifies that changing answers retains the reload affordance and blocks further writes until saved state is read.
+
+Visual review caught a duplicated Project details section when switching projects: the new disclosure and workflow panel had shared a sibling React key. The disclosure now uses a distinct context key and browser checks assert one disclosure after switching. The phone header was also simplified to avoid wrapping against a redundant signed badge.
+
+For the remaining human check, use a reviewer unfamiliar with the demo and a fresh private browser session. Start timing when the usable workspace appears; stop when the simulated handoff is confirmed. Record elapsed time, role/task understanding, first two actions and any coaching required here. Target under five minutes without coaching. No human result has been supplied, so AC-10 remains open. Public cold-entry/post-inactivity timing waits for the separately authorised hosting milestone.
+
+### Final employer review on 19 October 2026
+
+**Verdict: the implemented version-one concept and journey make sense; no blocking application defect was found in this review.** Scope remains the signed project -> review/correction -> approved brief -> explicitly simulated handoff. No additional product features or architecture work are needed to move to release preparation. No application code, schema, dependencies or deployment settings were changed by this review.
+
+Reran `npm run verify`: **30 PostgreSQL-backed API/database tests and eleven Chromium browser tests pass**. Both builds and formatting pass. A supplementary agent-guided walkthrough used fresh private browser contexts at 1280px desktop and 390px phone against a separate disposable PostgreSQL database. It followed the visible Review Pages/Review Brand assets actions, not a pre-known alternate route through the checklist. Both devices reached review in two actions, required a correction comment for Shop, required fresh approval for revised Pages, saved an approved-only brief and confirmed a separate persisted register entry. Outbox/Activity, reload, repeat Publish, independent OF-1043 recovery and switching back to saved OF-1042 work were inspected.
+
+The supplementary review also expired only its disposable session in PostgreSQL, confirmed the explicit Start fresh screen and checked that a fresh sandbox did not replay an old mutation. There were no application runtime errors or requests outside the local application origin during these scenarios. The test server and disposable database were removed; the existing development sandbox was not reset. This is agent/browser evidence, **not a first-time human timing result** or a public hosting/complete accessibility audit.
+
+Evidence: `.local/reports/final-employer-review.json` records the scenario steps and application-file manifest/hash `373047a5be02ab3177725daabf11e6f33d8661f62adb140de4eb8767429f8537`. Captures are `final-entry-*`, `final-scope-*`, `final-ready-*`, `final-confirmed-*` and `final-expired-*` under `.local/reports`. Entry, scope correction, ready/handoff and expiry captures were visually inspected. The maintained harness results remain `foundation.trx` and `playwright-report/index.html`.
+
+| Remaining gate | Smallest completion evidence |
+| --- | --- |
+| First-time human walkthrough (AC-10) | An unfamiliar person understands the project manager role, reaches useful review within two actions and completes the main flow in under five minutes without coaching. Record actual time/help required using the protocol above. |
+| Hosting/account and startup acceptance | Alwaysdata passes published-plan and local resource checks below. Verify no-card Free eligibility/features, actual resource accounting, restricted-mode requests and usable post-idle entry on the provider before acceptance. Northflank stays excluded. Deployment needs a separate instruction. |
+| Source and presentation package | At this review the application had no commit and the remote had no branches. The subsequent authorised package below adds a local source commit, setup README and case-study/script drafts. Source publication and an actual reviewed recording remain pending; local test captures and a script do not replace the recording. |
+| Deployment instruction | Dexter's later instruction authorises alwaysdata Free setup and hosted acceptance only. Stop for review before employer distribution or source publication. |
+
+One optional copy refinement remains: Waiting for correction says to review corrected Pages before that sample has been loaded. The nearby Load Maya's corrected Pages button makes the action clear and both walkthroughs completed; changing the instruction to say Load first would be polish, not a release blocker. Phone review involves vertical scrolling, but answer focus, readable type and visible scope/actions worked; no additional layout redesign is required by this review.
+
+AC-01 through AC-09 and AC-11 have local evidence appropriate to this demo; AC-10 remains partial. The real Make/Sheets connection stays deferred beyond version one. **Stop here.** Finish the listed evidence/release gates in the next authorised work; do not reopen general planning or add feature scope.
+
+### Version-one release package on 19 October 2026
+
+Dexter authorised a **local commit** of the reviewed source, clear setup instructions, a short case study and a demo recording script, then a stop for review. This is preparation for deployment, not permission to deploy, push source, publish a release or create hosting resources.
+
+| Artifact | Role and limit |
+| --- | --- |
+| README.md | Employer/developer entry, verified Windows prerequisites, setup/start/check/stop commands, workflow and simulation limits. The SDK, database credentials and generated build assets are not bundled. |
+| docs/case-study.md | Short review draft grounded in the current app and local evidence; no production use, business savings, connected provider result or human timing is claimed. |
+| docs/demo-recording-script.md | Approximately three-minute main take and optional recovery segment, with exact UI actions and truthful narration. Pacing is a target. No video has been recorded. |
+| Local Git commit | Current application, tests, migrations, lockfile, relevant docs and original assets on `codex/version-one-release-package`. The preserved legacy tag is separate; local credentials, SDK, database state and generated reports/assets remain excluded. No release tag or remote write. |
+
+Keep the five working documents as planning/verification authorities. These release artifacts are the user-requested outputs, not another roadmap. Stop for review once the source package is committed and its setup/check evidence is recorded. Human AC-10 evidence, hosting/account/cold-entry acceptance, a reviewed actual recording and remote publication/deployment remain later gates.
+
+Package verification: exported the staged source into a new ignored checkout with no copied prototype, node_modules, built frontend or bundled SDK. With the installed Node/.NET prerequisites and existing local PostgreSQL service, `npm ci`, .NET solution/tool restore and `npm run verify` passed: **30 API/database tests, eleven browser tests and zero C# build warnings/errors**. The first export then failed formatting because Windows Git converted text to CRLF. A minimal `.gitattributes` LF rule makes checkout line endings match Prettier; the corrected export/check result is recorded below. Only the local database credential file was supplied outside the source; the harness still created/dropped disposable test databases. This verifies the source package with installed prerequisites, not a second machine's Docker installation or public hosting. Export path is retained in ignored `.local/release-export-path.txt`; its reports are inside that export's `.local/reports` and `playwright-report`.
+
+The corrected LF export passed the complete build/API/browser harness again, and `npm run format:check` passed. The canonical checkout's formatting check also passed. All 38 local Markdown link targets resolve.
+
+Reviewed the 61 staged paths for local/generated output and checked credential patterns, including the actual ignored local database password; none were included. Whitespace checks pass for application/new package files. Two extra-blank-line-at-EOF notices remain in the dated research documents, whose historical content was preserved. The existing legacy tree/tag is unchanged. No package version/release tag, dependency, application behavior or hosting configuration was changed.
+
+### Earlier hosting desk validation on 19 October 2026
+
+This pass checked current official Northflank pricing, plan/payment, card, compute-quota, database and billing documentation, and rechecked Render's excluded free-plan behaviour. Detailed findings and source links are in the [architecture document](docs/architecture.md#hosting-feasibility-checked-on-19-october-2026). The application serving/build configuration was inspected; it already combines React and the C# API, with PostgreSQL supplied by configuration. No application, dependency, schema or hosting configuration was changed.
+
+| Check | Result and evidence limit |
+| --- | --- |
+| Published ongoing free shape | Northflank advertises always-on Sandbox compute, two services and one database; its database list supports PostgreSQL 17. One application service and one PostgreSQL addon fit on paper. No trial-credit dependency or separate frontend service is proposed. |
+| Account and cost | Dexter signed in through GitHub. The account's initial setup offers Developer Sandbox Free with two services, two jobs and one addon. Setup remains unsubmitted; no active plan allocation, region, exact free CPU/RAM/storage/build/egress allowance or overage behaviour was verified. A payment method is required by the docs; alerts and billing thresholds do not establish a hard $0 spending cap. This gate remains open. |
+| Startup behaviour | Published no-sleep policy is promising. No hosted runtime or fresh/post-inactivity measurement exists; local timings cannot pass this check. Render Free remains excluded for its roughly minute-long wake-up and expiring free database. |
+| Frontend readiness | The frontend is implemented, with local desktop/phone/keyboard and workflow evidence above. No further visual design phase is needed. First-time human understanding and under-five-minute completion remain unmeasured. |
+| Verification for this pass | Official-source review, repository configuration inspection and documentation diff/link checks. The earlier 30 API/database and eleven browser passes remain the application evidence; they were not rerun for documentation-only changes. |
+
+That desk pass stopped before team setup. The later authorised account inspection and Dexter's correction below supersede its Northflank candidate status. Do not resume card verification or deploy there.
+
+### Account inspection, no-card correction and alternatives on 19 October 2026
+
+The authorised setup activated Developer Sandbox Free and automatically created Default. Its metadata was initialised in US Central to inspect the resource forms. Team/project billing showed $0.00 usage and $0.00 credits, with two services, two jobs and one addon unused. The app selector allowed 0.1 shared vCPU/256 MB or 0.2 shared vCPU/512 MB, one instance and no autoscaling; PostgreSQL 17 allowed 0.2 shared vCPU/512 MB and 6 GB NVMe. Larger compute/storage choices were disabled. Only unsubmitted drafts were used; no app/database/job was created.
+
+Both resource forms required a card. Dexter rejected that requirement and explicitly required the whole project to work without credit-card verification. **Northflank is therefore excluded, regardless of its free pricing.** Its setup pages were closed, no payment details were entered, and the empty team/project was left intact. The earlier screenshot `.local/reports/northflank-sandbox-plan.jpg` is historical account evidence, not a selected-host recommendation. The generic billing-health badge said payment method active, while the dedicated Payment methods list was empty and both forms required a card; the specific evidence governs. The displayed $50 billing limit was an invoice trigger, not a spending cap.
+
+Dexter requested research through OpenAlternative and confirmed no existing server/spare computer is available. Official Coolify/Dokploy documentation confirms free self-hosted deployment software and a required user-provided Linux server. No tool was installed and no server purchase is proposed. This settles the open source self-hosting route for the available resources; do not repeat account setup for another tool without checking the full hosting arrangement first.
+
+The [architecture document](docs/architecture.md#no-card-candidate-checks-before-selection) records alwaysdata as a managed-host candidate. Official pages advertise an ongoing no-card personal free plan, .NET 10, PostgreSQL 17 and 256 MB RAM/1 GB shared disk. Its Free restrictions include the provider account hostname, non-profit use and no background Services. Website idle time is configurable, but processes may still stop; the background-Service workaround is unavailable on Free. No account was created, software installed or workload deployed there. Capacity, eligibility, free-account settings and actual startup are unverified; it is not a confirmed replacement.
+
+Verification for this pass is signed-in plan/project/form inspection, primary-source review, and documentation diff/link checks. Application code, schema, dependencies and local fixtures are unchanged; the earlier **30 API/database and eleven browser passes** remain application evidence and were not rerun. No source push, provider message or app deployment occurred.
+
+**Stop for review.** Keep the existing stack and scope. The next bounded hosting feasibility check must establish no-card account eligibility, the actual app/data fit and usable fresh/post-inactivity entry. After separately authorised deployment, measure navigation to usable project data/Start and the first database-backed action: fresh, warm, at least one hour idle and overnight, without keep-alive pings. Production HTTPS/proxy/CSRF behaviour must also be verified. A roughly minute-long wait fails AC-10; a quickly rendered shell does not pass it.
+
+### Alwaysdata feasibility evidence on 19 October 2026
+
+Dexter authorised validation against the current app and PostgreSQL with no card and no long startup wait. Official sources document an ongoing personal Free offer, .NET 10, PostgreSQL 17, 256 MB RAM, quarter CPU and 1 GB shared file/mail/database storage. Restrictions and the smallest later hosted path are in the [architecture document](docs/architecture.md#no-card-candidate-checks-before-selection).
+
+`npm run build` and a framework-dependent Release `dotnet publish` with `--self-contained false -p:UseAppHost=false` passed. The unmodified published app then ran locally in the official Linux ASP.NET 10.0 runtime image in **Production**, capped at 256 MiB, no swap and 0.25 CPU. A temporary locally trusted test certificate allowed HTTPS/Secure cookies without changing app security or the Windows trust store. Its PostgreSQL 17.11 database was isolated from development and owned only by this probe.
+
+| Check | Measured result and limit |
+| --- | --- |
+| Publish footprint | 33 files, 8,134,637 bytes (**7.76 MiB**), including the built frontend. The provider supplies the .NET runtime. No SDK/node_modules/source checkout needs uploading. |
+| Application memory | Peak cgroup memory **164.84 MiB**; no memory-limit or OOM events. A single app process was capped; the separate PostgreSQL server and provider overhead were not included. Actual account resource accounting remains to be confirmed. |
+| Database footprint | **8.05 MiB** after migrations, one visitor/two projects and the exercised main/recovery journeys. This does not establish a visitor capacity or sustained-growth limit. |
+| Local process startup | **4.78 seconds** from before process launch through HTML, CSRF, sandbox creation and project/onboarding API reads. Not a browser-rendering or hosted post-idle measurement. |
+| Business checks | 24 HTTP requests passed: normal Start/repeat, original review, Shop correction, revised Pages approval, approved brief, Publish/repeat, welcome failure/Restore/attempt-two success and five concurrent saved-state reads. This focused probe supplements the earlier full suite; it does not replace its three-attempt exhaustion/isolation/expiry checks or constitute a load test. |
+| Cleanup | The owned probe container and disposable database were removed; temporary credential/PFX files were deleted. The existing development database and preview were preserved. No app code, dependency, schema or public infrastructure changed. |
+
+Ignored local evidence is retained at `.local/alwaysdata-feasibility-65306bf21da643058732ac8cbf3ee5e9/result.json`, with HTTP timings and migration/runtime logs alongside it. The pointer is `.local/alwaysdata-feasibility-path.txt`; one-off probe commands are `.local/alwaysdata-check.ps1` and `.local/alwaysdata-probe.mjs`. These are local validation artifacts, not a new checked-in test framework or deployment dependency.
+
+The account must remain in no-card **restricted mode**, which applies stricter HTTP filtering and can add latency. Free profiles also need periodic admin login (every 120 days during year one). Idle time can be configurable but processes may still stop; Free does not include the background-Service workaround. These are provider conditions, not application features to work around.
+
+**Verdict: published stack and local resource fit pass; hosted acceptance remains open.** No alwaysdata account, card, upload or public service was created. The next bounded step, after a deployment instruction, is the single native .NET website and managed PostgreSQL on the Free account, with trusted HTTPS/proxy settings and persistent data-protection keys. Verify real no-card GET/POST/cookies, migrations, account resource use and browser entry after restart, at least an hour idle and overnight without pings. Start must become usable and reach PostgreSQL; a fast shell alone cannot pass AC-10. Stop at any card/payment requirement or material quota/startup failure. Human walkthrough timing and the reviewed recording remain separate release evidence.
+
+Documentation review: 39 local Markdown targets resolve and `git diff --check` passes. The required `npm run format:check` passes. An additional Markdown-wide Prettier check reports existing table-format differences in PLAN.md, HARNESS.md, README.md and architecture.md, also present at HEAD; no broad formatting rewrite was made. The earlier full 30 API/database and eleven browser checks were not rerun for this documentation-only update; the new resource probe is the additional application evidence.
+
+### Alwaysdata setup preparation and access checkpoint on 19 October 2026
+
+Dexter authorised Free account setup, deployment and hosted acceptance, with no card/paid upgrade and review before employer distribution. The supplied sign-in was rejected. Dexter then attempted registration; the resulting automatic sign-in reached an access error. A normal sign-in also rejected the supplied password. The open normal login page is left for Dexter to sign in or recover his password directly. This does not establish whether registration completed successfully; do not create duplicate profiles or keep retrying rejected credentials. No password, login token or provider secret is retained in these documents or release artifacts.
+
+Independent preparation is complete: the current frontend/Release publish, a 33-entry application ZIP and an idempotent migration SQL script are in the ignored directory identified by `.local/alwaysdata-release-path.txt`. The SQL applied twice successfully to an owned disposable PostgreSQL database, recording the same three migrations; that database was dropped. Archive contents and SHA-256 checksums are recorded alongside it. No upload or hosted database exists yet.
+
+Alwaysdata's documented HTTP proxy requires the original HTTPS scheme. Program.cs now enables only `X-Forwarded-Proto` processing from ASP.NET's default trusted loopbacks or exact configured `ReverseProxy:KnownProxies` addresses. No dependency, cookie weakening, arbitrary-forwarder trust or business feature was added. Actual provider addresses must be verified before configuring them. The three new Production checks cover trusted HTTPS, an unknown proxy and a missing scheme header.
+
+`npm run verify` passes **33 API/security tests and eleven Chromium browser tests**, with zero C# build warnings/errors. The required `npm run format:check` and a C# whitespace-format check limited to Program.cs/ProxyTests.cs pass. The initial Debug build encountered the running local preview's executable lock; stopping that owned preview resolved it, and the preview was restarted after verification without resetting development data. An additional whole-solution C# formatter reports layout differences in untouched existing workflow files; no broad formatting rewrite was made.
+
+Hosted deployment, account quotas/billing, real proxy/cookie/database behaviour, restricted-mode performance and fresh/post-idle/overnight entry remain pending account access. Do not mark AC-10 or hosted acceptance complete from these local results. Employer distribution remains unauthorised.
+
+### Signed-in Free setup checkpoint on 19 October 2026
+
+Dexter completed profile sign-in. The dashboard shows the first-hosting-account form, defaulting to paid Small. Selected **Free (1 GB disk, 256 MB RAM, 0.25 CPU)** and entered proposed name `dexter-onboardflow`. This is a draft, not an allocated subscription or available hostname. The hosting-password field was not entered by the agent. Both contract checkboxes remain unchecked and Let's go was not submitted. Evidence: ignored `.local/reports/alwaysdata-free-setup-review.png`. No payment method, app, database or upload was created.
+
+The form requires shared-hosting contract 28 and terms 36. [Contract 28](https://www.alwaysdata.com/en/contract/28/) clause 2.1.3 describes resource upgrades at an applicable fee, with notification and refusal/termination provisions. The reviewed pricing, plan-change, billing FAQ and alert pages did not establish a Free-specific exemption. Do not claim an automatic charge occurs; applicability to Free is unresolved. It prevents treating the form as a verified hard-zero-cost arrangement under Dexter's explicit no-paid-upgrade instruction. The published and local technical fit remain promising, while hosted speed is unmeasured.
+
+A support question was drafted, but Dexter explicitly declined contacting anyone on 19 October 2026. Do not send it or repeat that request without a new instruction. No message was sent. Leave activation unsubmitted while the zero-cost condition is unresolved. A new hosting credential and contract acceptance also require the browser's user-confirmation steps.
+
+Dexter requested a direct suitability verdict: **not confirmed**. The app is compatible on paper and passed the local resource probe; no alwaysdata-hosted working-flow or startup measurement exists, and the zero-cost/upgrade condition remains unresolved. Do not present this as a proven host or a definitive failure of its Free runtime. No further provider search or account setup is implied by this checkpoint.
+
+Only account-form and primary-source inspection plus documentation diff/link checks were performed in this continuation. No application code changed; the prior **33 API/security and eleven browser passes** remain the application evidence. Actual Free allocation, PostgreSQL quotas, restricted-mode behaviour, proxy/cookie/database writes and fresh/post-idle/overnight browser entry remain unverified. Keep employer distribution behind review.
+
+### Hosting reassessment and portfolio entry on 19 October 2026
+
+Dexter challenged the previous account recommendations and clarified the intended entry: OnboardFlow card on **dexter-developer.dev**, **Try this demo** beside **GitHub**, opening the working app separately on its prepared project screen. The portfolio itself does not need a C# runtime or database. No portfolio code was edited.
+
+The additional primary-source checks and their rejection/uncertainty reasons are in [architecture](docs/architecture.md#hosting-reassessment-and-website-entry-on-19-october-2026). In particular, blitz.cloud's ordinary short wake claim is superseded for our use by its documented extra one-to-two-minute database wake after a full day asleep. No candidate was promoted to a confirmed host. No new signup, contract acceptance, provider message, resource, upload, deployment or source push occurred.
+
+This supersedes earlier instructions here to proceed with alwaysdata activation. Keep its setup unsubmitted. The existing React/C#/PostgreSQL app and private 24-hour sandbox remain the release scope. A browser-only preview or recording is not a replacement for live app/database acceptance without an explicit scope decision. Do not begin another general planning round or rewrite to suit a speculative host.
+
+When a host clears the full desk check and deployment is separately authorised, test HTTPS/Secure cookies and database writes, resource accounting, refresh/isolation/replays/recovery, and usable browser entry fresh, warm, after at least one hour idle, overnight and any documented deeper-sleep interval. Measure to usable project data and the first database-backed action, without keep-alive pings. Then verify the real portfolio button's new-tab/window journey before publication. No hosted or human-timing acceptance is claimed from the current review. Application code did not change in this reassessment; the prior **33 API/security and eleven browser passes** remain the application evidence.
+
+### No-card host recommendation and constrained rehearsal on 19 October 2026
+
+Dexter requested a concrete free/no-card/no-long-wake host before any more signups, and asked about Render. The [architecture document](docs/architecture.md#recommended-no-card-route-checked-on-19-october-2026) records the published requirements, sources and recommended **Deplexo Free app + Neon Free PostgreSQL** arrangement. Render remains excluded: its current docs still give about a minute to wake after 15 minutes idle and a 30-day Free database lifetime. No provider was contacted and no signup, deployment, source push or portfolio edit occurred.
+
+Before recommending Deplexo's small Free instance, reused the focused existing local HTTPS/database probe in fresh ignored directories. Both ordinary and Alpine official .NET 10.0.13 runtime variants ran the current publish unchanged against separate, owned disposable PostgreSQL 17.11 databases. Each process had **128 MiB RAM, no swap, 0.25 CPU, non-root user, read-only root, dropped capabilities, no-new-privileges, writable HOME under data and a 100 MiB no-exec temporary mount**. No GC tuning, AOT, schema or application change was introduced.
+
+| Check | Result and evidence limit |
+| --- | --- |
+| Normal runtime rehearsal | 24 successful HTTP requests; 81.18 MiB peak; no memory-limit/OOM events; 4.557 seconds from local launch to usable project/onboarding API data. |
+| Smaller Alpine runtime rehearsal | Same 24-request journey passed: Start/repeat, review/Shop correction, fresh approval, frozen brief, Publish/repeat, welcome failure/Restore/attempt-two success and five concurrent reads. Peak 81.96 MiB; all memory-limit/OOM counters zero; local usable API entry 4.650 seconds. Not browser or hosted timing, a soak/load test or the full acceptance suite. |
+| Disk and database | Alpine runtime 176.97 MiB plus measured publish 7.76 MiB totals 184.72 MiB. This is component sizing, not a built production image. The exercised database was 8.05 MiB. A persisted ASP.NET key file was created in the writable home; hosted key survival across replacement is still to be tested. |
+| Isolation and cleanup | Both owned containers and temporary databases were removed. No matching disposable databases remain. Temporary credential environment/PFX files were deleted. Development data and other projects' containers were untouched. |
+
+Evidence pointers are ignored `.local/deplexo-feasibility-path.txt` and `.local/deplexo-alpine-path.txt`; each identifies its run.ps1, result.json, request timings and logs. The existing probe supplied the HTTP checks. These are feasibility artifacts, not a new checked-in test framework. The earlier full **33 API/security and eleven Chromium passes** remain unchanged; only the focused resource checks were run again because the smaller host limit and filesystem constraints were new.
+
+**Stop for review before setup.** Published-plan fit and local capacity now support a concrete recommendation. They do not prove account-specific provisioning, Deplexo-to-Neon connectivity, actual proxy addresses, trusted HTTPS/CSRF, browser startup, long-idle behaviour or sustained usage. The next authorised hosted slice must verify those, retain the normal database scale-to-zero, inspect both providers' actual allowances and stop before employer distribution. Do not mark AC-10 complete or claim a live demo from this rehearsal.
+
+### Authorised setup attempt and container package on 19 October 2026
+
+Dexter authorised Deplexo Free + Neon Free setup and hosted acceptance, stopping before linking from dexter-developer.dev. Opening Deplexo's pricing page reached a **Webroot Web Threat Shield** block that labels `https://deplexo.com/plans` a **Phishing Site**. This is an observed vendor classification, not independent proof that the service is malicious. The warning was not bypassed, no credentials were entered and no review/support request was sent. Screenshot: ignored `.local/reports/deplexo-security-warning.png`. The tab is left for Dexter's review. Neon signup was also left pending so another account is not created while the app host is blocked.
+
+Independent deployment preparation is complete: the root Dockerfile builds the frontend and API in separate build stages and ships only the Alpine ASP.NET runtime, published app and licence notices. It runs as user `app`, listens on 8080 and sets HOME=/data for persistent ASP.NET keys. `.dockerignore` allows only build inputs; deplexo.yaml declares a web app on port 8080. No business code, schema, dependencies or cookie protections changed in this pass.
+
+| Local package check | Result and limit |
+| --- | --- |
+| Source ZIP | 40 files, 68,409 bytes, SHA-256 `9CDEA6F53727875726415022A06A7C6A658EB9883B9B10916B6DBE9E73F45E28`. No .local, .git, credentials, node_modules, bin/obj or generated frontend included. Built successfully from a newly extracted copy, including frontend typecheck/build and C# publish. Not uploaded. |
+| Actual image | 196,834,144 bytes (**187.72 MiB**); non-root user `app`, work directory /app. This is the complete built image, replacing component estimates for packaging evidence. Provider disk accounting remains unverified. |
+| Production probe | Built image exercised with 128 MiB RAM/no swap, 0.25 CPU, read-only root, dropped capabilities, no-new-privileges, writable /data and 100 MiB no-exec /tmp. The existing 24-request main/correction/brief/Publish-repeat and welcome-attempt-two probe passed against an owned disposable PostgreSQL database. Peak **73.71 MiB**, all memory-limit/OOM counters zero; database **8.05 MiB**. |
+| Startup and files | **4.851 seconds** from local container launch through usable SQL-backed project/onboarding API data. One ASP.NET key file created under /data. Neither number proves hosted browser startup or key survival across a provider restart. |
+| Cleanup | Owned probe container and database removed; zero matching temporary databases remain. Temporary environment/PFX files deleted. Development preview/data and other projects untouched. |
+
+Ignored evidence pointers are `.local/deplexo-package-path.txt` (ZIP, extracted build context, file list and build log) and `.local/deplexo-image-path.txt` (probe commands, result, timings and logs). The earlier idempotent migration script remains in the release directory identified by `.local/alwaysdata-release-path.txt`; its name reflects its original preparation, not a current deployment target. The Docker build does not apply migrations automatically. See README.md for container requirements.
+
+The first attempted SDK tag `10.0.402-alpine` was unavailable. Microsoft's supported `10.0-alpine` tag builds successfully with the existing global.json; no SDK requirement or package version was loosened. Keep this failed tag out of future build instructions.
+
+The required `npm run format:check` and `git diff --check` pass; all 39 local documentation link targets resolve. The earlier full 33 API/security and eleven Chromium results remain unchanged. This packaging pass adds the source-archive build and focused 24-request container probe; it does not claim a new full-suite run.
+
+**Hosted acceptance is blocked, not passed.** No Deplexo/Neon signup, card, paid resource, upload, deployment, source push or portfolio edit occurred. User review of the security warning is required before resuming Deplexo access. If access is resolved, verify actual Free allocation, PostgreSQL 17/verified TLS, migrations, exact proxy trust/Secure cookies, restart persistence, session isolation/reset/replays/recovery and browser entry fresh, warm, after an hour idle and overnight without pings. AC-10 human timing also remains open. Do not claim these from the local probe.
+
+### Signed-in hosted setup on 19 October 2026
+
+Dexter completed signup/sign-in to both providers after the warning checkpoint. The existing signed-in Chrome tabs are accessible without an agent bypass. Deplexo's dashboard confirms Free, one app, 0.25 vCPU, 128 MiB, 250 MB published disk limit and 100 GiB displayed monthly account transfer. Neon billing confirms Free at $0/month, 1 GB storage and 100 compute hours per project. No payment details, paid plan or support message was used.
+
+Created a separate **OnboardFlow** Neon PostgreSQL **17** project (`little-glade-60384800`), one `production` branch and `onboardflow` database in **AWS Frankfurt**. The unrelated existing project was untouched. Set the compute range to a fixed **0.25 CU**, retaining Free's five-minute scale-to-zero. Other services were left off. The reviewed idempotent SQL applied successfully in this project's SQL editor; the result lists Foundation, MainWorkflow and Reliability migrations. No sample-provider tables or data were added.
+
+Uploaded the reviewed 40-file source ZIP to Deplexo and created **dexter-onboardflow** (`b1ca1ebf-42b4-4e0c-9589-6c0aa46c562f`), a web service on port 8080. Its assigned HTTPS endpoint is `https://dexter-onboardflow.de.deplexo.com/`. The protected environment contains the generated Npgsql connection to the new database, with **SSL Mode=VerifyFull; Channel Binding=Require**. The credential was not printed, stored in source or included in the image. /data is the configured persistent mount and HOME points there.
+
+The hosted frontend/typecheck and C# publish succeeded. The first container startup failed because the worker's shared **128 inotify-instance allowance** was exhausted while .NET registered JSON config watchers. Set `DOTNET_HOSTBUILDER__RELOADCONFIGONCHANGE=false` and requested redeployment. This disables automatic appsettings reload; changes take effect on restart. It does not alter HTTPS, authentication, business rules or database connections. The same setting is now in the Dockerfile for future source builds. See [Microsoft's host configuration documentation](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/host/generic-host?view=aspnetcore-10.0#reload-config-on-change).
+
+The updated local image built and passed the existing 24-request Production probe, with **zero inotify watchers and no OOM events**. This run also reached the **128 MiB memory limit with 61 reclaim/limit events**, unlike the earlier 73.71 MiB run; do not report guaranteed memory headroom. Actual hosted resource use and stability still need measurement. Local usable API entry was 4.863 seconds. The temporary container/database/credential files were removed.
+
+The corrected deployment is **READY**, with the app **RUNNING** and /app as its content root. Provider logs show Production startup and listening on port 8080 at **10:29:02 AEST on 19 October 2026**. The dashboard briefly showed Unknown before receiving live worker telemetry; idle readings showed **58.8–69.6 MiB / 128 MiB**, with 0.25 vCPU maximum. These are point-in-time readings, not a workload peak or stability proof. Evidence: ignored `.local/reports/deplexo-free-running.png`. The deployment's reported 270-second job duration includes queue/restart work; it is not a visitor startup measurement.
+
+The assigned HTTPS endpoint initially returned the provider's 503 while the first app process was unavailable. After corrected startup, it reached a **new Webroot phishing-site block for the demo hostname itself**, separate from the dashboard warning. Dexter subsequently handled the warning manually and the browser reached OnboardFlow. No agent bypass, alternate HTTP client or changed-domain workaround was used. The warning remains a potential employer-access problem; reaching the app in this browser does not clear the hostname's reputation elsewhere. Warning evidence is ignored `.local/reports/deplexo-demo-security-warning.png`; Neon setup evidence is `.local/reports/neon-free-compute.png`.
+
+**Hosted acceptance failed at secure workspace creation at this checkpoint.** The browser obtains the React shell, but GET /api/csrf returns 500 because Production antiforgery requires HTTPS. Debug logging identified the actual peer as `::ffff:10.92.13.1`. Configured that exact peer through `REVERSEPROXY__KNOWNPROXIES__0`; the next deployment no longer reports an unknown proxy, but still fails HTTPS detection. A narrow server-side failure diagnostic confirms at **10:58:44 AEST on 19 October 2026**: peer and configured proxy match, the saved original transport scheme is `http`, no forwarded scheme remains, and X-Forwarded-Ssl is absent. These post-middleware fields did not directly capture the incoming scheme header. The app settings page exposes no corresponding correction. Do not force the request scheme, enable Development, trust arbitrary proxies or weaken Secure cookies to obtain a pass. The continuation below captures the raw incoming scheme metadata and resolves the failure; no provider contact or new signup was needed.
+
+The latest uploaded source ZIP builds successfully from a newly extracted copy: **40 files, 68,666 bytes, SHA-256 `DC5E37BBA49325807524E711E62078152B2725F123F91A85323B1BCDFD5510D9`**. `.local/deplexo-package-path.txt` identifies its source, archive, extracted context and build log. It includes the Docker config-reload setting and narrow proxy diagnostics; no workflow/schema/dependency changes were made. The sixth deployment starts successfully at 10:57:31 AEST, then reaches RUNNING. Deployment/startup time is not usable visitor-entry timing. The three Production proxy checks pass in Release after the diagnostics change; this is local security evidence, not a hosted pass.
+
+Actual app-to-Neon queries, secure CSRF/session writes, browser workflow/recovery, isolation/reset, restart cookie continuity and fresh/post-idle/overnight usability have **not passed**. Neon was observed suspended, but no successful app query has measured its wake. An ignored `.local/hosted-probe.mjs` adapts the existing checks and adds budget/isolation/expiry-metadata cases; it passes syntax checking but remains unrun because the browser fails the prerequisite. AC-10 human timing remains open. No website edit, employer distribution, source push, card, paid upgrade or provider message occurred.
+
+The owned resource-probe container/database and temporary environment/PFX files are cleaned up. The existing development preview/database and unrelated cloud/local projects remain intact. The full local 33 API/security and eleven browser suite was not rerun for these infrastructure diagnostics; the focused three proxy tests, prior updated-image 24-request probe and clean extracted-ZIP build are the new local evidence. Required frontend formatting, the focused C# whitespace check, diff whitespace and all **40 local Markdown targets** pass. Ignored hosted evidence is identified by `.local/hosted-acceptance-path.txt`, including setup.json, https-forwarding-failure.log and demo-workspace-error.png.
+
+### Hosted workspace repair and bounded acceptance on 19 October 2026
+
+Dexter authorised continuing the hosting diagnosis and acceptance without restarting planning or adding features. Preserved the existing changes and used the same Free app/database. A temporary diagnostic before `UseForwardedHeaders` captured, at **11:10:17 AEST**, peer `::ffff:10.92.13.1`, transport `http`, `X-Forwarded-Proto=http`, `X-Forwarded-Port=80` and `CF-Visitor={"scheme":"https"}`. Other inspected scheme headers were absent. This directly establishes the standard-header problem while identifying preserved edge evidence. Cloudflare documents the JSON scheme header in its [header reference](https://developers.cloudflare.com/fundamentals/reference/http-headers/#cf-visitor).
+
+A same-origin browser probe supplied `CF-Visitor={"scheme":"http"}` over HTTPS; the diagnostic still received the edge's `https` value. After the repair, another probe supplied that false scheme plus an invalid private derived header and still obtained secure CSRF successfully. No new browser warning appeared, no warning was bypassed and no alternate client was used to evade one. Earlier Webroot classifications remain an independent employer-access concern.
+
+The repair adds a default-off `ReverseProxy:UseCloudflareVisitor` adapter, explicitly enabled in Deplexo alongside the existing exact peer. It removes visitor-supplied `X-OnboardFlow-Proto`, strictly parses a single HTTP/HTTPS scheme only from an explicitly configured proxy, and feeds the result to ASP.NET's existing trusted-proxy middleware. Missing, malformed, duplicate or untrusted metadata cannot manufacture HTTPS. It does not assign a constant request scheme, trust networks broadly, change Production, weaken cookies/CSRF/TLS, add a dependency or change business/schema behaviour. Removed the temporary raw-header diagnostic from the repaired image.
+
+The repaired **40-file** source ZIP passed a clean extracted Docker build: SHA-256 `FBBA0C1E70E537849926AB3046886264DCC085ADE09D80FE9D3FC41A5A47C678`. `.local/deplexo-package-path.txt` identifies the archive, extracted source and build log. This legitimate deployment also includes the approved introduction, **“You're the project manager.”** Source publication and the portfolio entry are unchanged.
+
+| Check | Observed result and limit |
+| --- | --- |
+| Local regression suite | `npm run verify`: **47 API/security tests and 11 Chromium browser tests pass**, zero C# build warnings/errors. Seventeen Production proxy cases include explicit opt-in, exact peer, missing/malformed/duplicate/HTTP schemes and a forged derived header. Disposable local databases were used and removed. |
+| Secure hosted entry / real Neon writes | Browser GET /api/csrf succeeds; workspace creation and project/onboarding reads reach Neon. Both antiforgery and sandbox cookies are Secure, HttpOnly and SameSite=Strict. Missing-CSRF POST is rejected with 403. The configured PostgreSQL connection retains VerifyFull and required channel binding. |
+| Main workflow and business guards | **49 hosted probe requests pass** through onboarding, invalid Shop approval (422), missing correction comment (400), revised Pages needing approval, saved kickoff brief, frozen replies, simulated register and repeated Start/Publish. The complete hosted desktop browser journey independently reaches the persisted simulated handoff. |
+| Recovery / isolation | Attempt-two recovery, three-attempt exhaustion after restoration, exact-command replay, concurrent Start, five concurrent saved reads, cross-visitor rejection and visitor-only reset pass in the hosted probe. No real email or external register write occurs. |
+| Fixed lifetime | Hosted metadata is exactly 24 hours from creation and unchanged by activity/reset of another visitor. Precise expired-credential boundaries remain covered by the local clock-controlled tests; no 24-hour real wait is claimed. |
+| First entry with suspended Neon | Neon was observed SUSPENDED before the successful browser navigation. Initial project/onboarding data finished at **12.509 seconds from navigation**; the usable Start control was verified. The first Start request took **420.7 ms**. This includes the observed ordinary database wake and fresh app path; it is not an hour-idle/overnight or first-time human result. |
+| Warm API / resources | The separate API probe reached usable project data in **2.162 seconds**. During the bounded workload, dashboard memory samples included **79.1 and 95.9 MiB / 128 MiB**. These are samples, not a proven peak, sustained capacity or OOM-counter measurement. |
+| Hosted phone layout | Saved handoff inspected at **390 × 844**: document width 390px, no horizontal overflow, body text 16px. The hosted phone UI also completed OF-1043 Start → saved welcome failure → Restore → successful explicit Try welcome. Temporary emulation was cleared. The full desktop/phone workflows also pass in the local browser suite. |
+| Restart persistence | Same-source rebuild/redeploy passed. **Three additional hosted requests** confirm the original session, saved register/brief, unchanged expiry and old CSRF cookie/token survive container replacement; repeated Publish reuses the same record. Credentials stayed only in process memory, with no hosted requests during the local signal wait. The browser independently recovered its saved handoff, observed visible at **1.637 seconds from reload** after the probe had warmed the new process. |
+
+Evidence is under the ignored directory identified by `.local/hosted-acceptance-path.txt`: `incoming-scheme-evidence.log`, `scheme-diagnosis.json`, `neon-before-entry.png`, `browser-entry.json`, `http-result.json`, `http-probe.log`, `https-header-overwrite.json`, `responsive-result.json`, `resource-before-restart.txt`, `restart-result.json`, `browser-after-restart.json`, `browser-recovery.json` (attempt outcomes `[false, true]`, one Outbox message) and hosted desktop/phone screenshots. The inspected/extended `.local/hosted-probe.mjs` is a bounded acceptance artifact, not a new application test framework. Local full-suite output is `.local/reports/hosting-fix-verify.log`. The owned development preview was stopped for the Debug build and restarted afterward without resetting development data. Frontend and focused C# formatting, diff whitespace and **41 local Markdown targets** pass. The deployed Program.cs and App.tsx match the current working files; the preserved legacy tree tag remains intact.
+
+**Still pending:** at least an hour of inactivity, overnight/longer idle entry without pings, first-time human understanding/timing (AC-10), sustained resource behaviour, fresh-browser reputation/access review, the actual recording and final publication review. The observed ordinary wake does not close those gates. No card, paid upgrade, new account, provider contact, source push, employer distribution or portfolio edit occurred.
+
+### Focused quality/API review and updated deployment on 19 October 2026
+
+Dexter requested an explanatory introduction, a modest separation of workflow responsibilities, OWASP-aware API practice and a practical bounded release check. He explicitly left portfolio changes to the other chat and asked to avoid hours of manual testing. The introduction now explains preparing Juniper's signed redesign, reviewing Maya's replies, resolving Shop and publishing the simulated handoff. It preserves the project-manager role, readable type and simulation labels.
+
+Reviewed the complete moved workflow code and diff. `WorkflowEndpoints` now owns only HTTP routing/cookies/status mapping; scoped `WorkflowService` retains direct EF transactions, ownership/expiry guards and saved effects. Pure rules, response mapping and session lookup are small separate helpers. No repository framework, service interfaces, schema change, dependency or business feature was added. Existing rollback, concurrency, stale-revision and replay tests exercise the refactoring's behaviour.
+
+The API adds six concurrent requests and 240 requests/minute per instance, no waiting queue, a 16 KiB Kestrel body cap with early Content-Length rejection, controlled request/error responses, Retry-After on 429, no-store and basic browser headers. Static assets are not rate limited. The global budget is shared by all visitors and is not a DDoS guarantee. Temporary raw-header debugging was removed and SQL/debug logging reduced. The architecture records the [OWASP API Security Top 10](https://owasp.org/API-Security/editions/2023/en/0x11-t10/) / [ASVS](https://owasp.org/projects/asvs) mapping and limits; no formal certification or full security assessment is claimed.
+
+| Check | Observed result and limit |
+| --- | --- |
+| Full local regression | `npm run verify` passes **50 API/security tests and 11 Chromium tests**, zero C# build warnings/errors. Three new Production-policy checks cover rate rejection/Retry-After/static delivery, oversized requests before session/database work and safe uncached error responses. The shared high-throughput test fixture has a higher rate budget; the dedicated policy check uses a limit of two. |
+| Production advisory checks | `npm audit --omit=dev --json`: zero known production dependency vulnerabilities. `.local/dotnet/dotnet.exe list src/OnboardFlow.Api package --vulnerable --include-transitive`: no vulnerable packages from the configured current sources. These are advisory snapshots, not proof of absence of vulnerabilities; npm development dependencies were outside this audit. |
+| Exact source package | Clean extracted Docker build passes for **46 files**, ZIP SHA-256 `CBBD342F897840AFD2A4F7B6C6EE558D55635B08D717B000B35DF7EA40A0898C`. All 46 extracted build inputs match working files before Git line-ending normalization. No local credentials/state are included. The tenth Deplexo deployment completes in 211 seconds, then runtime telemetry shows RUNNING. |
+| Deployment availability | One browser request during the post-swap Unknown telemetry state received the provider's 503. It recovered once RUNNING without configuration changes or another deployment. This is an observed deployment interruption; no zero-downtime claim is made. |
+| Live regression | **49 requests pass again** against the updated app and real Neon database: full correction/approval/brief/handoff, repeated Start/Publish, recovery on attempt two, exhausted three-attempt budget, replay, concurrent Start/reads, ownership/reset, CSRF and fixed lifetime metadata. A fresh probe reaches usable project data in **2.916 seconds** after the browser has warmed the database. |
+| Live API boundaries | **Five additional requests pass**: unknown route 404 with no-store/nosniff/frame denial/no-referrer, oversized known-length request 413 without a session cookie, valid-CSRF chunked oversized JSON 413, and malformed JSON 400 without a stack trace. The 240/minute budget was not deliberately flooded on the public app; rejection is covered by the isolated Production-policy test. |
+| Browser entry / saved work | After Neon was observed SUSPENDED, the first successful browser reload receives session data at **8.873 seconds**, projects at **9.676 seconds** and saved onboarding/revision data at **11.686 seconds** from navigation. The expanded introduction and existing Needs review / Revision 1 state are visible. A diagnostic observer expected a handoff heading and timed out because this browser was on the saved review state; its 45-second timeout is not a load duration. Resource timing and the actual DOM are retained separately. |
+| Desktop / phone | Updated introduction visually inspected at 1280×900 and 390×844. Phone body text is 16px and document width equals the 390px viewport, with no horizontal overflow. Temporary emulation is cleared. The local eleven browser tests include complete desktop/phone main and recovery paths. |
+| Resource sample / persistence | After the bounded live run, dashboard shows **89.9 MiB / 128 MiB** and 0.17 vCPU / 0.25 maximum. This is a sample, not a peak/capacity guarantee. Existing browser session/revision state survives this deployment; the earlier stronger cookie/CSRF/register restart checks remain recorded above. No extra restart loop was added. |
+
+Ignored evidence is identified by `.local/quality-acceptance-path.txt`: full verify log, production advisory logs, `http-result.json`/`http-probe.log`, `api-safety-result.json`, `browser-quality-entry.json`, raw observer output, pre-entry Neon screenshot, responsive result, resource sample and updated desktop/phone screenshots. `.local/deplexo-package-path.txt` identifies the deployed archive and clean build. The prior restart evidence remains under `.local/hosted-acceptance-path.txt`.
+
+The working demo is **https://dexter-onboardflow.de.deplexo.com/**. The other chat can use this as the OnboardFlow card's **Try this demo** destination, opening a new tab with `rel="noopener noreferrer"`; the portfolio and application do not need a shared API origin or iframe. Portfolio publication still belongs there and requires the existing review. Do not publish an empty GitHub source link as though the code is available.
+
+The GitHub remote was checked and still has no heads/tags. Meaningful commits are local; no source push, repository connection or CI/CD activation occurred. GitHub would improve release traceability and enable automated build/test checks, not runtime speed. [Deplexo supports Git-triggered builds](https://docs.deplexo.com/operations/deployments/) and [GitHub Actions supports CI](https://docs.github.com/en/actions/get-started/continuous-integration); any later CD setup should deploy a verified selected revision and keep provider secrets outside source.
+
+**Practical handoff:** the updated demo passes this bounded release check. Do not promise guaranteed uptime or universal access. Hour-idle/overnight behaviour, sustained free-tier resource capacity and first-time human timing remain unmeasured; no long wait was imposed in this slice. The earlier Webroot hostname classification may still affect new visitors even though no new warning appeared in this run. Source publication, actual recording, employer distribution and portfolio publication remain behind review. No card, paid upgrade, new account, provider contact or portfolio edit occurred.
+
+### GitHub delivery checkpoint on 19 October 2026
+
+Dexter explicitly requested publishing the source and implementing employer-visible CI/CD, superseding the previous source hold. Published the reviewed baseline and meaningful commits to the existing public repository and prepared [PR #1](https://github.com/Dexter2099/client-onboarding-automation/pull/1). Portfolio edits remain with the other chat. He also requested retaining CI/CD, OWASP and SOLID as later employer-description topics; docs/case-study.md now maps each to concrete code/results and bounds the claims.
+
+The provider's current UI and documented API expose no in-place conversion of the existing ZIP app to Git source. Preserve its URL, secrets, persistent key files and Neon database: GitHub Actions delivers the checked commit's package via the documented source upload/redeploy API. This is genuine GitHub-driven CI/CD, with a source package rather than an image promotion or native Git webhook. The public marker, checksum, run and deployment IDs establish traceability; the normal path needs no manual source upload. Provider auto-deploy remains disabled to avoid bypassing checks.
+
+| Check/control | Evidence |
+| --- | --- |
+| Local workflow/source validation | Prettier, actionlint, Node/PowerShell parsing, locked NuGet restore and clean diff pass. A package exported from committed revision `0936b23687742e5460864e4beea47774aef30c72` builds with the generated marker and pinned Docker base-image digests. No local credentials/state are exported. |
+| Real GitHub CI | [Run 39186999599](https://github.com/Dexter2099/client-onboarding-automation/actions/runs/39186999599) passes **50 API/security tests, eleven browser tests and the packaged Docker build** on standard Ubuntu 24.04. PR testing uses GitHub's checked-out merge revision `b3540329e288cf7ffa3c76df8eb0183c80d5f88f`; main will be tested/packaged again at its own revision. Its deployment job is correctly skipped for the PR. |
+| Repository/environment guards | Main requires up-to-date **Verify and package** from GitHub Actions app 15368, including administrators; force-push/deletion disabled. Production environment permits only main. Workflow token is contents-read only; PR verification has no provider secret. Production runs serialize and do not auto-cancel a swap. |
+| Source/deployment integrity | npm/NuGet locks, pinned action SHAs and base-image digests, Git-only export, marker, SHA-256 validation before upload and provider-reported upload checksum comparison. Only that run's verified artifact is downloaded by deploy. Deplexo rebuilds the source; no bit-for-bit image identity is claimed. |
+| Post-deploy acceptance | The job must observe its exact deployment success and then the expected live revision. A fresh fictional session checks Secure/HttpOnly/Strict cookies, CSRF rejection, fixed 24-hour lifetime, saved Start and repeat identity. Failed/uncertain results fail the job, without blind redeploy or mutation replay. |
+
+**Activation pending at this checkpoint:** the prepared 90-day Deplexo key needs confirmation because it grants GitHub new deployment access. Proposed scopes are only app:deploy, app:restart and app:read; Deplexo keys are account-scoped, while the script fixes the app ID. No env, database, delete, stop, domain or log access is requested. Store it only as the GitHub production environment's DEPLEXO_TOKEN, not a file. First main deployment and its live marker are not yet claimed complete.
+
+Dexter then requested set-and-forget delivery and explicitly approved the **non-expiring** key with the same three scopes. That supersedes the initial 90-day proposal. Expiring a deployment key blocks future releases, not the running app; visitor sandbox expiry is unrelated. Deplexo requires a separate "Confirm it is you" identity check before key creation. The tab was handed to Dexter for that authentication; no password/code was requested in chat. No key had been issued at that handoff. The first successful main run's deployment ID, package checksum and live smoke result will be the activation evidence in the GitHub Actions run summary, linked by README.md.
+
+For visitor safety, the earlier Webroot warning still requires a reputation review. Webroot's [official website-review process](https://answers.webroot.com/Webroot/ukp.aspx?app=vw&pid=17&solutionid=4509&t=Website-review&vw=1) uses the BrightCloud rating/change-request form. A successful local browser exception or app-security test cannot clear that classification. Do not ask employers to bypass/allowlist it or change access methods to evade it. Dexter subsequently reported submitting the request on 19 October 2026; vendor clearance is unconfirmed. No agent submission/contact is authorised.
+
+Workflow reference: [OpenAI's development-workflow guidance](https://developers.openai.com/cookbook/examples/codex/iterating-development-workflows-with-codex). The file layout here is deliberately adapted to this project's size.
+
+### CSP/HSTS release verification on 19 October 2026
+
+Dexter explicitly authorised adding CSP/HSTS, verifying the demo, publishing meaningful commits and deploying through GitHub CI/CD, with engineering notes for employers. This is one browser-security slice; no business rule, dependency, schema, hosting plan or portfolio-site change is needed.
+
+The initial CI/CD activation is confirmed by [production run 39188100200](https://github.com/Dexter2099/client-onboarding-automation/actions/runs/39188100200), main revision `83eb74d34a6ee90fb7b717095973761f2fdca60c` and Deplexo deployment `c90e7046-c6e3-4cda-b08c-f606a402733e`. It passed the earlier 50 API/eleven browser tests, image build and seven-request live smoke. This supersedes the activation-pending checkpoint above; it is not evidence for the later security changes.
+
+| Security-slice check | Result / release requirement |
+| --- | --- |
+| Local regression | `npm run verify` passes **57 API/security tests and 12 browser tests**, React type/build and the C# build with zero warnings/errors. Tests own disposable PostgreSQL databases. The owned Debug preview was stopped before rebuilding. |
+| Production policy | New tests require enforced CSP and `Strict-Transport-Security: max-age=86400` on documents, a static asset and API 404s. HSTS is absent for HTTP, Development and excluded loopback hosts. Existing 17 proxy cases also assert HSTS appears only with verified HTTPS evidence. |
+| Browser enforcement | A normally loaded test-only same-origin script cannot use eval; inline injection and an external fetch are blocked. No external request escapes the browser. Both full desktop/phone journeys report no CSP violations and retain saved/repeated handoff behaviour. The test probe exists only in Playwright routing, not public application files. |
+| Proxy transformation | Hosted HTML contained an injected Cloudflare analytics beacon. HTML-only no-cache/no-transform prevents the documented injection and avoids a CSP violation without allowing external scripts. Static caching and API no-store remain intact; the release smoke requires no-transform and rejects external script sources in the delivered document. |
+| Local test correction | Direct DevTools/page.evaluate can bypass eval restrictions. The initial eval assertion was replaced with an ordinary loaded-script probe; no CSP exception was added. The complete suite then passed. |
+| Delivery gate | The existing PR job must pass the same suite and build the checked source package's Docker image. Only passing main deploys with the existing scoped production secret. No manual upload or direct deployment is needed. |
+| Live release gate | `smoke-demo.mjs` now requires CSP/HSTS on the HTML document and each of seven API requests, plus the exact live source revision, secure cookies, CSRF rejection, saved/repeated Start and fixed 24-hour sandbox. A failure fails deployment acceptance. The [main delivery history](https://github.com/Dexter2099/client-onboarding-automation/actions/workflows/delivery.yml?query=branch%3Amain) owns each run's actual deployment ID/checksum/live result; `/release.json` identifies the active revision. |
+| Reputation limits | Before this slice, validated TLS 1.3/certificate and HTTP-to-HTTPS redirect passed; Google's exact-host Safe Browsing report displayed "No unsafe content found", updated 19 October 2026. Dexter says he submitted the Webroot review. Neither that report nor these headers proves vendor clearance or guarantees that every visitor will receive no warning. No warning was bypassed. |
+
+HSTS initially lasts one day and is renewed by qualifying HTTPS responses. It does not expire the app. Localhost remains usable, and provider-owned domains are not preloaded or pinned with includeSubDomains. The CSP intentionally supports only the actual same-origin resources; no unsafe-inline/unsafe-eval exception, external reporting endpoint or new dependency was added. Architecture and case-study notes explain the implementation and the limits without claiming complete ASVS conformance or an independent security certification.
+
+### Browser compatibility coverage on 19 October 2026
+
+Dexter asked whether the demo works on different computer setups, including macOS, and requested broad usability. The frontend is a browser application without Windows-specific APIs or a visitor-side .NET/Docker install. The existing twelve browser scenarios now run in Chromium, Firefox and WebKit. This is twelve scenarios with **36 executions**, not 36 distinct behaviours. No application dependency, business rule, security exception or database schema was added.
+
+`npm run verify` passes **57 API/security tests and all 36 browser executions on Windows**; formatting, React/C# builds and diff whitespace pass. The matrix covers desktop and phone widths (including the existing 320px no-overflow check), keyboard operation, saved state, two-visitor reset/isolation, scope correction, revised approval, ready/handoff/repeat, lost-response recovery and CSP rejection. `npm run setup` and the Ubuntu CI job install all three pinned Playwright engines. Reports identify each project; screenshots use `.local/reports/<engine>/`. CI retains only the explicitly selected TRX/PNG/HTML reports, including these paths under `.local`, for seven days. CI must pass the complete matrix and image build before main deployment; the main delivery history owns actual run/deployment results.
+
+Two harness issues were diagnosed rather than weakening the app:
+
+- The aggregate matrix exceeded the demo's shared 240-request/minute budget. Trace responses confirmed 429s. Only Playwright's guarded disposable local server sets `ApiLimits__RequestsPerMinute=10000`, consistent with the existing API-fixture approach. The public app remains at 240/minute and six concurrent requests; dedicated Production-policy rejection tests still pass. The interrupted initial test server was stopped and its single, exactly named disposable browser database was removed before rerunning.
+- Playwright's WebKit screenshot synchronization inserts a no-op inline `body {}` stylesheet, producing a real CSP rejection from test instrumentation. A caret option alone did not remove that separate insertion. WebKit intermediate captures are omitted in the CSP-observed main journey; all final captures happen after policy assertions. Policy/runtime observations persist across reloads. No directive is ignored, no CSP bypass/unsafe-style exception is enabled, and the normal loaded-script security test remains active in every engine.
+
+Compatibility claims must remain bounded. The installed Vite configuration resolves syntax targets Chrome/Edge 111, Firefox 114 and Safari/iOS 16.4, but these are not tested minimum-version guarantees. Current browsers are the intended audience. Playwright [documents that its WebKit is not branded Safari and platform-dependent behaviour can differ](https://playwright.dev/docs/browsers#webkit). Windows/Ubuntu engine results alone do not establish macOS acceptance. Branded Safari, physical mobile devices, screen readers and managed enterprise/security setups remain unverified. Webroot's pending classification review remains a separate access limit; no alternate client was used to evade a warning.
+
+The separate `macos-browser` job runs after successful main deployment on GitHub's standard `macos-15` runner. The repository was verified public; [GitHub documents these standard public-repository runners as free](https://docs.github.com/en/actions/reference/runners/github-hosted-runners). The job is explicitly excluded for private repositories and uses no production environment/secret. It installs the locked existing Playwright client and runs `node scripts/smoke-macos.mjs`, which refuses a non-Darwin runtime and requires the exact live Git revision. A fresh normal visitor performs correction, approval, persisted handoff, repeat and refresh, plus 1280px/390px layout/tab controls at 2x scale. It uses the normal 24-hour fictional sandbox, never the developer's existing visitor or a direct database connection. There is no mutation retry, provider write or real email. The six-minute job, result JSON, PNGs and summary own actual native macOS acceptance; it must pass before calling the complete release verified. This is headless WebKit on macOS, not an actual Safari application or physical iPhone test. Screenshots follow all CSP/runtime assertions because of the known capture instrumentation described above.
+
+The preceding CSP/HSTS release is confirmed by [production run 39189954448](https://github.com/Dexter2099/client-onboarding-automation/actions/runs/39189954448), revision `46921f41921b37a908047a278a5106b136a4f509`, deployment `9eb90279-0ba2-48fa-963e-2a5aeded19a7` and eight successful live document/API smoke requests. This compatibility slice changes verification and evidence, while the existing source-artifact pipeline preserves the reviewed app and live security gates.
+
+Native macOS acceptance is now confirmed by [production run 39192306214](https://github.com/Dexter2099/client-onboarding-automation/actions/runs/39192306214). All three jobs passed: Ubuntu verification/package, deployment/live API smoke and native macOS visitor smoke. The exact revision was `10c8399cadd845707c879d1585fd322ccdc43bc6`, Deplexo deployment `1e183bde-8d53-4be5-a1a1-70b59e365db1`, source SHA-256 `4a92853b9fe251a1e901a9a36cadb073e39255e2fd33bf93f3a3da142d27a2c9`. The Mac result reports Darwin 24.6.0, arm64, Playwright WebKit 27.2, 2x scale, successful correction/approval/handoff/repeat/refresh and desktop/phone-width controls, with zero application CSP errors during the workflow. Both downloaded screenshots were visually inspected and remain readable without overflow. Local evidence is under `.local/browser-compatibility-evidence/native-macos/`; CI retains its corresponding artifact for seven days. This establishes that native Mac check, with the branded Safari/physical-device limits above intact.
+
+### QA evidence and isolated rule tests on 19 October 2026
+
+Dexter requested employer-visible QA/testing evidence, including smoke, integration and unit tests. The audit found the existing 57 C# cases were integration/security checks: real ASP.NET pipeline tests and, where needed, disposable PostgreSQL. They were not relabelled as unit tests. A focused `WorkflowRulesTests` class adds sixteen isolated rule cases in the same existing test project, with no new dependency, service abstraction, schema or business behaviour. The application grants internal access only to that test assembly. Category traits now distinguish Unit from Integration, including the partial workflow test class.
+
+| Check | Observed result |
+| --- | --- |
+| Isolated unit run | With both application/test connection-string environment variables absent, `dotnet test tests/OnboardFlow.Api.Tests --filter "Category=Unit"` passed all **16** cases. No host/database fixture was constructed. Scope cases include empty, missing, extra, substituted, duplicate and case-changed pages, plus a valid different order. Readiness cases include missing answers/welcome, newest-revision approval and revalidation of signed scope. |
+| Complete local regression | `npm run verify` passed **73 C# cases: 16 unit and 57 integration/security**, plus all **36 browser executions** (49.4 seconds for the browser matrix). React type/build and C# build passed with zero C# warnings/errors; the browser database was dropped normally. Formatting and diff whitespace checks passed. The owned Debug preview was stopped before rebuilding. |
+| Claim traceability | README and the case study map unit/integration/E2E levels and smoke/regression/security/recovery/concurrency/compatibility purposes to source and evidence. Overlapping categories are not added as extra tests. Keyboard/layout checks are partial accessibility evidence, not a full WCAG audit; human usability, physical devices, sustained load/stress/soak, long idle and independent penetration testing remain open. |
+| Delivery | The existing required PR check runs all these cases and the packaged image build before a main release. Main then requires live revision/API/header checks and the native macOS visitor job. Actual run links and results, rather than a test count alone, establish CI/CD acceptance. |
+
+The first unit-test compile attempt used array-valued InlineData arguments that the attribute constructor could not accept; it was corrected to typed xUnit MemberData before the successful isolated/full runs. No policy exception or production change was needed. The [case-study QA table](docs/case-study.md#qa-and-testing-evidence) is the presentation artifact; this harness remains the verification authority. Existing historical counts above describe their original checkpoints.
+
+### Neon idle-entry investigation on 19 October 2026
+
+Dexter asked to distinguish a genuinely idle database from his recent browser use before considering a replacement. The existing OnboardFlow compute's read-only settings show 0.25 CU minimum/maximum and a fixed five-minute scale-to-zero period; configuring it requires an upgrade. [Neon's documentation](https://neon.com/docs/introduction/scale-to-zero) confirms automatic wake and the fixed Free setting. Neither the plan nor compute settings were changed, and the unrelated Neon project was untouched.
+
+The recent Chrome navigation recorded project/onboarding data by 2.874 seconds, but Dexter had been using the app. This is a recently used browser observation, not independent cold-entry evidence. The older 12.509-second capture included a 7.356-second POST /api/session; it measures initial sandbox/application/database work together and does not isolate Neon's wake time.
+
+After natural inactivity, Neon visibly reported **SUSPENDED**. A bounded HTTP probe then used a separate in-memory cookie jar to reproduce a new visitor's HTML, missing-session, CSRF, session-creation, projects and onboarding requests. It did not use/reset the existing browser visitor, execute direct database queries, bypass a warning or retry a mutation. Neon subsequently visibly reported ACTIVE. An immediate comparison used another fresh visitor with the database already warm.
+
+| Measurement | After confirmed Neon suspension | Warm comparison |
+| --- | --- | --- |
+| Complete HTML/API sequence, six requests | **3.626 seconds** | **2.216 seconds** |
+| HTML GET | 1.089 seconds | 0.395 seconds |
+| New sandbox POST | **1.039 seconds** | **0.382 seconds** |
+| Project list / onboarding GET | 0.375 / 0.386 seconds | 0.368 / 0.358 seconds |
+
+The samples completed at 13:34:44 and 13:34:48 Brisbane time (03:34:44/03:34:48 UTC). They include client/network/server/database time and exclude frontend asset download/rendering. The 1.410-second total difference cannot all be assigned to Neon: the HTML request also differed. The sandbox POST difference was 0.657 seconds. This supports retaining the current provider for this bounded release; it does not establish an overnight result, every visitor's latency or the pure database-wake cost. No keep-alive, paid upgrade, card, new account or startup retry was added.
+
+Ignored evidence: `.local/startup-review/profile-entry.mjs`, `after-neon-suspension.json`, `warm.json`, `neon-suspended.png` and `neon-after-entry.png`. The script fixes the public origin, asserts expected statuses/two projects/fixed expiry and logs timings only; cookies/CSRF remain in process memory. The HTTP measurement is separate from subsequent full browser regression and human acceptance.
+
+### Employer presentation and frontend refactor on 19 October 2026
+
+At Dexter's request, README now starts with the problem, live demo and engineering/QA evidence. A table distinguishes real server/database review, prepared Outbox records and saved register snapshots from sample replies, simulated email delivery and simulated external-register updates. Detailed deployment-key/hosting decision history remains in the working technical documents. The handoff UI now explains the inspectable demo register and absence of external service contact; it does not add real email, Make or Sheets integration. The case study retains evidence/limits with a clearer public introduction.
+
+The frontend extraction reduces `OnboardingPanel.tsx` from 873 lines to **362**. It owns navigation, review commands, comment/selection state and keyboard focus. The **100-line** `useOnboardingWorkflow` owns API/loading/error/uncertain-response handling; its callbacks return initial-load and committed-command results to the UI. ReviewWorkspace, WelcomeRecovery, KickoffBrief and the ActivityLog/SimulatedOutbox views render the existing sections. Shared response types/date formatting remain feature-local. No new dependency, generic abstraction, C# behavior, schema, security exception or provider setting was introduced.
+
+`npm run verify` passed **73 C# cases (16 unit + 57 integration/security)** and **36 browser executions** in 49.1 seconds for the browser matrix. React type/build and C# build passed with zero C# warnings/errors, as did formatting and diff whitespace. The disposable database was dropped normally. Existing tests preserve heading/tab focus, project switching/reset isolation, stale/corrected approvals, recovery budget, uncertainty/read-before-retry and CSP enforcement. Post-refactor phone handoff and desktop review screenshots were inspected and remain readable. The initial typecheck caught a leftover UI tab setter in the extracted request hook; an explicit initial-load callback restored that responsibility to the panel before the successful full run. Evidence: `.local/startup-review/verify.log` and the usual per-engine reports/screenshots.
+
+This is local acceptance for the reviewed slice. The required GitHub PR/main checks and subsequent live API/native macOS jobs own deployment acceptance for its final revision. Portfolio edits and employer distribution remain separate, and the owner's requested human walkthrough is the next acceptance step rather than an automated timing claim.
+
+### One main walkthrough and optional recovery on 19 October 2026
+
+The preceding presentation/refactor release passed all three jobs in [production run 39196083141](https://github.com/Dexter2099/client-onboarding-automation/actions/runs/39196083141), revision `e42997f3ace4d66e362d479acee46ef009ec9107`: verification/package, deployment/live security smoke and native macOS WebKit. Dexter then reported that his human testing worked fine and asked to keep moving without another tester. This records owner-reported acceptance, not an independently observed first-time walkthrough or a measured completion time. No additional tester is a release dependency for this slice; AC-10's independent understanding/timing evidence remains unmeasured.
+
+Dexter explicitly authorised the simplified entry, documentation, verification, meaningful GitHub commits and CI/CD deployment. Entry now opens directly on the main OF-1042 project, without equal project tabs. **Try failure recovery** below the main card opens the separate OF-1043 fixture with task-specific instructions and **Back to main walkthrough**. Switching moves keyboard focus to the destination heading. Main and recovery work remain separately saved; refresh opens the main view, and recovery can be reopened to read its saved state. Both fixtures, reset consequences, the existing shared server workflow and three-attempt budget remain unchanged. No dependency, schema, provider setting, security exception or portfolio edit was added.
+
+`npm run format:check`, `npm run typecheck` and `npm run verify` passed. Full regression passed **73 C# cases (16 unit + 57 integration/security)** and **36 browser executions**, twelve scenarios across Chromium, Firefox and WebKit; the browser matrix took 48.5 seconds. C# build reported zero warnings/errors and the disposable browser database was dropped normally. Existing foundation cases now verify default main entry, explicit recovery/return, separate saved states across switches and refresh, a single Project details disclosure, phone layout and destination keyboard focus. Recovery tests use the new entry action. Native macOS post-deploy smoke also exercises recovery navigation and return to the unchanged confirmed handoff at 1280px and 390px. Its actual CI result owns native/live acceptance for this new revision.
+
+Desktop/main, phone/main and phone/recovery screenshots were visually inspected and remain readable without overflow. Evidence: `.local/guided-walkthrough-verify.log`, `.local/reports/<engine>/foundation-*.png` and `welcome-recovery-*.png`. Diff review confirms this is presentation/navigation over the existing workflow, with API/database and security behaviour retained. The required GitHub PR check and subsequent main deployment/live/macOS jobs must pass before calling this slice deployed and verified; the [main delivery history](https://github.com/Dexter2099/client-onboarding-automation/actions/workflows/delivery.yml?query=branch%3Amain) and live `/release.json` identify that final revision.
+
+The public HTTPS demo URL works from another laptop or network without LAN binding or firewall changes. Each browser/device gets its own private sandbox; this does not transfer a visitor's saved work between devices. Webroot reclassification remains unconfirmed, and no warning was bypassed. Overnight behaviour, physical-device coverage and independent first-time timing remain bounded gaps. Portfolio changes remain with the other chat.
+
+### Clearer failure-recovery explanation on 19 October 2026
+
+The preceding simplified-walkthrough release passed [production run 39197909458](https://github.com/Dexter2099/client-onboarding-automation/actions/runs/39197909458) for revision `68f9a442eaa2cbc3f43ce98ea1a8dcdb11b420f8`, including live API/security and native macOS WebKit. Dexter subsequently reported successful Chrome use on his other laptop while using his PC. This is owner-reported second-device acceptance, without an OS/version or independent timing claim. He found the recovery exercise's purpose unclear and explicitly authorised clearer app/docs copy, verification, meaningful commits and GitHub CI/CD deployment.
+
+The optional entry and recovery introduction now explain a deliberate simulated welcome-message service failure: Start saves the request and review task while the welcome fails; Restore makes the simulated service available without retrying or resetting the counter; Try welcome explicitly retries just the failed step, retaining the original request/task. The guided restored-service example succeeds on attempt two. Unavailable, available and exhausted-state instructions name what stays saved and what to do next. Simulation and reset consequences remain visible. README, walkthrough, case study and recording narration explain preserved data, controlled retries and duplicate prevention; scope/agent notes preserve that meaning. No business behaviour, action label, dependency, schema, security policy, provider configuration or portfolio content changed.
+
+`npm run format:check`, React TypeScript/build, C# build and `npm run verify` passed: **73 C# cases (16 unit + 57 integration/security)** and **36 browser executions** across Chromium, Firefox and WebKit; the browser matrix took 48.6 seconds. C# build reported zero warnings/errors. The existing recovery assertion was updated for the revised available-state instruction; no new test count or functionality is claimed. Existing cases retain attempt counts, request/task identities, explicit retry/restoration, exhaustion, lost-response handling, main-project isolation, keyboard focus and responsive layout coverage. The owned Debug preview was stopped before verification and the disposable browser database was dropped normally. Main-entry and recovery phone screenshots were inspected; copy remains readable without overflow. Evidence: `.local/recovery-explanation-verify.log` and `.local/reports/<engine>/` screenshots. Diff whitespace and scope review passed.
+
+The required PR check and all main production jobs own deployment acceptance for the final revision; the main delivery history and live release marker identify it. Portfolio changes remain with the other chat. Webroot clearance and independent first-time timing remain unconfirmed/unmeasured; no new warning or service/account setup is needed for this copy slice.
+
+**Final local handoff checks — 25 October 2026:** strict TypeScript, isolated Vite build, scoped Prettier and git diff --check passed; all 31 local documentation links/anchors resolved. Source inspection confirmed no legacy frontend, CI/deployment or hosting configuration changes. The final negative test also rejects a malformed model tool call without leaving an active claim. The new request migration was applied only to project-local PostgreSQL. API, UI and cloud-disabled local Ollama are left running for review; no deployment occurred.

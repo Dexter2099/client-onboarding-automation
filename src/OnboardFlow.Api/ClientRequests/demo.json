@@ -1,0 +1,347 @@
+{
+  "documents": {
+    "profile": {
+      "name": "Client company profile",
+      "page": 1,
+      "sections": [
+        {
+          "id": "company",
+          "title": "Company",
+          "text": "Our legal company name is Juniper Studio LLC. We trade as Juniper Studio. Our entity is LLC."
+        },
+        {
+          "id": "contact",
+          "title": "Contact details",
+          "text": "Our business address is 100 Example Avenue, Portland, OR 97205. Phone: +1 202-555-0147. Email: maya@juniper.example. Website: https://juniper.example."
+        },
+        {
+          "id": "dates",
+          "title": "Business dates",
+          "text": "We started business on April 12, 2021. Our financial year ends on December 31."
+        },
+        {
+          "id": "activity",
+          "title": "Business activity",
+          "text": "We provide branding and website design for small businesses. Our demo tax reference has not been included in this document."
+        }
+      ]
+    },
+    "setup": {
+      "name": "Client onboarding notes",
+      "page": 2,
+      "sections": [
+        {
+          "id": "banking",
+          "title": "Banking arrangements",
+          "text": "Our operating bank is Demo Bank. A view-only invitation is planned. We have no second bank account. Our card is Example Card; monthly statements will be shared. Where view-only access is unavailable, we prefer to upload statements."
+        },
+        {
+          "id": "systems",
+          "title": "Payroll and sales",
+          "text": "We use payroll software and will share monthly payroll reports. Example CRM is our sales system; view-only access is planned."
+        },
+        {
+          "id": "loans",
+          "title": "Loans",
+          "text": "We have no business loans."
+        },
+        {
+          "id": "call",
+          "title": "Onboarding call",
+          "text": "We would like an onboarding call."
+        },
+        {
+          "id": "actions",
+          "title": "Actions still to complete",
+          "text": "The tax return has not been attached. Folder access, first payment and recurring payment authorisation still need to be confirmed by the client. No passwords, banking credentials or real account details are provided."
+        }
+      ]
+    },
+    "reply": {
+      "name": "Sample client clarification",
+      "page": 1,
+      "sections": [
+        {
+          "id": "tax",
+          "title": "Demo tax reference",
+          "text": "The fictional tax reference for this demo is DEMO-EIN-1042. This is a test label, not a real government identifier."
+        }
+      ]
+    }
+  },
+  "fields": [
+    {
+      "id": "legal",
+      "label": "Legal Company Name",
+      "page": "general",
+      "group": "General Information",
+      "kind": "text",
+      "allowedSources": [
+        "profile.company"
+      ]
+    },
+    {
+      "id": "dba",
+      "label": "DBA Name",
+      "page": "general",
+      "group": "General Information",
+      "kind": "text",
+      "allowedSources": [
+        "profile.company"
+      ]
+    },
+    {
+      "id": "address",
+      "label": "Address",
+      "page": "general",
+      "group": "General Information",
+      "kind": "text",
+      "allowedSources": [
+        "profile.contact"
+      ]
+    },
+    {
+      "id": "phone",
+      "label": "Phone Number",
+      "page": "general",
+      "group": "General Information",
+      "kind": "tel",
+      "allowedSources": [
+        "profile.contact"
+      ]
+    },
+    {
+      "id": "email",
+      "label": "Email",
+      "page": "general",
+      "group": "General Information",
+      "kind": "email",
+      "allowedSources": [
+        "profile.contact"
+      ]
+    },
+    {
+      "id": "entity",
+      "label": "Entity",
+      "page": "general",
+      "group": "General Information",
+      "kind": "choice",
+      "options": [
+        "Sole Proprietor",
+        "Partnership",
+        "S-Corp",
+        "C-Corp",
+        "LLC"
+      ],
+      "allowedSources": [
+        "profile.company"
+      ]
+    },
+    {
+      "id": "tax",
+      "label": "Tax ID (EIN)",
+      "page": "general",
+      "group": "General Information",
+      "kind": "text",
+      "hint": "Fictional demo reference only.",
+      "allowedSources": [
+        "profile.activity",
+        "reply.tax"
+      ]
+    },
+    {
+      "id": "website",
+      "label": "Website",
+      "page": "general",
+      "group": "General Information",
+      "kind": "url",
+      "allowedSources": [
+        "profile.contact"
+      ]
+    },
+    {
+      "id": "started",
+      "label": "Date Business Started",
+      "page": "general",
+      "group": "General Information",
+      "kind": "date",
+      "allowedSources": [
+        "profile.dates"
+      ]
+    },
+    {
+      "id": "yearend",
+      "label": "Year-End Date (If not 12/31)",
+      "page": "general",
+      "group": "General Information",
+      "kind": "text",
+      "allowedSources": [
+        "profile.dates"
+      ],
+      "hint": "Month/day only (MM/DD); no year has been provided."
+    },
+    {
+      "id": "activity",
+      "label": "Primary Business Activity",
+      "page": "general",
+      "group": "General Information",
+      "kind": "long",
+      "hint": "Briefly describe what your business does.",
+      "allowedSources": [
+        "profile.activity"
+      ]
+    },
+    {
+      "id": "bank-one",
+      "label": "Bank",
+      "page": "tasks",
+      "group": "Account Access - Bank & Credit Card Accounts",
+      "kind": "long",
+      "hint": "Describe the view-only access arrangement. Do not enter login credentials.",
+      "allowedSources": [
+        "setup.banking"
+      ]
+    },
+    {
+      "id": "bank-two",
+      "label": "Bank",
+      "page": "tasks",
+      "group": "Account Access - Bank & Credit Card Accounts",
+      "kind": "long",
+      "hint": "Add another bank, or confirm there is no second account.",
+      "allowedSources": [
+        "setup.banking"
+      ]
+    },
+    {
+      "id": "credit-card",
+      "label": "Credit Card",
+      "page": "tasks",
+      "group": "Account Access - Bank & Credit Card Accounts",
+      "kind": "long",
+      "hint": "Describe how card statements will be shared.",
+      "allowedSources": [
+        "setup.banking"
+      ]
+    },
+    {
+      "id": "access-alternative",
+      "label": "Bank Account or Credit Card without View-Only User Access",
+      "page": "tasks",
+      "group": "Account Access - Bank & Credit Card Accounts",
+      "kind": "choice",
+      "options": [
+        "Upload statements",
+        "Discuss another arrangement"
+      ],
+      "allowedSources": [
+        "setup.banking"
+      ]
+    },
+    {
+      "id": "payroll",
+      "label": "How do you access/receive your payroll reports?",
+      "page": "tasks",
+      "group": "Account Access - Payroll Software",
+      "kind": "choice",
+      "options": [
+        "Payroll software",
+        "Accountant sends reports",
+        "No payroll"
+      ],
+      "allowedSources": [
+        "setup.systems"
+      ]
+    },
+    {
+      "id": "crm",
+      "label": "Sales/CRM/Merchant Software",
+      "page": "tasks",
+      "group": "Account Access - CRM/Sales/Merchant Software",
+      "kind": "long",
+      "hint": "Describe the system and access arrangement.",
+      "allowedSources": [
+        "setup.systems"
+      ]
+    },
+    {
+      "id": "loans",
+      "label": "Do you have any business loans?",
+      "page": "tasks",
+      "group": "Loans",
+      "kind": "choice",
+      "options": [
+        "Yes",
+        "No"
+      ],
+      "allowedSources": [
+        "setup.loans"
+      ]
+    },
+    {
+      "id": "tax-return",
+      "label": "Please upload your most recent business tax return",
+      "page": "tasks",
+      "group": "Tax Return",
+      "kind": "attachment",
+      "hint": "This preview uses a fictional sample attachment.",
+      "sample": "sample-tax-return.txt",
+      "allowedSources": []
+    },
+    {
+      "id": "folder",
+      "label": "Access Your Shared Google Drive Folder",
+      "page": "tasks",
+      "group": "Your Client Folder",
+      "kind": "confirmation",
+      "hint": "Confirm the simulated shared folder is accessible.",
+      "confirmation": [
+        "I have accessed the sample client folder."
+      ],
+      "sample": "Sample folder access confirmed",
+      "allowedSources": []
+    },
+    {
+      "id": "payment",
+      "label": "Complete First Payment",
+      "page": "tasks",
+      "group": "Payments & Billing",
+      "kind": "confirmation",
+      "hint": "Demo confirmation only. No payment is taken.",
+      "confirmation": [
+        "Mark the fictional first payment as complete."
+      ],
+      "sample": "Fictional first payment marked complete",
+      "allowedSources": []
+    },
+    {
+      "id": "ach",
+      "label": "Authorize ACH Payments",
+      "page": "tasks",
+      "group": "Payments & Billing",
+      "kind": "confirmation",
+      "hint": "Simulate the checklist. No bank is connected and no authorisation is created.",
+      "confirmation": [
+        "Sample email opened",
+        "Sample account step completed",
+        "Sample verification completed"
+      ],
+      "sample": "Fictional authorisation checklist completed",
+      "allowedSources": []
+    },
+    {
+      "id": "call",
+      "label": "Schedule an Onboarding Call",
+      "page": "tasks",
+      "group": "Schedule an Onboarding Call",
+      "kind": "choice",
+      "options": [
+        "An onboarding call would help",
+        "No call needed"
+      ],
+      "allowedSources": [
+        "setup.call"
+      ]
+    }
+  ]
+}

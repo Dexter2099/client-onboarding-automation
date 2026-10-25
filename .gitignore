@@ -1,0 +1,14 @@
+.local/
+# Original local preview assets are preserved in public/ under versioned release filenames.
+preview/content-snare/public/
+node_modules/
+dist/
+**/bin/
+**/obj/
+**/TestResults/
+playwright-report/
+test-results/
+src/OnboardFlow.Api/wwwroot/
+.env
+.env.*
+!.env.example
