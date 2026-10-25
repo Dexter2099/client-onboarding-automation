@@ -73,7 +73,7 @@ Hostless builds Git repositories, so CI publishes the **verified source archive*
 
 The free target is **0.25 vCPU, 512 MB, minimum one instance, maximum one instance, review apps off**, with no card, paid plan or credit dependency. Keep all configured resources within the account's shared free pool. Hostless's spending-limit field is not a hard invoice cap; entering zero disables that control. Use the free resource limits rather than relying on that field.
 
-The container reads Hostless's `PORT`, binds on all interfaces and exposes `/health` without touching the database. Workstation GC has a 256 MiB managed-heap ceiling within the 512 MB container. Fonts, licences, the labelled MP4/WebM recording and its poster are packaged locally. Startup secrets belong only in server settings:
+The container reads Hostless's `PORT`, binds on all interfaces and exposes `/health` without touching the database. Production HTTP redirects to HTTPS. Only the verified ingress peer may supply the protocol header; the host overwrites visitor-supplied values. Workstation GC has a 256 MiB managed-heap ceiling within the 512 MB container. Fonts, licences, the labelled MP4/WebM recording and its poster are packaged locally. Startup secrets belong only in server settings:
 
 - `ConnectionStrings__OnboardFlow`: the existing production Neon database, retaining the shared spending ledger.
 - `Intake__Enabled=true` and `Intake__Provider=OpenAI`.

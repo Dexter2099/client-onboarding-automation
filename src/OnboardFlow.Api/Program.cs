@@ -15,6 +15,11 @@ if (Environment.GetEnvironmentVariable("PORT") is { } hostedPort)
     builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
 }
 builder.AddApiSafety();
+builder.Services.AddHttpsRedirection(options =>
+{
+    options.HttpsPort = 443;
+    options.RedirectStatusCode = StatusCodes.Status308PermanentRedirect;
+});
 const string cloudflareProtoHeader = "X-OnboardFlow-Proto";
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {
@@ -66,7 +71,11 @@ if (useCloudflareVisitor) app.Use(async (http, next) =>
 });
 app.UseForwardedHeaders();
 // Determine HTTPS from the verified proxy before HSTS; preserve local HTTP development.
-if (!app.Environment.IsDevelopment()) app.UseHsts();
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+    app.UseHsts();
+}
 app.UseExceptionHandler(handler => handler.Run(async http =>
 {
     var error = http.Features.Get<IExceptionHandlerFeature>()?.Error;

@@ -94,9 +94,11 @@ public sealed class ApiSafetyTests
     public async Task Hsts_does_not_pin_http_development_or_loopback(string environment, string address)
     {
         await using var factory = Factory(environment: environment);
-        using var client = factory.CreateClient(new() { BaseAddress = new Uri(address) });
+        using var client = factory.CreateClient(new() { BaseAddress = new Uri(address), AllowAutoRedirect = false });
         var response = await client.GetAsync("/favicon.svg");
-        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var redirects = environment == "Production" && new Uri(address).Scheme == "http";
+        Assert.Equal(redirects ? HttpStatusCode.PermanentRedirect : HttpStatusCode.OK, response.StatusCode);
+        if (redirects) Assert.Equal("https://demo.example/favicon.svg", response.Headers.Location?.ToString());
         Assert.False(response.Headers.Contains("Strict-Transport-Security"));
     }
 }

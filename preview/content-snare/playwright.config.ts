@@ -6,7 +6,9 @@ const live = process.env.ONBOARDFLOW_LIVE_ORIGIN;
 if (live) {
   const target = new URL(live);
   if (
-    target.origin !== 'https://dexter-onboardflow.de.deplexo.com' &&
+    !['https://onboardflow.hostless.app', 'https://dexter-onboardflow.de.deplexo.com'].includes(
+      target.origin,
+    ) &&
     !(target.protocol === 'http:' && ['127.0.0.1', 'localhost'].includes(target.hostname))
   )
     throw new Error('Live verification is restricted to this app or its loopback container.');
