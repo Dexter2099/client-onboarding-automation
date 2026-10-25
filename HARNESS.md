@@ -1,6 +1,29 @@
 # Development harness
 
+## Employer release ready — 25 October 2026
+
+[Open OnboardFlow](https://onboardflow.hostless.app/). Runtime source **2a2524f45c681707432c35d86ee6b0cec5a95629**, release-branch commit **3d4e2bb34bbd9ecf9bb1421590c467bd54e4fbe7**. [Delivery 40163443945](https://github.com/Dexter2099/client-onboarding-automation/actions/runs/40163443945) passed all three jobs. Hosting remains the verified free/no-card **0.25 vCPU / 512 MB / one always-running instance**, maximum one, review apps off. The old Deplexo release remains available for rollback, sharing the same Neon database/ledger. No paid hosting or card was added.
+
+| Check | Actual result |
+| --- | --- |
+| Deterministic regression and package | **131 backend + 12 browser** checks passed; formatting and production container build passed. Two opt-in checks are excluded from the ordinary backend run; the separate browser job executes its 12 cases. |
+| Real-model evaluation | Original pinned-model matrix **9/9**, unchanged by the view/protocol-file organisation and ingress work. |
+| Live HTTPS boundary | All **four normal/forged-header cases on both Ubuntu and macOS** passed, with the exact revision and no HTTP cookies. Storage, CSRF, fixed lifetime, security headers, command replay and video ranges passed. |
+| Hosted AI journey | Native macOS WebKit passed real inference, source inspection, explicit fictional reply/continuation, four manual sample actions, all 23 submissions, reload, reset and local-recording playback. Final UI also passed four hosted Chromium scenarios on the preceding application-equivalent view release, including 390px/320px layouts. Branded Safari/physical iOS were not tested. |
+| Container replacement | A held visitor recovered its saved edit and question with the **same owner cookie**, from `ab91256…` to `d7224a5…`. API response and rendered state were both checked. No AI calls. |
+| Short fresh-browser entry | Two uncached browser contexts on the active service: usable persisted request data in **5.348 s / 2.259 s**; first saved edit **0.532 s / 0.538 s**. First-byte times were **3.132 s / 0.403 s**. These combine client/network/app/database work and do not isolate a provider's latency. |
+| Budget continuity | At **05:00:59 UTC**, **260 reservations / US$1.197821 accounted**, including the original **two uncertain holds / US$0.005998**. The shared **US$4.50 cutoff** and separate **US$5 project limit** remain; no counter import/reset/refund occurred. This is conservative application accounting, not an invoice. |
+| Secret protections | 12 server settings, with the database connection and dedicated key still write-only. The separate portfolio chatbot key remains untouched. Temporary transfer/query copies are removed after the final query; the original ignored OnboardFlow key file is retained. |
+
+Dexter cancelled the proposed hour-long inactivity test. **No hour-idle test was started or completed**, and it is not a release gate. The short measurements above are active-service observations, not long-idle or uptime evidence. No keep-alive was added; no SQL keep-alive is configured and no background request poll runs outside an active AI fill.
+
+Sanitized, credential-free measurements are committed in [release evidence](docs/evidence/hostless-release-2026-10-25.json). Native macOS artifacts are retained by the linked CI run for seven days; local screenshots and the restart proof are in `.local/macos-d722-evidence/`, `.local/showcase-final-browser/` and `.local/hostless-restart-verified/`. The initial five-second restart assertion and reset-test race remain documented below rather than counted as passes. The colour legend matches the implemented draft/submitted/missing sidebar states. Portfolio changes and a newly recorded hosted video remain separate work.
+
+Earlier sections below preserve investigation checkpoints; their pending-release/hour-idle statements do not override this release or Dexter's cancellation.
+
 ## Current Hostless release acceptance — 25 October 2026
+
+**Latest scope correction:** Dexter explicitly cancelled the proposed hour-long inactivity test and asked for the employer demo to be ready. No hour-idle window was started or completed. The full hosted journeys, restart persistence and a short fresh-visitor check are the release evidence; long-idle behaviour remains untested. Earlier references to an hour-idle acceptance dependency are superseded.
 
 **Proxy correction verified:** [Delivery 40161984670](https://github.com/Dexter2099/client-onboarding-automation/actions/runs/40161984670) is fully green after the second exact peer was configured, including Ubuntu HTTPS/storage/security/media checks and the native macOS real-AI journey. The held visitor restored its edit and question at **04:42:09 UTC** across `ab91256…` to `d7224a5…`, with the same owner cookie and no AI calls; native macOS and restored-state screenshots were inspected. Evidence: `.local/hostless-restart-verified/result.json`, `.local/macos-d722-evidence/`. The initial five-second UI-only restart assertion remains inconclusive; the causal API-response check is the successful evidence.
 
