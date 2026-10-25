@@ -50,6 +50,8 @@ public sealed partial class FoundationDb(DbContextOptions<FoundationDb> options)
         project.Property(x => x.Owner).HasMaxLength(80);
         project.Property(x => x.Service).HasMaxLength(80);
         ConfigureWorkflow(model);
+        ConfigureIntake(model);
+        ConfigureIntakeSpend(model);
     }
 }
 

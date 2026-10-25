@@ -1,6 +1,131 @@
 # Development harness
 
-Updated 19 October 2026. **The hosted workspace failure is resolved and GitHub CI/CD is active.** The verified Cloudflare scheme adapter preserves Production antiforgery and Secure cookies. Both accounts remain Free. Dexter authorised the security and simplified-walkthrough releases through the existing GitHub pipeline. He reported a successful human walkthrough; independent first-time timing, extended-idle entry and employer-access reputation remain unmeasured/unconfirmed. Employer distribution and portfolio linking remain separate. The latest dated checkpoint below owns the current evidence.
+## Production release preparation — 25 October 2026
+
+Dexter authorised deployment with the existing capped OnboardFlow project. This supersedes the earlier local-only holds below; the portfolio/new hosted-app recording remain separate. The normal build and multi-stage container now package the reviewed UI, local font files/licences and labelled original local recording (silent H.264 MP4 plus preserved WebM). Production intake is opt-in and refuses the wrong provider, project or unverified setup.
+
+Local release checks: **130 backend checks passed**, two opt-in tests skipped in the ordinary run; the browser integration test then passed all **12 Chromium/Firefox/WebKit checks** against the packaged UI, real Kestrel API and disposable PostgreSQL. Its model double is test-assembly-only, not production code. The unchanged real-model matrix remains 9/9, with evidence below. Formatting, TypeScript and the Docker build pass.
+
+The actual Production container ran with **128 MiB memory, no swap and 0.25 CPU**, workstation GC and a 64 MiB managed-heap ceiling. One real OpenAI no-typing visitor completed sources, missing-detail continuation, manual tasks, submissions, reload and restart in **20.1 seconds**. Six additional concurrent visitors passed session/CSRF/storage/reload with no model calls. Observed cgroup peak was **112,799,744 bytes (107.6 MiB)**, with zero OOM/max events and the process still running. This small capacity check does not guarantee arbitrary load. The local container fixture emulated the trusted TLS ingress peer over loopback; final hosted verification must use actual HTTPS without a scheme override.
+
+Preparation found and fixed three packaging/test issues: the frontend Docker stage needed the shared JSON specification; the original WebM/automatic playback did not complete on Windows WebKit, so the release adds silent H.264 MP4 with muted inline playback; Kestrel browser tests must use the dynamically bound address. The first direct HTTP Production probe correctly failed antiforgery's SSL requirement; only the local proxy fixture was configured, without relaxing production cookie/TLS checks.
+
+Deployment order: back up the existing Neon database, apply only ClientRequests/IntakeSpend additive migrations, stop local paid inference, import every current spend reservation including uncertain holds, configure the existing Deplexo app with the separate server-side OnboardFlow key, and deploy the checked committed archive through Delivery. Retain the previous release **145ef2e15031be5c342e76ebcb9121928095fe9d** and provider history for rollback. Do not roll back the additive schema or spending ledger. Production rollout status is evidenced by the Delivery run and hosted release.json; preparation alone is not live acceptance.
+
+## OpenAI capped inference checkpoint — 25 October 2026
+
+Dexter selected OpenAI after the Cloudflare Free comparison. The separate **OnboardFlow** project has a verified **US$5/month enforced limit**, with an 80% / US$4 alert. The existing **Dexter Portfolio Chatbot** project and its active key were not edited, replaced or revoked. Dexter explicitly requested **no expiry** on the new restricted Responses read/write key. It is stored only in ignored `.local/openai.env`, restricted to the local Windows user. No secret is included in evaluation evidence.
+
+`OpenAiIntakeClient` uses direct server-side Responses HTTP, exact input counting, strict output and only the existing two read tools. GPT-5.4 Mini failed the missing-information/choice cases; the evaluated snapshot is **gpt-5.4-2026-03-05**, reasoning `none`, temperature 0, Standard processing. Generation remains bounded by six calls including continuation, 512 output tokens and 15 seconds per call. Batches allow up to eight drafts within the existing validator limit; a full batch must continue rather than invent a clarification.
+
+**Current live matrix: 9/9 passed**, complete/missing/conflict × 3, in `.local/intake-evaluation/openai-20261025-113713-1caf6b38/` (per-case JSON, summary and TRX). Complete/conflict runs used four calls and 7.994–8.885 seconds; missing-detail plus reply used six calls and 11.357–12.178 seconds. All manual items stayed absent, quotes matched retrieved passages, conflicts paused on the legal-name question, the missing reference came only from the supplied reply, and planned access/sharing stayed in future tense. Human review of normalized values agreed with the fixtures. This small fixed matrix does not prove general reliability.
+
+Conservative uncached accounting for the matrix totalled **US$0.276884**, or US$0.025766–0.040317 per evaluated journey. These are token-priced estimates used by the spending controls, not an invoice or allowance guarantee; cache discounts may reduce billing. At this measured range, a fresh US$4.50 app allowance would cover roughly 110–170 similar single-run journeys, before other usage, retries started by visitors or uncertainty holds. Current October development ledger after matrix and regression tests: US$0.561767 accounted, including US$0.005998 in two retained uncertain holds. It persisted after live-test database cleanup.
+
+The persistent PostgreSQL spending ledger reserves counted input plus a 256-token buffer and the full output allowance **before** inference. It stops at **US$4.50/month**; uncertain/failed requests keep their holds. Settlement uses ordinary uncached input/output rates conservatively. Tests of actual OpenAI calls use the persistent loopback ledger even though their request databases are disposable. Reset, expiry, process restart and test cleanup cannot refund spending. The ledger must be carried into the shared hosted database before release. The provider hard limit can have enforcement delay; the separate application ceiling leaves headroom. Neither boundary applies to the existing chatbot project.
+
+~~~text
+Intake__OpenAI__ProjectId=<dedicated-project-id>
+Intake__OpenAI__BudgetVerified=true
+Intake__OpenAI__ApiKey=<server-side-secret>
+~~~
+
+~~~powershell
+pwsh -NoProfile -File scripts/intake-local.ps1 test
+pwsh -NoProfile -File scripts/intake-local.ps1 evaluate -Provider OpenAI
+pwsh -NoProfile -File scripts/intake-local.ps1 api -Provider OpenAI
+~~~
+
+Ordinary tests disable live AI. The evaluation command runs the unchanged nine complete/missing/conflict cases, three repetitions each. Optional `-EvaluationFilter` selects a labelled development probe; it does not establish the full matrix. Unique ignored `.local/intake-evaluation/openai-*` directories retain normalized answers, source documents, call counts, input/output tokens, conservatively accounted USD, timings and safe response shapes. Hidden reasoning and credentials are excluded. Ollama is still the explicit default local provider; there is no automatic retry or provider/model fallback.
+
+**Earlier OpenAI attempts:** the initial Mini full matrix passed 3/9; it copied an absence statement into a tax draft, while a correct legal clarification with `done=false` was initially ignored. The server now rejects identifiers absent from their cited passage and respects a valid clarification independently of that flag. Later Mini matrices/probes still produced unsupported absence values or unnecessary call-preference questions; they remain failures. Early temperature probes were rejected by the input-counting endpoint because it does not accept that generation parameter. Temperature is now added only after counting the identical input/tools/schema; removing it previously allowed generation but did not solve Mini quality. The current stronger-model comparison is explicit, not runtime fallback.
+
+**Cloudflare measured comparison:** Workers Free and account/model eligibility were verified using the approved, account-scoped Workers AI Read token. Llama 3.3 70B passed 0/9. Qwen 3.8 27B passed 8/9, then 7/9; 15-second call timeouts prevented acceptance. Qwen 3 30B returned reasoning-only responses within the same 512-token bound and failed its probes. Development tests then exhausted the daily free allocation: actual HTTP 429 / code **4006** explicitly reported the 10,000-neuron allowance exhausted. The adapter recognizes that specific message as well as documented code 3036, without retry or paid upgrade. This was many development runs, not five employer visits. Token-derived neuron estimates are separate from observed dashboard usage; no final exact dashboard total was captured after exhaustion.
+
+**Regression verification:** **126 passed, one opt-in theory skipped**, after the final model/protocol change and whole-identifier boundary test. Exact input/tool/schema counting excludes generation-only temperature, which is added after counting. Budget concurrency, uncertain reservations, duplicate settlement, provider errors and output truncation remain covered. TypeScript, scoped Prettier and `git diff --check` passed. The stricter identifier boundary rejects a prefix such as DEMO-EIN as a substitute for the full source identifier.
+
+**Local browser journey:** the existing no-typing Playwright journey passed against the real C# API, PostgreSQL and selected OpenAI snapshot (20.0 seconds). It checked 18 initial drafts, explicit fictional reply/continuation, the actual source passage, four human-only sample actions, both page submissions, all 23 saved submitted items, reload and restart. Screenshots are in `.local/content-snare-evidence/`; the completed desktop image was visually inspected. This uses loopback HTTP, not hosted HTTPS, and does not establish production acceptance. The local API and Vite remain available at http://127.0.0.1:5622/l/instructions for review. October conservative accounting after this journey is **US$0.602084**, including the unchanged two uncertain holds.
+
+**Release boundary:** no production endpoint, hosted database migration, deployment, CI release, portfolio or video update. Production intake routes remain disabled. Local browser verification is recorded separately from the nine real-model API cases.
+
+Official references: [GPT-5.4 model, snapshot and pricing](https://developers.openai.com/api/docs/models/gpt-5.4), [input counting](https://developers.openai.com/api/docs/guides/token-counting), [spend limits](https://developers.openai.com/api/docs/guides/spend-limits), [Cloudflare pricing](https://developers.cloudflare.com/workers-ai/platform/pricing/). PMB tools are not exposed in this session; no prepare/recall/record call is claimed.
+
+## Historical Cloudflare setup plan — superseded by the measured checkpoint above
+
+Dexter withdrew the proposed paid OpenAI option and selected Cloudflare Workers AI Free. The direct C# adapter is implemented locally behind IIntakeModelClient; no production endpoint, release, hosting, CI or portfolio change. The candidate is pinned to @cf/meta/llama-3.3-70b-instruct-fp8-fast, documented with native tools and JSON Mode. Live account/model eligibility and the nine-case matrix remain pending credentials. The earlier Ollama 9/9 is baseline only.
+
+Deterministic verification: **105 passed, one opt-in live theory skipped**; includes 13 new adapter cases for limits, current tool allowlist/history translation, usage, safe errors, no outbound call without configuration, quota/capacity/access failures without retry, and bounded input/response reads. The additional pipeline case proves that quota failure after accepted drafts preserves them, consumes the outbound call, replays without inference and allows manual completion. TypeScript, isolated Vite build, scoped Prettier and git diff --check passed. One initial build attempt encountered the already-running API's Windows assembly lock; the exact project API process was verified/stopped and the successful run followed. Do not count that failed build as a model evaluation.
+
+### Cloudflare setup and evaluation
+
+1. Verify this account uses **Workers Free**, without a billing upgrade or prepaid AI Gateway credits. Domain Free is not evidence of the Workers plan. The published free limit is 10,000 neurons/day, resetting at 00:00 UTC. Quota error 3036 must stop inference, never upgrade/retry/fallback. A future plan change requires rechecking the $0 boundary.
+2. Provision an account-scoped, least-privilege Workers AI inference token through Cloudflare. Credential creation requires the applicable browser action-time confirmation. Never put a real token in chat, repository config, screenshots or evaluation evidence.
+3. Store only the following settings in ignored .local/cloudflare.env (or server-side environment variables); replace the placeholders locally:
+
+~~~text
+Intake__Cloudflare__AccountId=<account-id>
+Intake__Cloudflare__ApiToken=<workers-ai-token>
+~~~
+
+~~~powershell
+pwsh -NoProfile -File scripts/intake-local.ps1 evaluate -Provider Cloudflare
+pwsh -NoProfile -File scripts/intake-local.ps1 api -Provider Cloudflare
+~~~
+
+The script explicitly selects the provider, imports only those two allowed settings and forces the project loopback PostgreSQL connection. Ordinary tests disable live inference. API credentials stay in C#; the browser never calls Cloudflare directly. Missing configuration fails without inference. Ollama remains the default local mode, not a hosted failure fallback. Production intake routes remain unmapped.
+
+Record all nine outcomes (complete/missing/conflict × 3), latency, persisted call counts, source/manual-action assertions and input/output tokens in a unique .local/intake-evaluation/cloudflare-* directory. Capture dashboard allowance before/after where available. Per-call estimatedNeurons uses published 26,668 input / 204,805 output neurons per million tokens for this model, checked 25 October 2026; it is an estimate, not observed dashboard usage. Do not substitute token-derived estimates for measured allowance consumption or claim a pass while credentials/access are missing.
+
+Official provider references: [REST API](https://developers.cloudflare.com/workers-ai/get-started/rest-api/), [candidate model](https://developers.cloudflare.com/workers-ai/models/llama-3.3-70b-instruct-fp8-fast/), [JSON Mode](https://developers.cloudflare.com/workers-ai/features/json-mode/), [traditional tools](https://developers.cloudflare.com/workers-ai/features/function-calling/traditional/), [pricing](https://developers.cloudflare.com/workers-ai/platform/pricing/), [quota/access errors](https://developers.cloudflare.com/workers-ai/platform/errors/). PMB tools are not exposed in this session; no prepare/recall/record call is claimed.
+
+## Local C# / real AI checkpoint — 25 October 2026
+
+Dexter authorised the local backend and real AI connection to this reference interface, with no live app/website change. The local feature now uses C#/ASP.NET Core, PostgreSQL and installed Ollama qwen3.8:27b. Native tool calls and schema-constrained extraction replace canned filling; browser storage was removed. Production does not map the new intake endpoints. Existing UI layout and fictional external actions are preserved.
+
+| Phase | Current evidence / boundary |
+| --- | --- |
+| A0 | Real local model/tool/schema capability verified. No key/cloud/billing account; public hosted provider remains future work. |
+| A1 | Owned PostgreSQL aggregate, command/version checks, budgets/claims, source validation, model adapter and explicit submission rules implemented. |
+| A2 | Reference interface connected by same-origin Vite proxy to the local API; server drafts/status/source inspection/reply continuation/edits/submissions. |
+| A3 | Deterministic and live evaluations below; browser/visual checks completed before handoff. User review and deployment remain separate. |
+
+### Exact local commands
+
+~~~powershell
+pwsh -NoProfile -File scripts/intake-local.ps1 setup
+pwsh -NoProfile -File scripts/intake-local.ps1 api
+node node_modules/vite/bin/vite.js --config preview/content-snare/vite.config.ts
+~~~
+
+Ollama must run on loopback 11434 with cloud disabled and the installed model available. API uses 5080, Vite 5622, project PostgreSQL 54329. Open [local Instructions](http://127.0.0.1:5622/l/instructions). The setup helper creates ignored random local database credentials if missing and applies the additive migration only to the fixed loopback database; it never inherits a hosting connection.
+
+On Windows, stop the API before .NET rebuild/test because its assemblies are locked while running. Start it again afterwards. Keep API, Vite and Ollama running for user review.
+
+~~~powershell
+pwsh -NoProfile -File scripts/intake-local.ps1 test
+pwsh -NoProfile -File scripts/intake-local.ps1 evaluate
+node node_modules/typescript/bin/tsc -p preview/content-snare/tsconfig.json --noEmit
+node node_modules/@playwright/test/cli.js test --config preview/content-snare/playwright.config.ts
+node node_modules/vite/bin/vite.js build --config preview/content-snare/vite.config.ts
+~~~
+
+Normal .NET tests explicitly disable live inference and use disposable project-local databases. Evaluate is an explicit local-model call, never normal CI. The separate browser suite calls this live local API/model and requires services. UI output stays in ignored preview/content-snare/dist/ and does not replace the published app's static files.
+
+### Verification and failed attempts
+
+- Deterministic .NET suite: **91 passed**, one opt-in live theory skipped. New cases cover tool/source/manual boundaries, exact source reconstruction, CSRF/ownership/expiry, command replay/conflicting inputs, version checks, invalid submission, source changes, timeout, six-call limits, concurrent starts, dead-claim expiry/late completion and Production route absence. Older workflow/security tests remain passing.
+- Final live evaluation: **9/9 passed** in .local/intake-evaluation/20261025-103400-5b8b82e4/. Three complete, three missing-detail/resume and three conflicting-source cases. Complete/conflict runs used four calls, resumed runs six. Observed warm end-to-end evaluation times: 4.10–6.40 seconds on this computer. Initial model warm-up was 12.94 seconds; this is not a general latency guarantee.
+- Source inspection confirmed correct fixture values/passages, recurring year-end without an invented year, conflict clarification instead of guessing, and plans retained as future actions. All outputs remained drafts; the four manual tasks were absent until explicit user actions. Small fixed-fixture evaluation does not establish general reliability or automatic semantic verification.
+- Earlier attempts are retained: initial full matrix 6/9 (invented year in annual date); next 3/9 (malformed structured output); schema-constrained output then 9/9; final future-tense assertions also 9/9. Initial ad-hoc tool probe was rejected by automatic approval review with only 'blocked by policy'; actual verification then used the application-enforced read-only tools. The implementation first found wasted tool rereads and omitted negative/default facts; single-read availability and explicit required-field continuation corrected them without raising the six-call budget.
+- Per-case snapshots, trace/tokens/timing and prompt/source metadata are under unique ignored evaluation directories. A build-locked attempt produced no evaluation cases. TRX reports in .local/reports describe the last command; unique JSON directories retain earlier runs. No hidden thinking, provider keys or browser/session credentials are included in those evaluation snapshots.
+
+**Browser verification:** four Chromium journeys passed against the actual local C# API, PostgreSQL and Ollama, including the 23-item no-typing flow, source/edit/submission and question persistence, refresh/restart, keyboard/modal operation and 390px/320px layouts. An early preview-era five-second wait and undefined-vs-null assertion were corrected for asynchronous persisted API responses; the UI required no alternate flow. A new recording captures actual six-call local inference and source inspection; the welcome caption now labels it as real local AI. Screenshots and the recorded local walkthrough are under .local/content-snare-evidence/ and preview/content-snare/public/. Prior HTML wireframes and the earlier simulated recording are historical, not agent evidence. PMB tools were unavailable; no prepare/recall/record call is claimed.
+
+### Scope and engineering audit
+
+One fixed field/source specification; one owned request table with bounded JSON state/version; existing sandbox/security infrastructure; narrow model HttpClient contract; pure validation and aggregate transactions; inference outside locks; application-owned writes; visitor-owned submissions. No agent framework, separate Python service, generic repository, scheduler, chat mode or financial integration. No deployment, hosting/CI setting, portfolio or remote database change.
+
+The dated sections below concern the earlier application and are preserved as historical infrastructure evidence.
 
 ## Purpose
 
@@ -560,3 +685,5 @@ The optional entry and recovery introduction now explain a deliberate simulated 
 `npm run format:check`, React TypeScript/build, C# build and `npm run verify` passed: **73 C# cases (16 unit + 57 integration/security)** and **36 browser executions** across Chromium, Firefox and WebKit; the browser matrix took 48.6 seconds. C# build reported zero warnings/errors. The existing recovery assertion was updated for the revised available-state instruction; no new test count or functionality is claimed. Existing cases retain attempt counts, request/task identities, explicit retry/restoration, exhaustion, lost-response handling, main-project isolation, keyboard focus and responsive layout coverage. The owned Debug preview was stopped before verification and the disposable browser database was dropped normally. Main-entry and recovery phone screenshots were inspected; copy remains readable without overflow. Evidence: `.local/recovery-explanation-verify.log` and `.local/reports/<engine>/` screenshots. Diff whitespace and scope review passed.
 
 The required PR check and all main production jobs own deployment acceptance for the final revision; the main delivery history and live release marker identify it. Portfolio changes remain with the other chat. Webroot clearance and independent first-time timing remain unconfirmed/unmeasured; no new warning or service/account setup is needed for this copy slice.
+
+**Final local handoff checks — 25 October 2026:** strict TypeScript, isolated Vite build, scoped Prettier and git diff --check passed; all 31 local documentation links/anchors resolved. Source inspection confirmed no legacy frontend, CI/deployment or hosting configuration changes. The final negative test also rejects a malformed model tool call without leaving an active claim. The new request migration was applied only to project-local PostgreSQL. API, UI and cloud-disabled local Ollama are left running for review; no deployment occurred.

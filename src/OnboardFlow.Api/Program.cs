@@ -20,6 +20,7 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
 });
 builder.Services.AddSingleton(TimeProvider.System);
 builder.Services.AddScoped<WorkflowService>();
+builder.Services.AddIntake();
 builder.Services.AddDbContext<FoundationDb>((services, options) => options.UseNpgsql(
     services.GetRequiredService<IConfiguration>().GetConnectionString("OnboardFlow")
     ?? throw new InvalidOperationException("Set ConnectionStrings__OnboardFlow; see HARNESS.md.")));
@@ -98,6 +99,7 @@ app.MapGet("/api/csrf", (HttpContext http, IAntiforgery antiforgery) =>
     Results.Ok(new { token = antiforgery.GetAndStoreTokens(http).RequestToken }));
 app.MapSandboxEndpoints();
 app.MapWorkflowEndpoints();
+app.MapIntake();
 app.MapFallback("/api/{**path}", () => Results.Problem(statusCode: 404, title: "Unknown API route."));
 app.MapFallbackToFile("index.html");
 app.Run();

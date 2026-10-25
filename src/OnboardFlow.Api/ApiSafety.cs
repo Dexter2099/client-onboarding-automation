@@ -7,7 +7,7 @@ public static class ApiSafety
 {
     private const int MaxBodyBytes = 16 * 1024;
     private const string BrowserPolicy = "default-src 'none'; script-src 'self'; script-src-attr 'none'; "
-        + "style-src 'self'; style-src-attr 'none'; img-src 'self'; font-src 'self'; connect-src 'self'; "
+        + "style-src 'self'; style-src-attr 'none'; img-src 'self'; font-src 'self'; media-src 'self'; connect-src 'self'; "
         + "base-uri 'none'; object-src 'none'; frame-ancestors 'none'; form-action 'none'";
 
     public static void AddApiSafety(this WebApplicationBuilder builder)

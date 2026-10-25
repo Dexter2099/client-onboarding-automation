@@ -65,6 +65,64 @@ namespace OnboardFlow.Api.Migrations
                     b.ToTable("ActivityEvents");
                 });
 
+            modelBuilder.Entity("OnboardFlow.Api.ClientRequestRecord", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("SandboxSessionId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("StateJson")
+                        .IsRequired()
+                        .HasColumnType("jsonb");
+
+                    b.Property<long>("Version")
+                        .IsConcurrencyToken()
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SandboxSessionId")
+                        .IsUnique();
+
+                    b.ToTable("ClientRequests");
+                });
+
+            modelBuilder.Entity("OnboardFlow.Api.IntakeSpendReservation", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<long>("AccountedMicros")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateOnly>("Month")
+                        .HasColumnType("date");
+
+                    b.Property<long>("ReservedMicros")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Scope")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("character varying(80)");
+
+                    b.Property<bool>("Settled")
+                        .HasColumnType("boolean");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Scope", "Month");
+
+                    b.ToTable("IntakeSpendReservations", t =>
+                        {
+                            t.HasCheckConstraint("CK_IntakeSpend_Nonnegative", "\"ReservedMicros\" > 0 AND \"AccountedMicros\" >= 0");
+                        });
+                });
+
             modelBuilder.Entity("OnboardFlow.Api.ItemRevision", b =>
                 {
                     b.Property<Guid>("Id")
@@ -401,6 +459,15 @@ namespace OnboardFlow.Api.Migrations
                     b.HasOne("OnboardFlow.Api.Onboarding", null)
                         .WithMany("Events")
                         .HasForeignKey("OnboardingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("OnboardFlow.Api.ClientRequestRecord", b =>
+                {
+                    b.HasOne("OnboardFlow.Api.SandboxSession", null)
+                        .WithOne()
+                        .HasForeignKey("OnboardFlow.Api.ClientRequestRecord", "SandboxSessionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

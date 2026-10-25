@@ -12,6 +12,12 @@
 !THIRD_PARTY_NOTICES.md
 !public/
 !public/**
+!preview/
+!preview/content-snare/
+!preview/content-snare/index.html
+!preview/content-snare/tsconfig.json
+!preview/content-snare/src/
+!preview/content-snare/src/**
 !src/
 !src/**
 !tests/
@@ -19,4 +25,5 @@
 !tests/browser/**
 **/bin
 **/obj
+**/dist
 src/OnboardFlow.Api/wwwroot

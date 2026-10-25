@@ -1,108 +1,105 @@
 # OnboardFlow
 
-A full-stack client-onboarding demo built with **React, TypeScript, C#, ASP.NET Core and PostgreSQL**. A project manager reviews a signed website project's client replies, resolves an out-of-scope request and saves an approved kickoff brief with an inspectable handoff.
+A client-onboarding application based closely on [this Content Snare client demo](https://demo.contentsnare.com/shared/21481036-b8ca-4abb-ac0b-4d09b663333a/l/instructions), with an AI agent drafting answers from fictional client documents.
 
-[Try the live demo](https://dexter-onboardflow.de.deplexo.com/) · [Engineering case study](docs/case-study.md) · [QA evidence](docs/case-study.md#qa-and-testing-evidence)
+**Release build:** React/TypeScript, C#/.NET 10 and PostgreSQL, with server-side OpenAI inference. The dedicated project enforces US$5/month; a persistent database ledger cuts off the app at US$4.50. Nine real-model evaluation cases, 130 backend checks and 12 browser checks across Chromium, Firefox and WebKit pass. [Verification and setup](HARNESS.md) · [Delivery and release evidence](https://github.com/Dexter2099/client-onboarding-automation/actions/workflows/delivery.yml).
 
-[![Delivery](https://github.com/Dexter2099/client-onboarding-automation/actions/workflows/delivery.yml/badge.svg)](https://github.com/Dexter2099/client-onboarding-automation/actions/workflows/delivery.yml)
+## Try OnboardFlow
 
-## The problem
+[Open the hosted demo](https://dexter-onboardflow.de.deplexo.com/). It uses fictional documents and actions. AI availability is limited by the shared monthly allowance; saved progress and manual completion remain available when inference stops. The labelled Instructions recording shows the earlier local Ollama run.
 
-Receiving client information does not mean it is ready for kickoff. A reply may add work outside the signed agreement, and a correction must receive fresh approval. Repeated clicks or a lost response must not duplicate requests, messages or handoffs.
+1. Select Let's get started, then Fill with AI.
+2. The model requests field definitions and documents through two read-only tools, then proposes supported drafts.
+3. View source beside an answer to inspect the supporting passage.
+4. Supply the labelled sample clarification for the missing fictional tax reference, then explicitly continue filling.
+5. Complete the four manual-only sample attachment/confirmation items yourself.
+6. Submit individual answers or Submit page for review. All 23 items finish awaiting review.
 
-The fictional Juniper Studio project makes those rules visible. Maya's first reply adds Shop to a signed five-page website. The visitor acts as the project manager, requests a correction and approves the revised answer before marking the project ready.
+AI does not submit/approve or complete actions on your behalf. Editing clears extraction attribution and requires resubmission. PostgreSQL stores drafts, questions, run state and allowance; refresh reads saved work without starting inference. Attachment/payment/access/message actions remain explicitly simulated.
 
-## Try it
+## Technology and limits
 
-No account, installation or personal information is needed. Use a current browser with JavaScript and same-origin cookies enabled.
+| Part           | Implementation                                                                                                                                                   |
+| -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| UI             | React/TypeScript; Instructions, 11 information fields, 12 tasks/eight groups, nested navigation and summaries.                                                   |
+| API and agent  | C# / ASP.NET Core / .NET 10; request rules, transactional storage, bounded tool/model loop and pure source validation.                                           |
+| Database       | PostgreSQL / EF Core / Npgsql; owned expiring sandbox and versioned request aggregate.                                                                           |
+| Real inference | OpenAI Responses with pinned GPT-5.4; explicit provider selection, strict output/source validation and no automatic fallback. Local Ollama remains available. |
+| Controls       | Six calls per run including continuation; 512 output tokens per call; 15-second call timeout; three runs per sandbox. No automatic provider retry/paid fallback. |
 
-1. The main walkthrough opens directly on OF-1042. Select **Start onboarding**, then **Load Maya's sample reply**.
-2. Approve Goals & audience. Review Pages and request a correction with a comment because Shop is outside the agreement.
-3. Load the corrected Pages, approve that revision, then approve Brand assets.
-4. **Mark ready for kickoff**, inspect the saved brief and **Publish simulated handoff**. Inspect its register entry and repeat Publish to see the same result reused.
+Model values replace canned browser extraction. Unknown tools/fields, manual-action proposals and invalid sources are rejected. Quotes are reconstructed from retrieved sections; semantic support still needs review. The model sees fictional document data, not visitor credentials. The [Ollama API](https://docs.ollama.com/capabilities/tool-calling) supplies native tool calls and [schema-constrained output](https://docs.ollama.com/capabilities/structured-outputs).
 
-Below the main walkthrough, **Try failure recovery** shows how the app handles a service failure without losing completed work. It uses the separate OF-1043 fixture:
+The 9 October 2026 100-ad sample counted C#/.NET in 20, React in 26, APIs in 51, SQL/relational databases in 42, testing in 64 and CI/CD in 58. This dated convenience sample supports the stack, not a market-wide demand estimate. [Scope/research](PLAN.md).
 
-1. **Start onboarding** saves the request and staff review task, but deliberately fails to prepare the welcome message because its simulated service is unavailable.
-2. **Restore simulated service** pretends the service is available again. It does not retry anything or reset the attempt counter.
-3. **Try welcome** retries only the failed welcome step. The guided example succeeds on attempt two, keeping the original request and task.
+## Start locally
 
-This demonstrates preserved data, controlled retries and duplicate prevention. No real service is contacted or email sent. There are three welcome attempts total per project. **Back to main walkthrough** returns to your unchanged OF-1042 work. Refresh opens the main walkthrough; both projects' saved state remains available.
+Prerequisites: Node.js 24/npm, .NET SDK from global.json (repo-local SDK used when present), PowerShell 7, Docker and Ollama with qwen3.8:27b installed. No hosting/billing account.
 
-Each visitor has a private fictional sandbox with a fixed 24-hour lifetime. Work survives refresh. **Reset both sample projects** replaces only that visitor's projects.
-
-The public demo link also works on another laptop or network; no local server, shared Wi-Fi, firewall rule or installation is needed. Each browser/device receives its own sandbox, so work is not transferred between devices.
-
-## What is real and what is simulated?
-
-| Part | What actually happens |
-| --- | --- |
-| Review and approval | The C# API enforces signed scope, current-revision approval and readiness. PostgreSQL stores the answers, decisions, history and frozen kickoff brief. |
-| Visitor workspace | Server-enforced ownership and expiry isolate visitors. Reset, persistence and repeat/concurrency protection use the real API/database. |
-| Client replies | Labelled demo controls supply prepared fictional replies. There is no separate client portal. |
-| Email / Outbox | The app saves prepared welcome/correction messages for inspection. Delivery is simulated: no email is sent and visitors supply no email address. |
-| Handoff | Publish stores a real snapshot of the approved brief in the visitor's demo register. Repeats reuse that saved entry. The external destination is simulated: no Make, Google Sheets or other external register is updated. |
-
-This is a personal portfolio project with fictional data. Real external delivery/integration is outside version one.
-
-## Engineering and QA
-
-- **Frontend:** React/TypeScript, contextual next actions, keyboard controls and desktop/phone layouts.
-- **Backend:** one same-origin ASP.NET Core app on .NET 10 LTS, EF Core/Npgsql and PostgreSQL 17. Direct transactions and database constraints protect workflow consistency.
-- **Reliability:** revision-bound approvals, idempotent commands, explicit lost-response recovery, rollback checks and a three-attempt welcome budget.
-- **Security:** private expiring sandboxes, ownership checks, Secure/HttpOnly cookies, CSRF protection, resource limits, controlled errors, enforced CSP and HTTPS HSTS. These are OWASP-aware controls, not a certification.
-- **Delivery:** Docker on Deplexo Free with Neon Free; passing GitHub Actions checks gate deployment and verify the live Git revision.
-
-| Automated check | Coverage |
-| --- | --- |
-| Unit | 16 isolated scope/readiness cases without an API host or database. |
-| Integration / security | 57 ASP.NET pipeline and PostgreSQL cases, including ownership, expiry, stale approvals, concurrency and injected failures. |
-| Browser E2E | Twelve scenarios in Chromium, Firefox and WebKit: 36 executions covering the main journey, recovery, persistence, isolation and CSP. |
-| Post-deploy smoke | Live revision/API/security checks followed by a native macOS arm64/WebKit visitor journey at desktop/phone widths and 2x scale. |
-
-Regression, security and recovery describe overlapping test purposes; they are not additional counts. See the [QA table](docs/case-study.md#qa-and-testing-evidence) for source links, failure cases and limits, and the [delivery history](https://github.com/Dexter2099/client-onboarding-automation/actions/workflows/delivery.yml?query=branch%3Amain) for actual release results. Detailed CI reports/screenshots are retained for seven days.
-
-## Run locally
-
-Prerequisites: Node.js 24/npm, .NET SDK **10.0.402** selected by [global.json](global.json), PowerShell 7 and Docker with Linux containers. Local setup is verified on Windows; CI runs the harness on Ubuntu.
+From repository root:
 
 ```powershell
 npm ci
-npm run setup
-npm run build
-npm run api
+pwsh -NoProfile -File scripts/intake-local.ps1 setup
 ```
 
-Open **http://127.0.0.1:5080/**. Setup creates ignored local database credentials, starts PostgreSQL, applies migrations and installs the three Playwright engines. It preserves existing development data and requires no hosting account. Keep `.local/database.env` when retaining the database volume.
-
-For frontend development, run `npm run dev` in another terminal and open http://127.0.0.1:5173/. Vite proxies the C# API. The API on port 5080 serves the last frontend build. PostgreSQL uses port 54329; browser checks use 5081.
+Start Ollama in a separate terminal if it is not running:
 
 ```powershell
-npm run verify
-npm run format:check
+$env:OLLAMA_HOST='127.0.0.1:11434'
+$env:OLLAMA_NO_CLOUD='1'
+& "$env:LOCALAPPDATA\Programs\Ollama\ollama.exe" serve
 ```
 
-The full harness builds the app and runs unit, integration and browser checks. Database tests own disposable local fixtures and never reset development or hosted data. Unit cases can run alone with `dotnet test tests/OnboardFlow.Api.Tests --filter "Category=Unit"`.
+Start API and interface in separate terminals:
 
-Stop API/Vite with Ctrl+C; `npm run stop:db` stops PostgreSQL while retaining its volume. Run `npm run setup` before the next start. See [HARNESS.md](HARNESS.md) for troubleshooting and exact verification evidence.
+```powershell
+pwsh -NoProfile -File scripts/intake-local.ps1 api
+```
 
-## Code and deployment
+```powershell
+node node_modules/vite/bin/vite.js --config preview/content-snare/vite.config.ts
+```
 
-| Path | Responsibility |
-| --- | --- |
-| `src/web` | React workspace, typed API client and onboarding UI. |
-| `src/OnboardFlow.Api` | HTTP endpoints, workflow transactions, pure rules, response mapping, EF model/migrations and static hosting. |
-| `tests` | Isolated rule tests, API/database integration checks and Playwright journeys. |
-| `.github/workflows/delivery.yml` | Required PR checks, source packaging/image build, production deployment and live smoke verification. |
+Open **http://127.0.0.1:5622/l/instructions**. Vite proxies the same-origin API to loopback 5080; C# calls loopback Ollama on 11434. Keep all three processes running. Cold model loading is slower than warm inference; unavailability preserves confirmed drafts. Load saved work after uncertainty, rather than repeating the action.
 
-Merge a passing PR into main to release. Actions packages the checked commit, verifies its checksum and sends that source archive to the existing Deplexo app, which rebuilds it. This is verified source delivery, not promotion of an identical prebuilt image. Main releases are serial; production credentials stay in the production environment, and database credentials stay with the host. A failed live check fails release verification; mutations are not blindly retried.
+## Checks and evaluation
 
-Implementation and production configuration are described in [architecture.md](docs/architecture.md). [HARNESS.md](HARNESS.md) owns operational/release evidence; [PLAN.md](PLAN.md) owns scope and acceptance criteria. A [recording script](docs/demo-recording-script.md) is available; no completed recording is claimed.
+```powershell
+pwsh -NoProfile -File scripts/intake-local.ps1 test
+node node_modules/typescript/bin/tsc -p preview/content-snare/tsconfig.json --noEmit
+node node_modules/vite/bin/vite.js build --config preview/content-snare/vite.config.ts
+```
 
-## Known limits
+On Windows, stop the API with Ctrl+C before rebuilding or running .NET tests; the running process locks its assemblies. Restart it afterwards. The .NET suite uses deterministic doubles and disposable local databases. Opt-in evaluation calls the actual model for complete, missing/resumed and conflicting-source cases; every attempt is kept in a unique ignored evidence directory:
 
-Neon Free suspends database compute after five idle minutes and wakes on access. Post-idle requests can take longer; [HARNESS.md](HARNESS.md) distinguishes measured suspended-database entry from warm timing. No keep-alive workaround, always-on guarantee or sustained-load result is claimed.
+```powershell
+pwsh -NoProfile -File scripts/intake-local.ps1 evaluate
+node node_modules/@playwright/test/cli.js test --config preview/content-snare/playwright.config.ts
+```
 
-Branded Safari, physical phones, screen readers and a full accessibility audit remain unverified. Human first-time usability testing is separate from automated browser acceptance. A Webroot review was submitted; vendor clearance remains unconfirmed. Visitors should not bypass a security warning.
+The separate browser suite uses this local API/model/UI and requires all three processes. Existing CI does not run live inference. Output stays in preview/content-snare/dist/; root npm run build still targets the earlier app. No deployment is part of these commands.
 
-Application code is [MIT licensed](LICENSE); dependencies retain their own licences. See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+## Source and plan
+
+| Path                                        | Responsibility                                                                          |
+| ------------------------------------------- | --------------------------------------------------------------------------------------- |
+| src/OnboardFlow.Api/ClientRequests          | Fixed fictional schema/sources, rules/store, model adapter, agent and endpoints.        |
+| preview/content-snare/src                   | Reference UI and typed same-origin client; no canned extraction or browser persistence. |
+| tests/OnboardFlow.Api.Tests                 | Deterministic API/rule/security checks and opt-in real-model evaluation.                |
+| [PLAN.md](PLAN.md)                          | CS-01–CS-07 scope and limits.                                                           |
+| [Architecture](docs/architecture.md)        | Integration and SOLID boundaries.                                                       |
+| [Walkthrough](docs/employer-walkthrough.md) | Visitor/reference contract.                                                             |
+| [HARNESS.md](HARNESS.md)                    | Commands, actual results, failed attempts and limits.                                   |
+| [AGENTS.md](AGENTS.md)                      | AI development guardrails.                                                              |
+
+Local implementation only: Production does not map the new intake endpoints. Public inference is unconfigured; live app/website/hosting/CI release settings are unchanged. A release needs a separate instruction.
+
+## Earlier application baseline
+
+[Published app](https://dexter-onboardflow.de.deplexo.com/) is the earlier manager/website-scope/simulated-handoff version. It has neither this interface nor AI agent. This local slice adds C# intake code and an additive local migration, while its deployed version, legacy frontend, hosting and delivery remain unchanged.
+
+[HARNESS](HARNESS.md) retains setup/evidence; [case study](docs/case-study.md) describes earlier version. Original commands: npm run setup, npm run build, npm run api, npm run verify (.NET SDK from global.json, PowerShell 7, Docker). Old test counts/deployed results do not prove agent behaviour.
+
+Zero additional cost/no card remain constraints. Public hosted inference is unverified; local Ollama is verified. No paid fallback or unlimited-public-runs promise.
+
+[MIT licence](LICENSE). Dependencies retain own licences; [third-party notices](THIRD_PARTY_NOTICES.md).

@@ -1,0 +1,224 @@
+import { expect, test } from '@playwright/test';
+import type { Page } from '@playwright/test';
+import { mkdirSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import { resolve, sep } from 'node:path';
+
+const evidence = process.env.ONBOARDFLOW_EVIDENCE_DIR
+  ? resolve(process.env.ONBOARDFLOW_EVIDENCE_DIR) + sep
+  : fileURLToPath(new URL('../../../.local/content-snare-evidence/', import.meta.url));
+mkdirSync(evidence, { recursive: true });
+const saved = async (page: Page) => (await page.request.get('/api/intake/')).json();
+async function fill(page: Page) {
+  await page.getByRole('button', { name: 'FILL WITH AI', exact: true }).click();
+  await expect(page.getByText('Not found in the client documents.', { exact: true })).toBeVisible({
+    timeout: 120000,
+  });
+}
+async function reply(page: Page) {
+  await page.getByRole('button', { name: 'USE SAMPLE CLIENT REPLY', exact: true }).click();
+  await page.getByRole('button', { name: 'CONTINUE AI FILLING', exact: true }).click();
+  await expect
+    .poll(async () => (await saved(page)).answers.tax?.value, { timeout: 120000 })
+    .toBe('DEMO-EIN-1042');
+  await page.getByRole('button', { name: /^Tax ID \(EIN\) draft/ }).click();
+  await expect(page.getByRole('textbox', { name: 'Tax ID (EIN)', exact: true })).toHaveValue(
+    'DEMO-EIN-1042',
+  );
+}
+async function noOverflow(page: Page) {
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBe(
+    true,
+  );
+}
+
+test('no-typing request: supported drafts, explicit clarification, manual actions and submission', async ({
+  page,
+}) => {
+  const errors: string[] = [];
+  page.on('pageerror', (error) => errors.push(error.message));
+  await page.goto('/l/instructions');
+  await expect(
+    page.getByRole('img', { name: 'Source-linked answers in the local preview', exact: true }),
+  ).toHaveAttribute('src', '/onboardflow-local-ai-20261025.webp');
+  await page.evaluate(() => document.fonts.ready);
+  await page.screenshot({
+    path: evidence + 'instructions-desktop.png',
+    fullPage: true,
+    caret: 'initial',
+  });
+  await page.getByRole('button', { name: 'Play walkthrough', exact: true }).click();
+  await page.locator('video').evaluate(async (video: HTMLVideoElement) => {
+    await video.play();
+    video.pause();
+  });
+  await page.getByRole('button', { name: "LET'S GET STARTED", exact: true }).focus();
+  await page.keyboard.press('Enter');
+  await expect(page.getByRole('textbox', { name: 'Legal Company Name', exact: true })).toHaveValue(
+    '',
+  );
+  await expect(page.getByRole('button', { name: /3\. Onboarding Task List/ })).toBeInViewport();
+  await page.getByRole('button', { name: 'Client information pack', exact: true }).click();
+  await expect(page.getByRole('heading', { name: 'Selected passage', exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'Onboarding notes', exact: true }).click();
+  await expect(
+    page.getByRole('heading', { name: 'Client onboarding notes', exact: true }),
+  ).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Client reply', exact: true })).toHaveCount(0);
+  await page.getByRole('button', { name: 'Close source document', exact: true }).click();
+  await page.screenshot({ path: evidence + 'general-empty.png', fullPage: true, caret: 'initial' });
+  await fill(page);
+  const drafts = await saved(page);
+  expect(Object.keys(drafts.answers)).toHaveLength(18);
+  expect(
+    Object.values(drafts.answers).every(
+      (answer: unknown) => (answer as { status: string }).status === 'draft',
+    ),
+  ).toBe(true);
+  for (const id of ['tax', 'tax-return', 'folder', 'payment', 'ach'])
+    expect(drafts.answers[id]).toBeUndefined();
+  await expect(page.getByRole('textbox', { name: 'Tax ID (EIN)', exact: true })).toHaveValue('');
+  await page.screenshot({
+    path: evidence + 'missing-information.png',
+    fullPage: true,
+    caret: 'initial',
+  });
+  await reply(page);
+  expect((await saved(page)).answers.tax.evidence.document).toBe('reply');
+  await page.getByRole('button', { name: /^Legal Company Name draft/ }).click();
+  await page.getByRole('button', { name: /Client company profile.*View source/ }).click();
+  await expect(page.getByRole('dialog')).toBeVisible();
+  await expect(page.locator('.source-passage.highlighted')).toHaveText(
+    /Our legal company name is Juniper Studio LLC/,
+  );
+  await page.screenshot({
+    path: evidence + 'source-document.png',
+    fullPage: true,
+    caret: 'initial',
+  });
+  await page.keyboard.press('Escape');
+  await expect(page.getByRole('dialog')).not.toBeVisible();
+  await page.getByRole('button', { name: 'Page Summary', exact: true }).click();
+  await page.getByRole('button', { name: 'SUBMIT PAGE FOR REVIEW', exact: true }).click();
+  await expect(page.getByRole('button', { name: /2\. General Information 11\/11/ })).toBeVisible();
+  await page.getByRole('button', { name: /Go to next page/ }).click();
+  await page.getByRole('button', { name: 'CONTINUE', exact: true }).click();
+  await page.screenshot({ path: evidence + 'tasks-desktop.png', fullPage: true, caret: 'initial' });
+  await page
+    .getByRole('button', { name: /^Please upload your most recent business tax return empty/ })
+    .click();
+  await page.getByRole('button', { name: 'Use sample attachment', exact: true }).click();
+  await page.getByRole('button', { name: /^Access Your Shared Google Drive Folder empty/ }).click();
+  await page
+    .getByRole('checkbox', { name: 'I have accessed the sample client folder.', exact: true })
+    .check();
+  await page.getByRole('button', { name: /^Complete First Payment empty/ }).click();
+  await page
+    .getByRole('checkbox', { name: 'Mark the fictional first payment as complete.', exact: true })
+    .check();
+  await page.getByRole('button', { name: /^Authorize ACH Payments empty/ }).click();
+  for (const name of [
+    'Sample email opened',
+    'Sample account step completed',
+    'Sample verification completed',
+  ]) {
+    await page.getByRole('checkbox', { name, exact: true }).check();
+  }
+  await page.getByRole('button', { name: 'Page Summary', exact: true }).click();
+  await page.getByRole('button', { name: 'SUBMIT PAGE FOR REVIEW', exact: true }).click();
+  await expect(
+    page.getByRole('heading', { name: 'Your request is ready for review' }),
+  ).toBeVisible();
+  await expect(page.getByRole('button', { name: /3\. Onboarding Task List 12\/12/ })).toBeVisible();
+  const completed = await saved(page);
+  expect(Object.keys(completed.answers)).toHaveLength(23);
+  expect(
+    Object.values(completed.answers).every(
+      (answer: unknown) => (answer as { status: string }).status === 'submitted',
+    ),
+  ).toBe(true);
+  await page.screenshot({
+    path: evidence + 'completed-desktop.png',
+    fullPage: true,
+    caret: 'initial',
+  });
+  await page.reload();
+  await expect(page.getByRole('button', { name: /3\. Onboarding Task List 12\/12/ })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'FILL WITH AI', exact: true })).toHaveCount(0);
+  await page.getByRole('button', { name: 'Page Summary', exact: true }).click();
+  await page.getByRole('button', { name: 'Restart fictional request', exact: true }).click();
+  expect(Object.keys((await saved(page)).answers)).toHaveLength(0);
+  await expect(page).toHaveURL(/\/l\/instructions$/);
+  expect(errors).toEqual([]);
+});
+
+test('editing clears provenance and submission; invalid values and questions remain local', async ({
+  page,
+}) => {
+  await page.goto('/l/general-information');
+  await fill(page);
+  await page.getByRole('button', { name: /^Legal Company Name draft/ }).click();
+  await page
+    .getByRole('textbox', { name: 'Legal Company Name', exact: true })
+    .fill('Reviewer correction LLC');
+  await expect(page.locator('.source-chip')).toHaveCount(0);
+  await expect.poll(async () => (await saved(page)).answers.legal.evidence).toBeNull();
+  await page.getByRole('button', { name: 'SUBMIT FOR REVIEW', exact: true }).click();
+  await page.getByRole('button', { name: /^Legal Company Name submitted/ }).click();
+  await page.getByRole('button', { name: 'EDIT ANSWER', exact: true }).click();
+  expect((await saved(page)).answers.legal.status).toBe('draft');
+  await page.getByRole('button', { name: /^Email draft/ }).click();
+  await page.getByRole('textbox', { name: 'Email', exact: true }).fill('invalid');
+  await page.getByRole('button', { name: 'SUBMIT FOR REVIEW', exact: true }).click();
+  await expect(page.getByRole('alert')).toHaveText('Add a valid answer before submitting.');
+  await page.getByRole('button', { name: 'Save draft and continue', exact: true }).click();
+  expect((await saved(page)).answers.email.status).toBe('draft');
+  await page.getByRole('button', { name: 'ASK A QUESTION', exact: true }).click();
+  await page.getByLabel('Question about this item', { exact: true }).fill('Which entity applies?');
+  await page.getByRole('button', { name: 'SAVE QUESTION', exact: true }).click();
+  await expect(
+    page.getByText('Question saved in this local preview. No message was sent.', { exact: true }),
+  ).toBeVisible();
+  await page.reload();
+  await page.getByRole('button', { name: /^Entity draft/ }).click();
+  await expect(page.getByText('Which entity applies?', { exact: true })).toBeVisible();
+  await page.getByRole('button', { name: /^Legal Company Name draft/ }).click();
+  await expect(page.getByRole('textbox', { name: 'Legal Company Name', exact: true })).toHaveValue(
+    'Reviewer correction LLC',
+  );
+});
+
+for (const width of [390, 320]) {
+  test('same request and source inspection fit ' + width + 'px', async ({ page }) => {
+    await page.setViewportSize({ width, height: 844 });
+    await page.goto('/l/instructions');
+    await noOverflow(page);
+    await page.getByRole('button', { name: "LET'S GET STARTED", exact: true }).click();
+    await fill(page);
+    await noOverflow(page);
+    await page.screenshot({
+      path: evidence + 'missing-phone-' + width + '.png',
+      fullPage: true,
+      caret: 'initial',
+    });
+    await page.getByRole('button', { name: 'Open request navigation', exact: true }).click();
+    await page.getByRole('button', { name: /^Legal Company Name draft/ }).click();
+    await expect(
+      page.getByRole('textbox', { name: 'Legal Company Name', exact: true }),
+    ).toBeVisible();
+    await page.getByRole('button', { name: /Client company profile.*View source/ }).click();
+    await expect(page.getByRole('dialog')).toBeVisible();
+    await noOverflow(page);
+    await page.screenshot({
+      path: evidence + 'source-phone-' + width + '.png',
+      fullPage: true,
+      caret: 'initial',
+    });
+    await page.getByRole('button', { name: 'Close source document', exact: true }).click();
+    expect(
+      await page
+        .getByRole('textbox', { name: 'Legal Company Name', exact: true })
+        .evaluate((input) => parseFloat(getComputedStyle(input).fontSize)),
+    ).toBeGreaterThanOrEqual(16);
+  });
+}

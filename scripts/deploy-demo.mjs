@@ -83,6 +83,6 @@ if (process.env.GITHUB_STEP_SUMMARY) {
     process.env.GITHUB_STEP_SUMMARY,
     `## Verified production release\n\nCommit: \`${revision}\`\n\n` +
       `Source SHA-256: \`${manifest.sha256}\`\n\nDeployment: \`${accepted.deploymentId}\`\n\n` +
-      `[Open demo](https://dexter-onboardflow.de.deplexo.com/) · Live revision, CSP/HSTS headers, secure cookies, CSRF, saved Start/repeat and 24-hour lifetime passed.\n`,
+      `[Open demo](https://dexter-onboardflow.de.deplexo.com/) · Live revision, CSP/HSTS headers, secure cookies, CSRF, saved intake/command replay, video and 24-hour lifetime passed.\n`,
   );
 }
