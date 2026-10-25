@@ -74,7 +74,7 @@ assert(
   complete,
   'Deployment did not finish within eight minutes. Inspect its history before retrying.',
 );
-const smoke = await smokeDemo(revision);
+const smoke = await smokeDemo(revision, 'https://dexter-onboardflow.de.deplexo.com');
 const result = { ...smoke, deploymentId: accepted.deploymentId, sourceSha256: manifest.sha256 };
 await writeFile('.local/deployment-result.json', JSON.stringify(result, null, 2));
 console.log(JSON.stringify(result));

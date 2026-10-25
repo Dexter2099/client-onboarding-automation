@@ -1,14 +1,16 @@
 import assert from 'node:assert/strict';
 import { setTimeout as delay } from 'node:timers/promises';
 import { randomUUID } from 'node:crypto';
+import { checkedOrigin } from './demo-target.mjs';
 
-const origin = 'https://dexter-onboardflow.de.deplexo.com';
 const repository = 'https://github.com/Dexter2099/client-onboarding-automation';
 
-export async function smokeDemo(revision) {
+export async function smokeDemo(revision, target) {
+  const origin = checkedOrigin(target);
   assert.match(revision, /^[a-f0-9]{40}$/);
   let markerVerified = false;
-  for (let attempt = 0; attempt < 12; attempt++) {
+  const deadline = Date.now() + 8 * 60000;
+  while (Date.now() < deadline) {
     try {
       const response = await fetch(`${origin}/release.json?revision=${revision}`, {
         signal: AbortSignal.timeout(10000),
