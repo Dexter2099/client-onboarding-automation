@@ -1,14 +1,16 @@
 # OnboardFlow
 
-A client-onboarding app based closely on [this Content Snare client demo](https://demo.contentsnare.com/shared/21481036-b8ca-4abb-ac0b-4d09b663333a/l/instructions), with an AI agent drafting answers from fictional client documents.
+An AI onboarding app that drafts answers from fictional client documents, shows supporting passages and asks for missing details before human submission.
 
-React/TypeScript, C# / ASP.NET Core / .NET 10 and PostgreSQL. OpenAI runs on the server through a bounded adapter. The dedicated project has a US$5 monthly limit; a persistent PostgreSQL ledger stops new inference at US$4.50. The separate portfolio chatbot key is unrelated.
+React/TypeScript, C# / ASP.NET Core / .NET 10 and PostgreSQL. OpenAI runs on the server through a bounded adapter. The dedicated project has a US$5 monthly limit; a persistent PostgreSQL ledger stops new inference at US$4.50.
 
 ## Try the demo
 
-[Open the current hosted demo](https://dexter-onboardflow.de.deplexo.com/).
+[Open OnboardFlow](https://onboardflow.hostless.app/).
 
-**Hostless migration in progress:** the replacement uses the verified no-card free allocation of 0.25 vCPU / 512 MB, one always-running instance, maximum one instance and review apps disabled. The existing demo stays available until Hostless passes the full HTTPS journey and the first visit after at least one hour without visitor traffic. Published no-sleep behaviour is not a measured speed result. [Current release evidence](HARNESS.md).
+Hostless runs the app on its verified **free, no-card 0.25 vCPU / 512 MB allocation**, with one always-running instance, maximum one and review apps disabled. The complete HTTPS AI journey, sources, clarification, human submissions, desktop/mobile layouts, macOS WebKit and saved progress across container replacement have been checked. Long-idle performance has not been measured. [Release evidence and practical limits](HARNESS.md).
+
+Two fresh-browser checks on the active service reached usable request data in **2.26–5.35 seconds** and saved the first edit in about **0.54 seconds**. These are two observations from one machine/network. [Raw measurements and checked revision](docs/evidence/hostless-release-2026-10-25.json).
 
 1. Select Let's get started, then Fill with AI.
 2. Inspect a supporting passage with View source.
@@ -94,7 +96,7 @@ The container reads Hostless's `PORT`, binds on all interfaces and exposes `/hea
 
 The observed Hostless peers are configured as `ReverseProxy__KnownProxies__0=10.0.1.200` and `ReverseProxy__KnownProxies__1=10.0.7.101`, with `ReverseProxy__UseCloudflareVisitor=false`. The second address was identified after a CI request reached another ingress and correctly failed closed rather than trusting its scheme without configuration.
 
-A separate credential-free ingress probe verifies the new host before the application secrets are moved. It is a deployment diagnostic, not simulated AI or the employer demo. The production Dockerfile does not include it. Cutover requires source/clarification/manual submissions, saved reload/restart, desktop/mobile playback and actual entry after inactivity to pass over HTTPS. Keep the previous release available for rollback; do not roll back the additive schema or the spending ledger.
+The separate credential-free ingress probe was used before secrets were moved; it is excluded from the production image. Release checks cover source/clarification/manual submissions, saved reload/container replacement and desktop/mobile playback over HTTPS. The previous Deplexo release remains available for rollback, sharing the same database and ledger. Long-idle testing is outside this release's acceptance scope.
 
 ## Project references
 
@@ -106,9 +108,10 @@ A separate credential-free ingress probe verifies the new host before the applic
 | [PLAN.md](PLAN.md) | Scope, acceptance and limits. |
 | [Architecture](docs/architecture.md) | Integration and design boundaries. |
 | [Walkthrough](docs/employer-walkthrough.md) | Visitor journey. |
+| [Case study](docs/case-study.md) | Problem, engineering decisions and QA evidence. |
 | [HARNESS.md](HARNESS.md) | Actual checks, measurements, failures and release evidence. |
 | [AGENTS.md](AGENTS.md) | Development guardrails and current authorisation. |
 
-The earlier manager/workflow prototype remains in Git history. It does not describe the current client-request interface. The portfolio website and a replacement recording from the hosted app are separate work.
+The client interface follows [this Content Snare demo](https://demo.contentsnare.com/shared/21481036-b8ca-4abb-ac0b-4d09b663333a/l/instructions). The earlier manager/workflow prototype remains in Git history. The portfolio website and a replacement recording from the hosted app are separate work.
 
 [MIT licence](LICENSE). Dependencies retain their own licences; [third-party notices](THIRD_PARTY_NOTICES.md).

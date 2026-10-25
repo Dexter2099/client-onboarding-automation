@@ -1,0 +1,70 @@
+{
+  "recordedOn": "2026-10-25",
+  "origin": "https://onboardflow.hostless.app",
+  "runtimeRevision": "2a2524f45c681707432c35d86ee6b0cec5a95629",
+  "deliveryRun": "https://github.com/Dexter2099/client-onboarding-automation/actions/runs/40163443945",
+  "hosting": {
+    "freeAllocation": true,
+    "cardAdded": false,
+    "vcpu": 0.25,
+    "memoryMB": 512,
+    "minReplicas": 1,
+    "maxReplicas": 1,
+    "reviewApps": false
+  },
+  "checks": {
+    "backend": 131,
+    "packagedBrowser": 12,
+    "realModelMatrix": 9,
+    "realModelMatrixTotal": 9,
+    "hostedMacWebKit": true,
+    "ingressCasesPerRunner": 4,
+    "savedProgressAcrossContainerReplacement": true
+  },
+  "shortEntrySamples": [
+    {
+      "phase": "warm",
+      "origin": "https://onboardflow.hostless.app",
+      "startedAt": "2026-10-25T04:59:59.355Z",
+      "lastVisitorTrafficAt": "2026-10-25T05:00:05.276Z",
+      "freshBrowserContext": true,
+      "cachedAssets": false,
+      "aiCalls": 0,
+      "shellVisibleMs": 3220.3540000000003,
+      "usableDataMs": 5348.2262,
+      "firstSavedActionMs": 532.1998999999996,
+      "ttfbMs": 3131.5,
+      "documentCompleteMs": 3132.10000000149,
+      "domContentLoadedMs": 3178.5,
+      "databaseBackedActionVerified": true
+    },
+    {
+      "phase": "warm",
+      "origin": "https://onboardflow.hostless.app",
+      "startedAt": "2026-10-25T05:01:26.139Z",
+      "lastVisitorTrafficAt": "2026-10-25T05:01:28.968Z",
+      "freshBrowserContext": true,
+      "cachedAssets": false,
+      "aiCalls": 0,
+      "shellVisibleMs": 487.62640000000005,
+      "usableDataMs": 2258.535,
+      "firstSavedActionMs": 538.1594999999998,
+      "ttfbMs": 402.5999999977648,
+      "documentCompleteMs": 403.30000000074506,
+      "domContentLoadedMs": 446.8999999985099,
+      "databaseBackedActionVerified": true
+    }
+  ],
+  "longIdleTested": false,
+  "limits": [
+    "Two observations from one machine/network with an active service.",
+    "No long-idle, sustained-load, branded Safari or physical iOS claim."
+  ],
+  "appBudget": {
+    "monthlyProviderCapUsd": 5,
+    "sharedCutoffUsd": 4.5,
+    "accountedUsdAtCheck": 1.197821,
+    "uncertainHoldsUsd": 0.005998,
+    "ledgerCheckedAt": "2026-10-25T05:00:59.9814526Z"
+  }
+}
