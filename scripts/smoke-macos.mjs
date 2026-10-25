@@ -10,11 +10,17 @@ assert.match(revision ?? '', /^[a-f0-9]{40}$/);
 const output = '.local/macos-browser-evidence';
 await mkdir(output, { recursive: true });
 const marker = await fetch(`${origin}/release.json?revision=${revision}`, {
-  redirect: 'error',
+  redirect: 'manual',
   signal: AbortSignal.timeout(20000),
   cache: 'no-store',
 });
-assert.equal(marker.status, 200);
+const location = marker.headers.get('location');
+const redirect = location ? new URL(location, origin) : null;
+assert.equal(
+  marker.status,
+  200,
+  `Release marker status ${marker.status}; redirect ${redirect ? redirect.origin + redirect.pathname : 'none'}`,
+);
 assert.equal((await marker.json()).revision, revision);
 // One real public visitor, using the same persisted request/source/reply/submission journey.
 // This has no provider key or privileged production credential. Inference uses the app's shared cap.
