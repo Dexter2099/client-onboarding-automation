@@ -2,7 +2,7 @@
 
 An AI onboarding app that drafts answers from fictional client documents, shows supporting passages and asks for missing details before human submission.
 
-React/TypeScript, C# / ASP.NET Core / .NET 10 and PostgreSQL. OpenAI runs on the server through a bounded adapter. The dedicated project has a US$5 monthly limit; a persistent PostgreSQL ledger stops new inference at US$4.50. The separate portfolio chatbot key is unrelated.
+React/TypeScript, C# / ASP.NET Core / .NET 10 and PostgreSQL. OpenAI runs on the server through a bounded adapter. The dedicated project has a US$5 monthly limit; a persistent PostgreSQL ledger stops new inference at US$4.50.
 
 ## Try the demo
 
