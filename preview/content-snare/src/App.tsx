@@ -252,7 +252,7 @@ export function App() {
       applySnapshot(
         await api.current.command('question', { field: selected.id, value: question.trim() }),
       );
-      setMessage('Question saved in this local preview. No message was sent.');
+      setMessage('Question saved in this demo. No message was sent.');
       setQuestionOpen(false);
       setQuestion('');
     } catch (error) {
@@ -629,7 +629,7 @@ export function App() {
                   >
                     <img
                       src="/onboardflow-local-ai-20261025.webp"
-                      alt="Source-linked answers in the local preview"
+                      alt="Source-linked answers in the recorded local walkthrough"
                     />
                     <span className="play-icon">
                       <Play size={30} fill="currentColor" />

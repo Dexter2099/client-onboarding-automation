@@ -1,5 +1,15 @@
 # Architecture and existing-code assessment
 
+## Hostless release and engineering boundaries — 25 October 2026
+
+Hostless replaces the inherited small runtime with a verified free/no-card 0.25 vCPU, 512 MB allocation, one always-running replica, maximum one and review apps disabled. The production image uses a 256 MiB managed-heap ceiling, reads the host's `PORT` and redirects HTTP to HTTPS. A credential-free diagnostic verified peer 10.0.1.200 and that the ingress overwrites client-supplied protocol headers over both HTTP and HTTPS. Trust that exact peer with native forwarding; do not enable arbitrary-proxy trust. The same Neon database retains saved state and the US$4.50 reservation ledger beneath the dedicated US$5 OpenAI limit.
+
+GitHub Actions verifies backend/browser behaviour, exports committed source plus its original revision marker, builds both images, and only then publishes a fast-forward release commit to `deploy/hostless`. Hostless tracks this release channel. HTTPS acceptance checks the original verified revision, storage/security/media behaviour, then native macOS WebKit runs a real hosted-AI journey. Documentation-only updates do not restart the runtime. HARNESS records actual release and idle measurements; deployment preparation is not acceptance.
+
+SOLID is applied through concrete responsibilities: `IntakeAgentService` orchestrates; `IntakeRules` validates without I/O; `IntakeStore` owns transactional request updates and command identities; `IntakeSpendBudget` owns atomic reserve/settle. The agent depends on the small `IIntakeModelClient` boundary, implemented by explicit provider adapters and test doubles. Shared contracts and `IntakeModelProtocol` live outside provider implementation files. Adding a provider extends that boundary and the composition root. Adapter output remains untrusted and goes through the same rules before persistence. HTTP and time are injected. Comments explain ownership/security decisions and transaction/uncertainty behaviour. Direct EF operations keep transaction boundaries visible.
+
+The dated sections below retain earlier checkpoints and hosting assumptions. Current implementation and results are described above and in HARNESS.
+
 ## Production packaging and rollout — 25 October 2026
 
 The normal npm/Vite build now compiles the reviewed interface in preview/content-snare into the ASP.NET static root; the isolated preview build remains available. The multi-stage Docker build copies that UI and its shared field/source specification, self-hosts Montserrat/Open Sans with their licences, and includes a silent H.264 MP4 plus the preserved original WebM recording. CSP adds same-origin media while retaining self-only script/style/font/connect rules. The recording stays labelled as local Ollama footage.

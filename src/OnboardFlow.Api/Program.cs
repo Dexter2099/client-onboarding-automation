@@ -109,7 +109,15 @@ app.Use(async (http, next) =>
     await next(http);
 });
 app.UseDefaultFiles();
-app.UseStaticFiles();
+app.UseStaticFiles(new StaticFileOptions
+{
+    OnPrepareResponse = context =>
+    {
+        // Vite content hashes change with the bytes, so these public assets need no revalidation.
+        if (context.Context.Request.Path.StartsWithSegments("/assets"))
+            context.Context.Response.Headers.CacheControl = "public, max-age=31536000, immutable";
+    }
+});
 app.MapGet("/health", () => Results.Ok(new { status = "ok" }));
 app.MapGet("/api/csrf", (HttpContext http, IAntiforgery antiforgery) =>
     Results.Ok(new { token = antiforgery.GetAndStoreTokens(http).RequestToken }));
