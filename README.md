@@ -81,6 +81,8 @@ Real-model evaluation uses the same nine complete, missing/resumed and conflicti
 
 Hostless builds Git repositories, so CI publishes the **verified source archive**, including its original revision marker and excluding workflow definitions, to the managed `deploy/hostless` branch. It never publishes ignored local files or credentials. The branch has normal fast-forward history; application changes are reviewed on `main` and must pass verification first. Provider deployment tracks this managed release branch. Documentation-only updates do not restart the runtime.
 
+Live acceptance on Ubuntu and macOS checks normal HTTPS and forged protocol headers, plus HTTP redirects without cookies. Exact ingress peers are configured from observed provider traffic; a release-marker warning records canonical scheme/peer information if forwarding stops working. The gate requires the actual source revision and never follows redirects to make a check pass.
+
 The free target is **0.25 vCPU, 512 MB, minimum one instance, maximum one instance, review apps off**, with no card, paid plan or credit dependency. Keep all configured resources within the account's shared free pool. Hostless's spending-limit field is not a hard invoice cap; entering zero disables that control. Use the free resource limits rather than relying on that field.
 
 The container reads Hostless's `PORT`, binds on all interfaces and exposes `/health` without touching the database. Production HTTP redirects to HTTPS. Only the verified ingress peer may supply the protocol header; the host overwrites visitor-supplied values. Workstation GC has a 256 MiB managed-heap ceiling within the 512 MB container. Fonts, licences, the labelled MP4/WebM recording and its poster are packaged locally. Startup secrets belong only in server settings:
@@ -89,6 +91,8 @@ The container reads Hostless's `PORT`, binds on all interfaces and exposes `/hea
 - `Intake__Enabled=true` and `Intake__Provider=OpenAI`.
 - The dedicated OnboardFlow project ID, verified-budget flag and restricted server-side Responses key.
 - Reverse-proxy settings verified against the actual ingress; never trust arbitrary forwarded headers.
+
+The observed Hostless peers are configured as `ReverseProxy__KnownProxies__0=10.0.1.200` and `ReverseProxy__KnownProxies__1=10.0.7.101`, with `ReverseProxy__UseCloudflareVisitor=false`. The second address was identified after a CI request reached another ingress and correctly failed closed rather than trusting its scheme without configuration.
 
 A separate credential-free ingress probe verifies the new host before the application secrets are moved. It is a deployment diagnostic, not simulated AI or the employer demo. The production Dockerfile does not include it. Cutover requires source/clarification/manual submissions, saved reload/restart, desktop/mobile playback and actual entry after inactivity to pass over HTTPS. Keep the previous release available for rollback; do not roll back the additive schema or the spending ledger.
 

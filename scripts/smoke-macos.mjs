@@ -3,25 +3,14 @@ import { execFileSync } from 'node:child_process';
 import { appendFile, mkdir, writeFile } from 'node:fs/promises';
 import { release } from 'node:os';
 import { origin } from './demo-target.mjs';
+import { verifyHostlessIngress } from './verify-ingress.mjs';
 
 assert.equal(process.platform, 'darwin', 'Native macOS verification requires its macOS runner.');
 const revision = process.env.GITHUB_SHA;
 assert.match(revision ?? '', /^[a-f0-9]{40}$/);
 const output = '.local/macos-browser-evidence';
 await mkdir(output, { recursive: true });
-const marker = await fetch(`${origin}/release.json?revision=${revision}`, {
-  redirect: 'manual',
-  signal: AbortSignal.timeout(20000),
-  cache: 'no-store',
-});
-const location = marker.headers.get('location');
-const redirect = location ? new URL(location, origin) : null;
-assert.equal(
-  marker.status,
-  200,
-  `Release marker status ${marker.status}; redirect ${redirect ? redirect.origin + redirect.pathname : 'none'}`,
-);
-assert.equal((await marker.json()).revision, revision);
+await verifyHostlessIngress(revision);
 // One real public visitor, using the same persisted request/source/reply/submission journey.
 // This has no provider key or privileged production credential. Inference uses the app's shared cap.
 execFileSync(
@@ -54,6 +43,7 @@ const result = {
   humanOnlyManualActionsAndSubmissions: true,
   savedProgressAndReload: true,
   originalLocalRecordingPlayback: true,
+  ingressBoundary: true,
   brandedSafariOrPhysicalIosTested: false,
 };
 await writeFile(`${output}/result.json`, JSON.stringify(result, null, 2));

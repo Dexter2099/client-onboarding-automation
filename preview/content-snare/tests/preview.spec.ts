@@ -150,8 +150,9 @@ test('no-typing request: supported drafts, explicit clarification, manual action
   await expect(page.getByRole('button', { name: 'FILL WITH AI', exact: true })).toHaveCount(0);
   await page.getByRole('button', { name: 'Page Summary', exact: true }).click();
   await page.getByRole('button', { name: 'Restart fictional request', exact: true }).click();
-  expect(Object.keys((await saved(page)).answers)).toHaveLength(0);
+  // Navigation follows the committed reset; the click alone only dispatches its async command.
   await expect(page).toHaveURL(/\/l\/instructions$/);
+  expect(Object.keys((await saved(page)).answers)).toHaveLength(0);
   expect(errors).toEqual([]);
 });
 
