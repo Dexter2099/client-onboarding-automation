@@ -10,6 +10,8 @@ Final application checks passed locally (**131 backend + 12 browser**) and in th
 
 The first main live-verification attempt timed out after eight minutes waiting for the expected marker, although direct public requests and the full browser suite served that exact revision. Its log contains no response-status/network detail, so the cause remains unconfirmed. The failed deployment job was retried once against the same verified artifact; the acceptance gate was not removed. Native macOS acceptance, provider restart persistence and the final hour-idle measurement are still pending at this checkpoint. Do not present the preliminary warm timings below as an idle result.
 
+**Frontend responsibility review:** Instructions/media, request navigation, typed field rendering and the source dialog were extracted from the 1,135-line App into four typed components. App is now 746 lines and retains state, commands, submission decisions and navigation/focus. Native source-modal lifecycle and view-local playback moved with their views; the serialized API client and server behaviour are unchanged. The DOM/classes/labels are preserved. `npm run verify` passes **131 backend + 12 browser** checks after the extraction; TypeScript, formatting and whitespace checks pass. Evidence: `.local/reports/showcase-views-verify.log`. Release-readiness diagnostics now report only public status/revision or a safe error code, retaining the original exact-marker gate and bound.
+
 Earlier dated sections retain historical checkpoints. Pending-approval, disabled-production and inherited 128 MiB statements below do not describe this Hostless release.
 
 ## Current deployment and hosting clarification — 25 October 2026

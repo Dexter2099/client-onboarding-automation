@@ -8,6 +8,8 @@ GitHub Actions verifies backend/browser behaviour, exports committed source plus
 
 SOLID is applied through concrete responsibilities: `IntakeAgentService` orchestrates; `IntakeRules` validates without I/O; `IntakeStore` owns transactional request updates and command identities; `IntakeSpendBudget` owns atomic reserve/settle. The agent depends on the small `IIntakeModelClient` boundary, implemented by explicit provider adapters and test doubles. Shared contracts and `IntakeModelProtocol` live outside provider implementation files. Adding a provider extends that boundary and the composition root. Adapter output remains untrusted and goes through the same rules before persistence. HTTP and time are injected. Comments explain ownership/security decisions and transaction/uncertainty behaviour. Direct EF operations keep transaction boundaries visible.
 
+React rendering is separated into `RequestNavigation`, `RequestFieldInput`, `Instructions` and `SourceDocument`. The application retains request state, API commands, submission decisions and navigation/focus ownership; the API client retains its single serialized command queue. SourceDocument owns the native modal ref/effect, and Instructions owns view-local playback. Extracted views receive typed data/callbacks, keep the existing DOM/classes/labels and introduce no new fetches or persistence. This removes independent rendering responsibilities from the main component without a state library or custom framework.
+
 The dated sections below retain earlier checkpoints and hosting assumptions. Current implementation and results are described above and in HARNESS.
 
 ## Production packaging and rollout — 25 October 2026
