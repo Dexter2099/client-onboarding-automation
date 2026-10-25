@@ -32,6 +32,12 @@ AI never submits or approves, uploads files, grants access or makes payments. Ed
 
 The ledger is shared across hosts and survives sandbox resets, expiry, restarts and releases. Migration reuses the same production Neon database; it does not reset the budget or import an older counter. When inference is unavailable, saved work and manual completion remain available with an honest availability message. The model sees fictional source material, not visitor credentials.
 
+## Engineering choices
+
+The agent depends on the small [IIntakeModelClient](src/OnboardFlow.Api/ClientRequests/IIntakeModelClient.cs) contract. OpenAI, Cloudflare and Ollama implement that boundary; provider selection lives in the dependency-injection composition root. The shared [tool protocol](src/OnboardFlow.Api/ClientRequests/IntakeModelProtocol.cs) is independent of those adapters. Every result passes the same application validation before it can become a draft.
+
+[IntakeAgentService](src/OnboardFlow.Api/ClientRequests/IntakeAgentService.cs) owns orchestration, [IntakeRules](src/OnboardFlow.Api/ClientRequests/IntakeRules.cs) owns pure validation, [IntakeStore](src/OnboardFlow.Api/ClientRequests/IntakeStore.cs) owns transactional state/command receipts, and [IntakeSpendBudget](src/OnboardFlow.Api/ClientRequests/IntakeSpendBudget.cs) owns the shared monetary policy. Injected HTTP clients and time make these boundaries testable. Comments explain security decisions, transaction locks, uncertain holds and release integrity. The tests and release evidence below demonstrate these choices in practice.
+
 ## Run locally
 
 Prerequisites: Node.js 24/npm, the .NET SDK in `global.json`, PowerShell 7, Docker, and Ollama with `qwen3.8:27b` for local inference.
