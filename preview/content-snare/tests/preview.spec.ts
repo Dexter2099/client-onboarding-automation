@@ -39,7 +39,10 @@ test('no-typing request: supported drafts, explicit clarification, manual action
   page.on('pageerror', (error) => errors.push(error.message));
   await page.goto('/l/instructions');
   await expect(
-    page.getByRole('img', { name: 'Source-linked answers in the recorded local walkthrough', exact: true }),
+    page.getByRole('img', {
+      name: 'Source-linked answers in the recorded local walkthrough',
+      exact: true,
+    }),
   ).toHaveAttribute('src', '/onboardflow-local-ai-20261025.webp');
   await page.evaluate(() => document.fonts.ready);
   await page.screenshot({
