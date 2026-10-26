@@ -35,11 +35,13 @@ jobs:
           $ErrorActionPreference = 'Stop'
           $PSNativeCommandUseErrorActionPreference = $true
           $changed = $true
-          if ($env:GITHUB_EVENT_NAME -eq 'push') {
+          if ($env:GITHUB_EVENT_NAME -in @('push', 'pull_request')) {
             $event = Get-Content -Raw -LiteralPath $env:GITHUB_EVENT_PATH | ConvertFrom-Json
-            if ($event.before -match '^[a-f0-9]{40}$' -and $event.before -ne ('0' * 40)) {
-              $paths = @(git diff --name-only $event.before $env:GITHUB_SHA)
-              $changed = @($paths | Where-Object { $_ -notmatch '^(README\.md|AGENTS\.md|PLAN\.md|HARNESS\.md|docs/.*)$' }).Count -gt 0
+            $base = if ($env:GITHUB_EVENT_NAME -eq 'pull_request') { $event.pull_request.base.sha } else { $event.before }
+            if ($base -match '^[a-f0-9]{40}$' -and $base -ne ('0' * 40)) {
+              $paths = @(git diff --name-only $base $env:GITHUB_SHA)
+              # Workflow definitions are omitted from the runtime release branch.
+              $changed = @($paths | Where-Object { $_ -notmatch '^(README\.md|AGENTS\.md|PLAN\.md|HARNESS\.md|docs/.*|\.github/workflows/.*)$' }).Count -gt 0
             }
           }
           "app_changed=$($changed.ToString().ToLowerInvariant())" >> $env:GITHUB_OUTPUT
@@ -48,22 +50,41 @@ jobs:
           node-version: '24.19.0'
           cache: npm
       - uses: actions/setup-dotnet@26b0ec14cb23fa6904739307f278c14f94c95bf1 # v5
+        if: steps.scope.outputs.app_changed == 'true'
         with:
           global-json-file: global.json
-      - name: Install locked dependencies and browser prerequisites
+      - name: Install locked dependencies
         run: |
           $ErrorActionPreference = 'Stop'
           $PSNativeCommandUseErrorActionPreference = $true
           npm ci
-          npx playwright install --with-deps chromium firefox webkit
-          npm run setup
-      - name: Check formatting and run API/browser regression
+      - name: Check formatting and documentation links
         run: |
           $ErrorActionPreference = 'Stop'
           $PSNativeCommandUseErrorActionPreference = $true
           npm run format:check
+          git diff --check HEAD^ HEAD
+          foreach ($match in [regex]::Matches((Get-Content -Raw README.md), '\[[^\]]+\]\(([^)]+)\)')) {
+            $target = $match.Groups[1].Value.Split('#')[0]
+            if ($target -and $target -notmatch '^https?://' -and !(Test-Path -LiteralPath $target)) {
+              throw "Missing README target: $target"
+            }
+          }
+      - name: Install browser prerequisites and prepare the test database
+        if: steps.scope.outputs.app_changed == 'true'
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $PSNativeCommandUseErrorActionPreference = $true
+          npx playwright install --with-deps chromium firefox webkit
+          npm run setup
+      - name: Run API/browser regression
+        if: steps.scope.outputs.app_changed == 'true'
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $PSNativeCommandUseErrorActionPreference = $true
           npm run verify
       - name: Package this revision and build its deployment image
+        if: steps.scope.outputs.app_changed == 'true'
         run: |
           $ErrorActionPreference = 'Stop'
           $PSNativeCommandUseErrorActionPreference = $true
@@ -71,6 +92,7 @@ jobs:
           docker build --tag onboardflow:verified .local/release/source
           docker build --file .local/release/source/deploy/hostless-probe/Dockerfile --tag onboardflow:ingress-probe .local/release/source
       - name: Retain the verified release bundle
+        if: steps.scope.outputs.app_changed == 'true'
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
         with:
           name: verified-release
@@ -80,7 +102,7 @@ jobs:
           if-no-files-found: error
           retention-days: 7
       - name: Retain test evidence
-        if: always()
+        if: always() && steps.scope.outputs.app_changed == 'true'
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
         with:
           name: test-results

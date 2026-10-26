@@ -12,6 +12,24 @@ SOLID is applied through concrete responsibilities: `IntakeAgentService` orchest
 
 React rendering is separated into `RequestNavigation`, `RequestFieldInput`, `Instructions` and `SourceDocument`. The application retains request state, API commands, submission decisions and navigation/focus ownership; the API client retains its single serialized command queue. SourceDocument owns the native modal ref/effect, and Instructions owns view-local playback. Extracted views receive typed data/callbacks, keep the existing DOM/classes/labels and introduce no new fetches or persistence. This removes independent rendering responsibilities from the main component without a state library or custom framework.
 
+### Hostless deployment
+
+The current free, no-card target is 0.25 vCPU, 512 MB and one always-running instance, with minimum and maximum one and review apps off. Keep resources within the account's shared free pool. Hostless's spending-limit field does not halt ongoing charges; entering zero disables that control.
+
+The container reads `PORT`, binds on all interfaces and exposes `/health` without a database request. Workstation GC uses a 256 MiB managed-heap ceiling within the container allocation. Fonts, licences and the labelled MP4/WebM recording are packaged locally. Production HTTP redirects to HTTPS; private API responses use `no-store`, HTML is revalidated and content-hashed assets use immutable caching.
+
+Set production configuration on the server:
+
+- `ConnectionStrings__OnboardFlow`: the existing Neon database and shared spending ledger.
+- `ASPNETCORE_ENVIRONMENT=Production`, `Intake__Enabled=true` and `Intake__Provider=OpenAI`.
+- `Intake__OpenAI__ProjectId`, `Intake__OpenAI__BudgetVerified=true` and `Intake__OpenAI__ApiKey`: the verified dedicated project and restricted Responses key.
+- `AllowedHosts=onboardflow.hostless.app`.
+- `ReverseProxy__KnownProxies__0=10.0.1.200`, `ReverseProxy__KnownProxies__1=10.0.7.101` and `ReverseProxy__UseCloudflareVisitor=false`: only the observed ingress peers may supply protocol headers.
+
+The database connection and API key are write-only settings. Never put credentials in source, client variables, images or reports. The credential-free ingress probe is excluded from the production image.
+
+CI publishes the checked source archive to `deploy/hostless`; workflow definitions are excluded from that branch. Documentation and workflow-only updates receive formatting/document-link checks and do not publish a runtime. Application changes retain the full regression, packaging and hosted acceptance gates. The previous Deplexo release remains available for rollback against the same database and budget ledger. Never restore an older spending counter or roll back the additive schema.
+
 The dated sections below retain earlier checkpoints and hosting assumptions. Current implementation and results are described above and in HARNESS.
 
 ## Production packaging and rollout — 25 October 2026
