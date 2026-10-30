@@ -1,5 +1,11 @@
 # Development harness
 
+## Native HTTP liveness — 31 October 2026
+
+Dexter requested Hostless HTTP GET `/health` every **10 seconds**, replacing TCP every 30 seconds. The dashboard saved that configuration in deployment `6ae527fa90930df3bad525ae`, but the rollout did not become healthy. Inside the actual container, the same loopback request returned **400** with an IP Host header and **200** with `Host: onboardflow.hostless.app`; the deployed `AllowedHosts` contains only that public hostname. Startup logs showed a replacement after about five minutes. A public 200 response therefore did not prove the native probe worked.
+
+`LivenessStartupFilter` places only the fixed GET `/health` response before the framework's host filter. It uses no PostgreSQL, model, cookies or forwarded headers and sends `Cache-Control: no-store`. Every other path/method retains the configured host filter and verified-edge boundary. `hostless.yaml` preserves HTTP `/health` at 10 seconds across future releases. Regression first reproduced internal-host 400 responses; the seven new liveness/host-filter cases and 16 existing signature-boundary cases then passed. Live acceptance of the replacement runtime is still pending at this checkpoint; no crash or freeze was deliberately induced.
+
 ## GitHub availability email verification — 31 October 2026
 
 `Demo availability` checks the live page, release marker, CSRF cookie and database hourly. It rejects every unexpected redirect using `redirect: 'manual'`, so an HTTPS self-redirect fails the check immediately. GitHub Actions email delivery is configured in the account's Notifications settings; scheduled notifications belong to the workflow creator or the user who last changed its schedule/re-enabled it. This workflow's creator is `Dexter2099`.
