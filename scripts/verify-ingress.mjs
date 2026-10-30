@@ -27,9 +27,9 @@ export async function verifyHostlessIngress(revision) {
     });
     const location = response.headers.get('location');
     const target = location ? new URL(location, origin) : null;
-    assert.equal(
-      response.status,
-      probe.secure ? 200 : 308,
+    // Pages redirects HTTP before the Worker runs; HTTPS must reach the app without a redirect.
+    assert(
+      probe.secure ? response.status === 200 : response.status === 301,
       `${probe.name}: status ${response.status}, redirect ${target ? target.origin + target.pathname : 'none'}`,
     );
     if (probe.secure) {

@@ -1,5 +1,11 @@
 # OnboardFlow agent instructions
 
+## Current reliability repair — 31 October 2026
+
+Dexter requested a lasting repair after the Hostless HTTPS redirect loop recurred, and requires the complete live demo journey to be verified in Chrome before calling it fixed. Another observed-IP addition is insufficient. The repair uses a Cloudflare Pages gateway at `https://dexter-onboardflow.pages.dev/` signing requests with ECDSA P-256; production validates the signature with a public key and no longer depends on Hostless's rotating private ingress addresses. Original-host page URLs redirect to that stable address; unverified mutations fail closed. This supersedes the exact-peer-only scheme strategy below for the current production image. Do not replace this with arbitrary proxy/network trust or an unconditional HTTPS scheme override.
+
+Keep the existing app/database, secure cookies, CSRF, owned state, manual actions and shared US$5/US$4.50 inference controls. No payment card or hosting-plan upgrade is authorised. The signing private key belongs only in the Cloudflare server-secret binding; the app contains only its public verification key. Keep the encrypted local recovery copy ignored. The hourly availability check exercises the page, release marker, CSRF protection and database readiness without model calls. Record actual acceptance and limits in HARNESS; a passing deployment alone is not a completed employer journey.
+
 ## Current authority — Hostless release, 25 October 2026
 
 Dexter authorised deploying the complete 23-item React/C#/PostgreSQL demo to Hostless, testing the full journey and quick fresh-visitor entry, and keeping README current. He explicitly cancelled the proposed hour-long inactivity test: the priority is having the employer demo ready. Do not delay this release for long-idle testing or claim that it was completed. He explicitly approved saving the existing dedicated OnboardFlow OpenAI key and production Neon connection string in Hostless server settings. That transfer is complete; both sensitive values are write-only. Do not request the same approval again. No payment card or paid hosting is authorised.

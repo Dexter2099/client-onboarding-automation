@@ -6,9 +6,11 @@ const live = process.env.ONBOARDFLOW_LIVE_ORIGIN;
 if (live) {
   const target = new URL(live);
   if (
-    !['https://onboardflow.hostless.app', 'https://dexter-onboardflow.de.deplexo.com'].includes(
-      target.origin,
-    ) &&
+    ![
+      'https://dexter-onboardflow.pages.dev',
+      'https://onboardflow.hostless.app',
+      'https://dexter-onboardflow.de.deplexo.com',
+    ].includes(target.origin) &&
     !(target.protocol === 'http:' && ['127.0.0.1', 'localhost'].includes(target.hostname))
   )
     throw new Error('Live verification is restricted to this app or its loopback container.');
@@ -23,6 +25,7 @@ export default defineConfig({
   use: {
     baseURL: live ?? 'http://127.0.0.1:5622',
     browserName: process.env.ONBOARDFLOW_BROWSER === 'webkit' ? 'webkit' : 'chromium',
+    channel: process.env.ONBOARDFLOW_BROWSER === 'chrome' ? 'chrome' : undefined,
     // Local production-container fixture emulates the verified TLS ingress peer.
     // Hosted HTTPS verification sends no scheme override.
     extraHTTPHeaders:

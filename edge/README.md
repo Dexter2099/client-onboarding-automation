@@ -1,0 +1,11 @@
+# Public demo gateway
+
+The public demo is https://dexter-onboardflow.pages.dev/. The .NET application and database remain on their existing hosts. The original exact-IP scheme trust proved brittle; a homepage response alone also did not establish a working session on the previous host.
+
+This small Cloudflare Pages Worker signs the timestamp, canonical public origin, HTTP method, encoded target and body digest with ECDSA P-256. Only Cloudflare holds the private signing key in `EDGE_SIGNING_KEY`; the application ships the public verification key. Caller-supplied forwarding and OnboardFlow edge headers are replaced. The application accepts HTTPS evidence only from a valid, recent signature and retains secure cookies, CSRF, owned sandboxes, command replay protection and the existing inference budget. Proxy IP addresses can change without breaking that identity check.
+
+The production image enables `VerifiedEdge__Enabled`. Unsigned original-host page requests redirect to the public demo; unsigned mutations are rejected. The host's unauthenticated `/health` remains a light process check. Signed `/health/ready` also checks the database. Gateway failures return an explicit temporary-unavailability response instead of forwarding a redirect loop. Requests are not retried automatically.
+
+`wrangler.jsonc` retains a 10 ms CPU limit and the existing account plan. Pages Functions share the account's Workers request allowance; no paid subscription or capacity upgrade was added. Deploy only `_worker.js` and the static maintenance fallback from an ignored `dist/` directory. Keep the private key in the server-secret binding; never put it in source, browser code, reports or deployment assets. A local recovery copy is encrypted with Windows DPAPI.
+
+Verification: `npm run test:edge`, the backend `VerifiedEdgeTests`, ordinary `npm run verify`, then the live ingress/session/storage checks and the complete hosted browser journey. The hourly Demo availability workflow checks the page, release marker, CSRF cookie flags and database readiness without AI calls. It is failure detection, not an uptime guarantee or an idle-performance measurement.
