@@ -15,5 +15,6 @@ scaling:
   min_replicas: 1
   max_replicas: 1
 health_check:
-  type: tcp
-  interval_in_seconds: 30
+  type: http
+  http_path: /health
+  interval_in_seconds: 10

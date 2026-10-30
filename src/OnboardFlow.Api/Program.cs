@@ -8,6 +8,8 @@ using Npgsql;
 using OnboardFlow.Api;
 
 var builder = WebApplication.CreateBuilder(args);
+// Run the fixed liveness response before the framework's host filter: native probes use the pod IP.
+builder.Services.Insert(0, ServiceDescriptor.Transient<IStartupFilter, LivenessStartupFilter>());
 if (Environment.GetEnvironmentVariable("PORT") is { } hostedPort)
 {
     if (!int.TryParse(hostedPort, out var port) || port is < 1 or > 65535)
@@ -141,7 +143,6 @@ app.UseStaticFiles(new StaticFileOptions
             context.Context.Response.Headers.CacheControl = "public, max-age=31536000, immutable";
     }
 });
-app.MapGet("/health", () => Results.Ok(new { status = "ok" }));
 app.MapGet("/health/ready", async (HttpContext http, FoundationDb database) =>
 {
     http.Response.Headers.CacheControl = "no-store";
