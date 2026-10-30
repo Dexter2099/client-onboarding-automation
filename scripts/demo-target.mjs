@@ -1,4 +1,4 @@
-export const origin = 'https://onboardflow.hostless.app';
+export const origin = 'https://dexter-onboardflow.pages.dev';
 export const previousOrigin = 'https://dexter-onboardflow.de.deplexo.com';
 
 export function checkedOrigin(value = origin) {

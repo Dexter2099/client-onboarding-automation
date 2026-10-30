@@ -92,6 +92,7 @@ app.Use(async (http, next) =>
             http.Connection.RemoteIpAddress, schemes, visitor);
 });
 app.UseForwardedHeaders();
+app.UseVerifiedEdge();
 // Determine HTTPS from the verified proxy before HSTS; preserve local HTTP development.
 if (!app.Environment.IsDevelopment())
 {
@@ -141,6 +142,13 @@ app.UseStaticFiles(new StaticFileOptions
     }
 });
 app.MapGet("/health", () => Results.Ok(new { status = "ok" }));
+app.MapGet("/health/ready", async (HttpContext http, FoundationDb database) =>
+{
+    http.Response.Headers.CacheControl = "no-store";
+    return await database.Database.CanConnectAsync(http.RequestAborted)
+        ? Results.Ok(new { status = "ok" })
+        : Results.Json(new { status = "unavailable" }, statusCode: 503);
+});
 app.MapGet("/api/csrf", (HttpContext http, IAntiforgery antiforgery) =>
     Results.Ok(new { token = antiforgery.GetAndStoreTokens(http).RequestToken }));
 app.MapSandboxEndpoints();

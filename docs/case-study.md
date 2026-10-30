@@ -19,7 +19,9 @@ React/TypeScript provides the request interface; C#/ASP.NET Core owns validation
 | Delivery | GitHub Actions checks formatting, backend and three-engine browser behaviour, builds the container and publishes only its verified source archive to the Hostless release branch. Live HTTPS/storage/media checks and native macOS WebKit then exercise real hosted inference. Documentation-only updates preserve the tested runtime. |
 | Verifiable quality | Ordinary regression uses a model double only in the test assembly; the real nine-case evaluation is separate. HARNESS retains failures, actual timings and scope limits. Comments explain ownership, locks, uncertain holds and release integrity. |
 
-Hostless's verified allocation is free without a card: 0.25 vCPU, 512 MB, one always-running instance, maximum one, review apps off. The same Neon database retains saved progress and budget. [README](../README.md) is the entry point; [HARNESS](../HARNESS.md) records the checked release and measured speed, including entry after inactivity. A small fixed evaluation does not establish general AI reliability, and a single idle measurement is not an uptime or latency guarantee.
+Hostless's verified allocation is free without a card: 0.25 vCPU, 512 MB, one always-running instance, maximum one, review apps off. The same Neon database retains saved progress and budget. [README](../README.md) is the entry point; [HARNESS](../HARNESS.md) records the checked release and short entry measurement. Long-idle performance is untested. A small fixed evaluation does not establish general AI reliability.
+
+Live CI caught a second platform ingress peer missing from the exact allowlist. Bounded runtime diagnostics identified the address and correct forwarded scheme; adding that specific peer fixed HTTPS redirects without broadening trust to a network. Both hosted runners now check forged protocol headers as well as the normal journey. A held visitor also recovered saved data across container replacement with the same owner cookie.
 
 ## Previous workflow prototype — historical
 

@@ -4,13 +4,31 @@
 
 Hostless replaces the inherited small runtime with a verified free/no-card 0.25 vCPU, 512 MB allocation, one always-running replica, maximum one and review apps disabled. The production image uses a 256 MiB managed-heap ceiling, reads the host's `PORT` and redirects HTTP to HTTPS. A credential-free diagnostic verified peer 10.0.1.200 and that the ingress overwrites client-supplied protocol headers over both HTTP and HTTPS. Trust that exact peer with native forwarding; do not enable arbitrary-proxy trust. The same Neon database retains saved state and the US$4.50 reservation ledger beneath the dedicated US$5 OpenAI limit.
 
-GitHub Actions verifies backend/browser behaviour, exports committed source plus its original revision marker, builds both images, and only then publishes a fast-forward release commit to `deploy/hostless`. Hostless tracks this release channel. HTTPS acceptance checks the original verified revision, storage/security/media behaviour, then native macOS WebKit runs a real hosted-AI journey. Documentation-only updates do not restart the runtime. HARNESS records actual release and idle measurements; deployment preparation is not acceptance.
+GitHub Actions verifies backend/browser behaviour, exports committed source plus its original revision marker, builds both images, and only then publishes a fast-forward release commit to `deploy/hostless`. Hostless tracks this release channel. HTTPS acceptance checks the original verified revision, storage/security/media behaviour, then native macOS WebKit runs a real hosted-AI journey. Documentation-only updates do not restart the runtime. HARNESS records actual release and short entry measurements. Dexter cancelled the proposed hour-long idle test; long-idle behaviour is untested.
 
 Protected runtime diagnostics also identified physical ingress peer `10.0.7.101` forwarding native/Cloudflare HTTPS. It is added as the second exact proxy alongside `10.0.1.200`; the missing address explained a runner's HTTPS-to-itself redirect. No network wildcard or arbitrary proxy is trusted. Both live runners now test normal HTTPS, forged HTTP scheme headers over HTTPS, normal HTTP and forged HTTPS headers over HTTP. HTTPS must serve the exact revision; HTTP must redirect without issuing cookies. This verifies the provider contract as well as the application's forwarding rules.
 
 SOLID is applied through concrete responsibilities: `IntakeAgentService` orchestrates; `IntakeRules` validates without I/O; `IntakeStore` owns transactional request updates and command identities; `IntakeSpendBudget` owns atomic reserve/settle. The agent depends on the small `IIntakeModelClient` boundary, implemented by explicit provider adapters and test doubles. Shared contracts and `IntakeModelProtocol` live outside provider implementation files. Adding a provider extends that boundary and the composition root. Adapter output remains untrusted and goes through the same rules before persistence. HTTP and time are injected. Comments explain ownership/security decisions and transaction/uncertainty behaviour. Direct EF operations keep transaction boundaries visible.
 
 React rendering is separated into `RequestNavigation`, `RequestFieldInput`, `Instructions` and `SourceDocument`. The application retains request state, API commands, submission decisions and navigation/focus ownership; the API client retains its single serialized command queue. SourceDocument owns the native modal ref/effect, and Instructions owns view-local playback. Extracted views receive typed data/callbacks, keep the existing DOM/classes/labels and introduce no new fetches or persistence. This removes independent rendering responsibilities from the main component without a state library or custom framework.
+
+### Hostless deployment
+
+The current free, no-card target is 0.25 vCPU, 512 MB and one always-running instance, with minimum and maximum one and review apps off. Keep resources within the account's shared free pool. Hostless's spending-limit field does not halt ongoing charges; entering zero disables that control.
+
+The container reads `PORT`, binds on all interfaces and exposes `/health` without a database request. Workstation GC uses a 256 MiB managed-heap ceiling within the container allocation. Fonts, licences and the labelled MP4/WebM recording are packaged locally. Production HTTP redirects to HTTPS; private API responses use `no-store`, HTML is revalidated and content-hashed assets use immutable caching.
+
+Set production configuration on the server:
+
+- `ConnectionStrings__OnboardFlow`: the existing Neon database and shared spending ledger.
+- `ASPNETCORE_ENVIRONMENT=Production`, `Intake__Enabled=true` and `Intake__Provider=OpenAI`.
+- `Intake__OpenAI__ProjectId`, `Intake__OpenAI__BudgetVerified=true` and `Intake__OpenAI__ApiKey`: the verified dedicated project and restricted Responses key.
+- `AllowedHosts=onboardflow.hostless.app`.
+- `ReverseProxy__KnownProxies__0=10.0.1.200`, `ReverseProxy__KnownProxies__1=10.0.7.101` and `ReverseProxy__UseCloudflareVisitor=false`: only the observed ingress peers may supply protocol headers.
+
+The database connection and API key are write-only settings. Never put credentials in source, client variables, images or reports. The credential-free ingress probe is excluded from the production image.
+
+CI publishes the checked source archive to `deploy/hostless`; workflow definitions are excluded from that branch. Documentation and workflow-only updates receive formatting/document-link checks and do not publish a runtime. Application changes retain the full regression, packaging and hosted acceptance gates. The previous Deplexo release remains available for rollback against the same database and budget ledger. Never restore an older spending counter or roll back the additive schema.
 
 The dated sections below retain earlier checkpoints and hosting assumptions. Current implementation and results are described above and in HARNESS.
 

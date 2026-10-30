@@ -1,8 +1,14 @@
 # OnboardFlow agent instructions
 
+## Current reliability repair — 31 October 2026
+
+Dexter requested a lasting repair after the Hostless HTTPS redirect loop recurred, and requires the complete live demo journey to be verified in Chrome before calling it fixed. Another observed-IP addition is insufficient. The repair uses a Cloudflare Pages gateway at `https://dexter-onboardflow.pages.dev/` signing requests with ECDSA P-256; production validates the signature with a public key and no longer depends on Hostless's rotating private ingress addresses. Original-host page URLs redirect to that stable address; unverified mutations fail closed. This supersedes the exact-peer-only scheme strategy below for the current production image. Do not replace this with arbitrary proxy/network trust or an unconditional HTTPS scheme override.
+
+Keep the existing app/database, secure cookies, CSRF, owned state, manual actions and shared US$5/US$4.50 inference controls. No payment card or hosting-plan upgrade is authorised. The signing private key belongs only in the Cloudflare server-secret binding; the app contains only its public verification key. Keep the encrypted local recovery copy ignored. The hourly availability check exercises the page, release marker, CSRF protection and database readiness without model calls. Record actual acceptance and limits in HARNESS; a passing deployment alone is not a completed employer journey.
+
 ## Current authority — Hostless release, 25 October 2026
 
-Dexter authorised deploying the complete 23-item React/C#/PostgreSQL demo to Hostless, testing the full journey including entry after at least one hour without visitor traffic, and keeping README current. He explicitly approved saving the existing dedicated OnboardFlow OpenAI key and production Neon connection string in Hostless server settings. That transfer is complete; both sensitive values are write-only. Do not request the same approval again. No payment card or paid hosting is authorised.
+Dexter authorised deploying the complete 23-item React/C#/PostgreSQL demo to Hostless, testing the full journey and quick fresh-visitor entry, and keeping README current. He explicitly cancelled the proposed hour-long inactivity test: the priority is having the employer demo ready. Do not delay this release for long-idle testing or claim that it was completed. He explicitly approved saving the existing dedicated OnboardFlow OpenAI key and production Neon connection string in Hostless server settings. That transfer is complete; both sensitive values are write-only. Do not request the same approval again. No payment card or paid hosting is authorised.
 
 Hostless runs the free **0.25 vCPU / 512 MB / one always-running replica**, maximum one, review apps off. The production image reads `PORT`, uses a 256 MiB managed-heap ceiling, trusts only observed exact ingress peers `10.0.1.200` and `10.0.7.101`, and redirects HTTP to HTTPS. The second peer was confirmed in protected runtime diagnostics after a runner's HTTPS request incorrectly redirected to itself. Keep native forwarding/Cloudflare mode off, preserve exact-peer trust, and run normal/forged-header checks from both Ubuntu and macOS. `deploy/hostless` receives only the checked source archive after main CI; documentation-only main changes do not restart the runtime. The previous Deplexo release remains available for rollback, sharing the same Neon database and budget ledger. Never re-import an older ledger, reset spending or roll back the additive schema.
 
@@ -10,7 +16,7 @@ Preserve the dedicated US$5 OpenAI project limit and US$4.50 persistent shared r
 
 This is an employer showcase. Apply SOLID proportionately: focused orchestration, pure validation, transactional state/budget ownership and a narrow model boundary; use comments for decisions and invariants. Keep meaningful GitHub Actions, README and supporting engineering evidence aligned with actual code/results. Avoid speculative abstractions and tests that merely mirror code. Ordinary CI uses only a test-assembly model double; native macOS acceptance uses the real hosted adapter under the shared cap. Do not claim provider marketing, local fixtures or a warm request as proof of idle performance. Portfolio edits and a new hosted-app recording remain separate work.
 
-**Historical checkpoints below are superseded wherever they describe pending credentials, disabled production endpoints, a 128 MiB requirement or a deployment hold.** README and HARNESS identify current acceptance results.
+**Historical checkpoints below are superseded wherever they describe pending credentials, disabled production endpoints, a 128 MiB requirement, a deployment hold or an hour-long idle acceptance gate.** README and HARNESS identify current acceptance results.
 
 ## Current hosting requirements — 25 October 2026
 
