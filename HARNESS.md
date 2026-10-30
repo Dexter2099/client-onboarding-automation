@@ -6,7 +6,16 @@
 
 The manual `alert_test` choice is a notification drill: `outage` supplies HTTP 503 and `redirect_loop` supplies a self-redirecting HTTP 308 from a temporary **127.0.0.1-only server on the GitHub runner**. Only the drill process redirects the unchanged production checker's fetch calls to this fixture. The job deliberately remains failed so the ordinary GitHub failure-email path runs. Scheduled runs and manual `none` continue to check the real service. No model calls, application deployment, production settings or live outages are involved.
 
-Both local fixtures were rejected with their expected status and failed exit code. Live email arrival and final production-check evidence will be recorded after verification. GitHub's scheduling is best effort, and public-repository schedules can be disabled after 60 days without repository activity; these checks do not establish continuous uptime.
+Both local fixtures were rejected with their expected status and failed exit code. The account's **Actions: On GitHub + Email, failed workflows only** preference is saved. This is GitHub's account-wide Actions preference; other notification categories were preserved. Both alert emails were read in the configured Gmail inbox and matched to their exact workflow-run links:
+
+| Verification on 31 October 2026 (Brisbane) | Actual result |
+| --- | --- |
+| Simulated outage | [Run 41143984175](https://github.com/Dexter2099/client-onboarding-automation/actions/runs/41143984175) deliberately failed because the real checker rejected the fixture's HTTP 503. Its email arrived at **09:22:02**. |
+| Simulated redirect loop | [Run 41143987540](https://github.com/Dexter2099/client-onboarding-automation/actions/runs/41143987540) deliberately failed because the real checker rejected the fixture's HTTP 308. Its email arrived at **09:22:07**. |
+| Normal live check afterward | [Run 41144049087](https://github.com/Dexter2099/client-onboarding-automation/actions/runs/41144049087) passed all four live paths with `alert_test=none`. The scheduled check remains hourly. |
+| Application continuity | [Delivery 41143983317](https://github.com/Dexter2099/client-onboarding-automation/actions/runs/41143983317) passed, with application publication skipped for these workflow/documentation-only changes. No deployment, live outage or AI call was used to test the emails. |
+
+Private receipt metadata and local drill logs are in `.local/github-email-alerts-20261031/` and `.local/email-fixture-*.log`. GitHub's scheduling is best effort, and public-repository schedules can be disabled after 60 days without repository activity; these checks do not establish continuous uptime.
 
 ## Stable demo ingress repair — 31 October 2026
 
