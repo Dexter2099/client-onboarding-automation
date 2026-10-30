@@ -1,5 +1,13 @@
 # Development harness
 
+## Stable demo ingress repair — 31 October 2026
+
+The October 29 exact-peer configuration repair restored access then, but did not remove the dependency on rotating hosting proxy addresses. On October 31, Hostless again returned 308 from HTTPS to the same HTTPS URL. The previous Deplexo homepage returned 200 while its CSRF endpoint returned 500; it was not a working visitor fallback.
+
+The replacement public address is `https://dexter-onboardflow.pages.dev/`. Its small Cloudflare gateway attests HTTPS with a timestamped ECDSA signature bound to the public origin, method, encoded target and body digest. The production app validates only the public key, retains cookie/CSRF/ownership/budget protections and redirects unsigned original-host page entry to the stable gateway. No new model provider, database, paid plan or payment card is involved. No private signing key enters the application source or image.
+
+Local acceptance and final live release results are recorded below once completed. The existing application code, model and data limits otherwise remain authoritative. Hourly availability checks do not establish continuous uptime or long-idle performance.
+
 ## Employer release ready — 25 October 2026
 
 [Open OnboardFlow](https://onboardflow.hostless.app/). Runtime source **2a2524f45c681707432c35d86ee6b0cec5a95629**, release-branch commit **3d4e2bb34bbd9ecf9bb1421590c467bd54e4fbe7**. [Delivery 40163443945](https://github.com/Dexter2099/client-onboarding-automation/actions/runs/40163443945) passed all three jobs. Hosting remains the verified free/no-card **0.25 vCPU / 512 MB / one always-running instance**, maximum one, review apps off. The old Deplexo release remains available for rollback, sharing the same Neon database/ledger. No paid hosting or card was added.

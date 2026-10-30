@@ -4,7 +4,7 @@ An AI onboarding app that drafts answers from fictional client documents, shows 
 
 React/TypeScript, C# / ASP.NET Core / .NET 10, PostgreSQL and server-side OpenAI.
 
-[Try the demo](https://onboardflow.hostless.app/)
+[Try the demo](https://dexter-onboardflow.pages.dev/)
 
 ## Try it
 
@@ -24,6 +24,8 @@ The hosted adapter uses a pinned, evaluated OpenAI model. Each sandbox permits t
 The dedicated OpenAI project has a US$5 monthly limit. `IntakeSpendBudget` reserves costs in a shared PostgreSQL ledger and stops new inference at US$4.50. Uncertain calls retain their reservations; resets and restarts cannot erase spending. Manual completion remains available when inference is unavailable.
 
 Owned 24-hour sandboxes, secure cookies, CSRF protection, source validation and command/version checks protect saved work. GitHub Actions verifies application changes before publishing the checked source to Hostless. Documentation changes receive link and formatting checks without deploying the app.
+
+The public demo uses a [signed Cloudflare gateway](edge/README.md), so changing hosting proxy addresses cannot cause the earlier HTTPS self-redirect loop. An hourly availability check tests page access, protected sessions and database readiness without AI calls. Current live acceptance belongs in the [release evidence](HARNESS.md).
 
 ## Run locally
 

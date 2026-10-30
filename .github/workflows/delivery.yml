@@ -82,6 +82,7 @@ jobs:
         run: |
           $ErrorActionPreference = 'Stop'
           $PSNativeCommandUseErrorActionPreference = $true
+          npm run test:edge
           npm run verify
       - name: Package this revision and build its deployment image
         if: steps.scope.outputs.app_changed == 'true'
