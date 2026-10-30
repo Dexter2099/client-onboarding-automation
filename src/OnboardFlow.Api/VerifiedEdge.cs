@@ -26,12 +26,6 @@ public static class VerifiedEdge
 
         return app.Use(async (http, next) =>
         {
-            // Host health checks need no cookies, database, model or privileged proxy headers.
-            if (http.Request.Path == "/health" && !http.Request.Headers.ContainsKey(SignatureHeader))
-            {
-                await http.Response.WriteAsJsonAsync(new { status = "ok" });
-                return;
-            }
             var timestamp = http.Request.Headers[TimeHeader];
             var signature = http.Request.Headers[SignatureHeader];
             var now = DateTimeOffset.UtcNow.ToUnixTimeSeconds();

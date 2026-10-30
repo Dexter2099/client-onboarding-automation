@@ -1,12 +1,47 @@
 # Development harness
 
+## Native HTTP liveness — 31 October 2026
+
+Dexter requested Hostless HTTP GET `/health` every **10 seconds**, replacing TCP every 30 seconds. The dashboard saved that configuration in deployment `6ae527fa90930df3bad525ae`, but the rollout did not become healthy. Inside the actual container, the same loopback request returned **400** with an IP Host header and **200** with `Host: onboardflow.hostless.app`; the deployed `AllowedHosts` contains only that public hostname. Startup logs showed a replacement after about five minutes. A public 200 response therefore did not prove the native probe worked.
+
+`LivenessStartupFilter` places only the fixed GET `/health` response before the framework's host filter. It uses no PostgreSQL, model, cookies or forwarded headers and sends `Cache-Control: no-store`. Every other path/method retains the configured host filter and verified-edge boundary. `hostless.yaml` preserves HTTP `/health` at 10 seconds across future releases. Regression first reproduced internal-host 400 responses; the seven new liveness/host-filter cases and 16 existing signature-boundary cases then passed. Live acceptance of the replacement runtime is still pending at this checkpoint; no crash or freeze was deliberately induced.
+
+## GitHub availability email verification — 31 October 2026
+
+`Demo availability` checks the live page, release marker, CSRF cookie and database hourly. It rejects every unexpected redirect using `redirect: 'manual'`, so an HTTPS self-redirect fails the check immediately. GitHub Actions email delivery is configured in the account's Notifications settings; scheduled notifications belong to the workflow creator or the user who last changed its schedule/re-enabled it. This workflow's creator is `Dexter2099`.
+
+The manual `alert_test` choice is a notification drill: `outage` supplies HTTP 503 and `redirect_loop` supplies a self-redirecting HTTP 308 from a temporary **127.0.0.1-only server on the GitHub runner**. Only the drill process redirects the unchanged production checker's fetch calls to this fixture. The job deliberately remains failed so the ordinary GitHub failure-email path runs. Scheduled runs and manual `none` continue to check the real service. No model calls, application deployment, production settings or live outages are involved.
+
+Both local fixtures were rejected with their expected status and failed exit code. The account's **Actions: On GitHub + Email, failed workflows only** preference is saved. This is GitHub's account-wide Actions preference; other notification categories were preserved. Both alert emails were read in the configured Gmail inbox and matched to their exact workflow-run links:
+
+| Verification on 31 October 2026 (Brisbane) | Actual result |
+| --- | --- |
+| Simulated outage | [Run 41143984175](https://github.com/Dexter2099/client-onboarding-automation/actions/runs/41143984175) deliberately failed because the real checker rejected the fixture's HTTP 503. Its email arrived at **09:22:02**. |
+| Simulated redirect loop | [Run 41143987540](https://github.com/Dexter2099/client-onboarding-automation/actions/runs/41143987540) deliberately failed because the real checker rejected the fixture's HTTP 308. Its email arrived at **09:22:07**. |
+| Normal live check afterward | [Run 41144049087](https://github.com/Dexter2099/client-onboarding-automation/actions/runs/41144049087) passed all four live paths with `alert_test=none`. The scheduled check remains hourly. |
+| Application continuity | [Delivery 41143983317](https://github.com/Dexter2099/client-onboarding-automation/actions/runs/41143983317) passed, with application publication skipped for these workflow/documentation-only changes. No deployment, live outage or AI call was used to test the emails. |
+
+Private receipt metadata and local drill logs are in `.local/github-email-alerts-20261031/` and `.local/email-fixture-*.log`. GitHub's scheduling is best effort, and public-repository schedules can be disabled after 60 days without repository activity; these checks do not establish continuous uptime.
+
 ## Stable demo ingress repair — 31 October 2026
 
 The October 29 exact-peer configuration repair restored access then, but did not remove the dependency on rotating hosting proxy addresses. On October 31, Hostless again returned 308 from HTTPS to the same HTTPS URL. The previous Deplexo homepage returned 200 while its CSRF endpoint returned 500; it was not a working visitor fallback.
 
 The replacement public address is `https://dexter-onboardflow.pages.dev/`. Its small Cloudflare gateway attests HTTPS with a timestamped ECDSA signature bound to the public origin, method, encoded target and body digest. The production app validates only the public key, retains cookie/CSRF/ownership/budget protections and redirects unsigned original-host page entry to the stable gateway. No new model provider, database, paid plan or payment card is involved. No private signing key enters the application source or image.
 
-Local acceptance and final live release results are recorded below once completed. The existing application code, model and data limits otherwise remain authoritative. Hourly availability checks do not establish continuous uptime or long-idle performance.
+Runtime revision **258f72774026f5c3e67d7ed93d75ded42a2eda89** is live. [Delivery 41140717570](https://github.com/Dexter2099/client-onboarding-automation/actions/runs/41140717570) passed verification/package, production HTTPS acceptance and the real hosted journey on macOS WebKit. The existing application code, model and data limits otherwise remain authoritative.
+
+| Check on 31 October 2026 | Actual result |
+| --- | --- |
+| Deterministic regression | **149 backend checks**, the existing **12 browser cases across Chromium/Firefox/WebKit**, **6 gateway contract/security checks**, formatting and production image build passed. The backend total includes 16 signature-boundary and two database-readiness cases. Ordinary regression uses the existing model double. |
+| Live Google Chrome | Installed **Google Chrome 156.0.8078.76 on Windows**, selected through Playwright's `chrome` channel with an isolated visitor, passed the complete real-AI journey in **45.2 seconds**. Recording playback, 18 sourced drafts, missing-detail clarification, sample client reply/continuation, highlighted source inspection, four human sample actions, all **23 submissions awaiting review**, saved reload and reset passed without page errors. This is branded Chrome, not a claim about the user's existing personal tab. |
+| Public HTTPS and persistence | Exact runtime revision, four normal/forged-header ingress cases, secure/HttpOnly/SameSite Strict cookies, CSRF rejection, 24-hour lifetime, owned intake, saved edits, idempotent command replay, browser security headers and MP4 range responses passed. Original Hostless root/deep links return 308 to the corresponding stable address; unsigned original-host mutations return 403. |
+| External availability check | [Run 41141733945](https://github.com/Dexter2099/client-onboarding-automation/actions/runs/41141733945) passed from GitHub. The hourly check covers HTML, release marker, secure CSRF cookie and database readiness with **zero model calls**. |
+| Published employer entry | Portfolio revision **cd0f60a2bf851c57fa36954e4b695572e1763f24** is published. Chrome clicked the actual live OnboardFlow **Try demo** link, reached the stable origin and exact app revision, and opened an empty persisted intake. Desktop/390px portfolio previews passed without horizontal overflow. Card copy, media, layout and other links were preserved. |
+
+The first deployment acceptance observed the new marker but failed a CSP assertion on its subsequent session request during rollout. The same verified artifact passed the unchanged acceptance checks on rerun, followed by both complete hosted browser journeys. One later local read-only availability probe reached its 20-second timeout; its path/cause was not captured. Immediate per-path checks returned 200 for all four endpoints, followed by a passing unchanged availability check at 23:04:08 UTC. These observations do not establish zero transient failures. No assertion, security rule, inference timeout or budget was relaxed. Local evidence: `.local/stable-edge-20261031/`, including the Chrome journey log and source/completion screenshots.
+
+Earlier dated sections are historical checkpoints, including previous URLs and their availability at the time. Hourly checks do not establish continuous uptime or long-idle performance; no new long-idle test was performed. No billing plan or payment card was added.
 
 ## Employer release ready — 25 October 2026
 
