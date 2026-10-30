@@ -1,5 +1,13 @@
 # Development harness
 
+## GitHub availability email verification — 31 October 2026
+
+`Demo availability` checks the live page, release marker, CSRF cookie and database hourly. It rejects every unexpected redirect using `redirect: 'manual'`, so an HTTPS self-redirect fails the check immediately. GitHub Actions email delivery is configured in the account's Notifications settings; scheduled notifications belong to the workflow creator or the user who last changed its schedule/re-enabled it. This workflow's creator is `Dexter2099`.
+
+The manual `alert_test` choice is a notification drill: `outage` supplies HTTP 503 and `redirect_loop` supplies a self-redirecting HTTP 308 from a temporary **127.0.0.1-only server on the GitHub runner**. Only the drill process redirects the unchanged production checker's fetch calls to this fixture. The job deliberately remains failed so the ordinary GitHub failure-email path runs. Scheduled runs and manual `none` continue to check the real service. No model calls, application deployment, production settings or live outages are involved.
+
+Both local fixtures were rejected with their expected status and failed exit code. Live email arrival and final production-check evidence will be recorded after verification. GitHub's scheduling is best effort, and public-repository schedules can be disabled after 60 days without repository activity; these checks do not establish continuous uptime.
+
 ## Stable demo ingress repair — 31 October 2026
 
 The October 29 exact-peer configuration repair restored access then, but did not remove the dependency on rotating hosting proxy addresses. On October 31, Hostless again returned 308 from HTTPS to the same HTTPS URL. The previous Deplexo homepage returned 200 while its CSRF endpoint returned 500; it was not a working visitor fallback.

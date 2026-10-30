@@ -1,15 +1,27 @@
 name: Demo availability
+run-name: "OnboardFlow ${{ inputs.alert_test && inputs.alert_test != 'none' && format('SIMULATED {0}', inputs.alert_test) || 'live availability' }}"
 
 on:
   schedule:
     - cron: '19 * * * *'
   workflow_dispatch:
+    inputs:
+      alert_test:
+        description: 'Notification test only: a loopback fixture fails the real checker; the live demo is untouched.'
+        type: choice
+        required: true
+        default: none
+        options:
+          - none
+          - outage
+          - redirect_loop
 
 permissions:
   contents: read
 
 jobs:
   check:
+    name: "${{ inputs.alert_test && inputs.alert_test != 'none' && format('SIMULATED {0}', inputs.alert_test) || 'Live demo health' }}"
     if: github.event.repository.private == false
     runs-on: ubuntu-24.04
     timeout-minutes: 3
@@ -19,4 +31,57 @@ jobs:
         with:
           node-version: '24.19.0'
       - name: Verify HTTPS, session protection and database readiness without inference
+        if: github.event_name != 'workflow_dispatch' || inputs.alert_test == 'none'
         run: node scripts/check-demo-health.mjs --database
+      - name: Simulate a failed health check to test GitHub email delivery
+        if: github.event_name == 'workflow_dispatch' && inputs.alert_test != 'none'
+        env:
+          ALERT_TEST: ${{ inputs.alert_test }}
+        run: |
+          node --input-type=module <<'NODE'
+          import assert from 'node:assert/strict';
+          import { createServer } from 'node:http';
+          import { once } from 'node:events';
+          import { origin } from './scripts/demo-target.mjs';
+
+          const scenario = process.env.ALERT_TEST;
+          assert(['outage', 'redirect_loop'].includes(scenario));
+          const status = scenario === 'outage' ? 503 : 308;
+          const fixture = createServer((request, response) => {
+            response.writeHead(status, {
+              'Content-Type': 'text/plain',
+              ...(status === 308 ? { Location: `${localOrigin}${request.url}` } : {}),
+            });
+            response.end(`SIMULATED ${scenario}; live demo untouched`);
+          });
+          fixture.listen(0, '127.0.0.1');
+          await once(fixture, 'listening');
+          const localOrigin = `http://127.0.0.1:${fixture.address().port}`;
+          const realFetch = globalThis.fetch;
+          let requests = 0;
+          // Only this test process changes its transport. All traffic goes to loopback.
+          // The unchanged production checker still rejects unexpected status/redirects.
+          globalThis.fetch = (url, options) => {
+            const target = new URL(url);
+            assert.equal(target.origin, origin);
+            requests++;
+            return realFetch(localOrigin + target.pathname + target.search, options);
+          };
+          process.argv.push('--database');
+          try {
+            await import('./scripts/check-demo-health.mjs');
+            throw new Error('The checker incorrectly accepted the simulated failure.');
+          } catch (error) {
+            assert(error instanceof assert.AssertionError);
+            assert.equal(error.actual, status);
+            assert.equal(error.expected, 200);
+            assert.equal(requests, 1);
+            console.error(`SIMULATED ${scenario}: the real checker rejected HTTP ${status}. Only loopback was contacted; no live outage or AI call occurred.`);
+            // Keep the workflow failed so GitHub uses the real failure-email path.
+            throw error;
+          } finally {
+            globalThis.fetch = realFetch;
+            fixture.closeAllConnections();
+            await new Promise((resolve) => fixture.close(resolve));
+          }
+          NODE
