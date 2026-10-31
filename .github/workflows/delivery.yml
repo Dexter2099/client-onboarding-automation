@@ -35,16 +35,19 @@ jobs:
           $ErrorActionPreference = 'Stop'
           $PSNativeCommandUseErrorActionPreference = $true
           $changed = $true
+          $edgeChanged = $true
           if ($env:GITHUB_EVENT_NAME -in @('push', 'pull_request')) {
             $event = Get-Content -Raw -LiteralPath $env:GITHUB_EVENT_PATH | ConvertFrom-Json
             $base = if ($env:GITHUB_EVENT_NAME -eq 'pull_request') { $event.pull_request.base.sha } else { $event.before }
             if ($base -match '^[a-f0-9]{40}$' -and $base -ne ('0' * 40)) {
               $paths = @(git diff --name-only $base $env:GITHUB_SHA)
               # Workflow definitions are omitted from the runtime release branch.
-              $changed = @($paths | Where-Object { $_ -notmatch '^(README\.md|AGENTS\.md|PLAN\.md|HARNESS\.md|docs/.*|\.github/workflows/.*)$' }).Count -gt 0
+              $changed = @($paths | Where-Object { $_ -notmatch '^(README\.md|AGENTS\.md|PLAN\.md|HARNESS\.md|docs/.*|\.github/workflows/.*|\.gitignore|edge/.*|scripts/package-edge-release\.mjs|scripts/package-edge-release\.test\.mjs)$' }).Count -gt 0
+              $edgeChanged = $changed -or @($paths | Where-Object { $_ -match '^(edge/|scripts/package-edge-release)' }).Count -gt 0
             }
           }
           "app_changed=$($changed.ToString().ToLowerInvariant())" >> $env:GITHUB_OUTPUT
+          "edge_changed=$($edgeChanged.ToString().ToLowerInvariant())" >> $env:GITHUB_OUTPUT
       - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
           node-version: '24.19.0'
@@ -82,8 +85,25 @@ jobs:
         run: |
           $ErrorActionPreference = 'Stop'
           $PSNativeCommandUseErrorActionPreference = $true
-          npm run test:edge
           npm run verify
+      - name: Verify gateway and package public assets
+        if: steps.scope.outputs.edge_changed == 'true'
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $PSNativeCommandUseErrorActionPreference = $true
+          npm run test:edge
+          node --test scripts/package-edge-release.test.mjs
+          if ('${{ steps.scope.outputs.app_changed }}' -ne 'true') { npm run build }
+          node scripts/package-edge-release.mjs $env:GITHUB_SHA
+      - name: Retain the verified Cloudflare asset package
+        if: steps.scope.outputs.edge_changed == 'true'
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: verified-edge-release
+          path: .local/edge-release/
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 7
       - name: Package this revision and build its deployment image
         if: steps.scope.outputs.app_changed == 'true'
         run: |

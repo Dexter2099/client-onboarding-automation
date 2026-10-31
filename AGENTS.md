@@ -1,5 +1,9 @@
 # OnboardFlow agent instructions
 
+## Public asset release authority — 31 October 2026
+
+Dexter authorised moving first-load public asset delivery onto the existing Cloudflare Pages setup, keeping screens/flow unchanged, verifying in connected Chrome and publishing one consolidated release with **zero AI use**. This supersedes real-model acceptance for this asset-only task, including the automatic macOS AI job. Keep the stable Hostless application/release, signing secret, HTML/API/readiness routing, monitoring and budget controls. Only approved hashed JS/CSS/fonts and the existing versioned walkthrough files use Pages assets; missing assets retain signed read-only origin fallback. Package only public files, preserve security/cache/range behavior, and never put HTML or application release/readiness responses into a static success fallback. Edge-only CI verifies/packages the gateway without triggering a Hostless release or inference. Use the existing local Pages authentication for the reviewed upload; do not add credentials to GitHub or change billing.
+
 ## Lean startup release authority — 31 October 2026
 
 Dexter authorised implementing the reassessed startup, one-query intake read and old-demo cleanup first, verifying in connected Chrome with minimal paid inference and publishing one consolidated release. Keep screens/flow and existing stored-project compatibility. Startup uses CSRF plus intake, preserves explicit expired-workspace recovery and receives a new request from the existing session POST. Ordinary reads must retain ownership/expiry, missing-request initialization, changed-source invalidation and expired-run transitions. New visitors must not seed legacy project records; legacy regression data belongs in test fixtures. Preserve reset, model/call/budget controls, signed gateway, health/restart and the single availability monitor. Public asset delivery and unrelated legacy source/provider retirement are outside this release.
