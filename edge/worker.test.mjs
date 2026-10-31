@@ -409,6 +409,7 @@ test('network buckets are signed, keyed, spoof-resistant and group IPv6 privacy 
   assert.notEqual(ids[0], ids[2]);
   assert.notEqual(ids[0], 'f'.repeat(64));
   assert.equal(captured[0].url.searchParams.getAll('__of_network').length, 1);
+  assert.equal(captured[0].url.searchParams.has('__OF_NETWORK'), false);
   assert(!captured[0].url.href.includes('2001:'));
   const target = captured[0].url;
   const canonical = [

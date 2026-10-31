@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.Net;
 using System.Net.Http.Json;
+using System.Numerics;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
@@ -143,10 +144,24 @@ public sealed class OwnerAccessTests(FoundationFixture fixture) : IClassFixture<
         var page = await client.GetAsync("/api/owner-access");
         Assert.True(page.Headers.CacheControl!.NoStore);
         Assert.Contains("form-action 'self'", page.Headers.GetValues("Content-Security-Policy").Single());
+        var alias = await client.GetAsync("/api/OWNER-ACCESS/");
+        Assert.Equal(HttpStatusCode.OK, alias.StatusCode);
+        Assert.Contains("form-action 'self'", alias.Headers.GetValues("Content-Security-Policy").Single());
         var html = await page.Content.ReadAsStringAsync();
         var formToken = WebUtility.HtmlDecode(Regex.Match(html, "name=\"__RequestVerificationToken\" value=\"([^\"]+)\"").Groups[1].Value);
         Assert.NotEmpty(formToken);
         var pass = permanent ? PermanentPass() : Pass();
+        // ECDSA permits an equivalent signature (r, n-s). Revocation must bind the signed ID,
+        // not the bearer string, otherwise a copied pass could evade it by changing its signature.
+        var parts = pass.Split('.');
+        var signature = WebEncoders.Base64UrlDecode(parts[3]);
+        var order = new BigInteger(Convert.FromHexString("FFFFFFFF00000000FFFFFFFFFFFFFFFFBCE6FAADA7179E84F3B9CAC2FC632551"), true, true);
+        var alternateS = (order - new BigInteger(signature.AsSpan(32), true, true)).ToByteArray(true, true);
+        signature.AsSpan(32).Clear();
+        alternateS.CopyTo(signature, 64 - alternateS.Length);
+        var equivalentPass = string.Join('.', parts[0], parts[1], parts[2], WebEncoders.Base64UrlEncode(signature));
+        var verifier = new OwnerAccess(new ConfigurationBuilder().AddInMemoryCollection(Settings()).Build(), fixture.Clock);
+        Assert.Equal(verifier.Read(pass)!.Id, verifier.Read(equivalentPass)!.Id);
         FormUrlEncodedContent Form(string value, bool protection = true, string action = "enable") => new(
             new Dictionary<string, string> { ["pass"] = value, ["action"] = action, ["__RequestVerificationToken"] = protection ? formToken : "" });
         Assert.Equal(HttpStatusCode.Forbidden, (await client.PostAsync("/api/owner-access", Form(pass, false))).StatusCode);
@@ -213,6 +228,7 @@ public sealed class OwnerAccessTests(FoundationFixture fixture) : IClassFixture<
         copied.DefaultRequestHeaders.Add("Cookie", OwnerAccess.CookieName + "=" + pass);
         Assert.Contains("Enable owner access", await copied.GetStringAsync("/api/owner-access"));
         Assert.Equal(HttpStatusCode.Forbidden, (await client.PostAsync("/api/owner-access", Form(pass))).StatusCode);
+        Assert.Equal(HttpStatusCode.Forbidden, (await client.PostAsync("/api/owner-access", Form(equivalentPass))).StatusCode);
         await using (var scope = factory.Services.CreateAsyncScope())
         {
             Assert.Null(await scope.ServiceProvider.GetRequiredService<OwnerAccessPolicy>().Read(pass, CancellationToken.None));
