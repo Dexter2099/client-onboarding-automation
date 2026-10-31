@@ -155,6 +155,7 @@ app.MapGet("/api/csrf", (HttpContext http, IAntiforgery antiforgery) =>
 app.MapSandboxEndpoints();
 app.MapWorkflowEndpoints();
 app.MapIntake();
+app.MapOwnerAccess();
 app.MapFallback("/api/{**path}", () => Results.Problem(statusCode: 404, title: "Unknown API route."));
 app.MapFallbackToFile("index.html");
 app.Run();

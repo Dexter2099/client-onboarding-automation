@@ -29,6 +29,10 @@ The hosted adapter uses a pinned, evaluated OpenAI model. Each sandbox permits t
 
 The dedicated OpenAI project has a US$5 monthly limit. `IntakeSpendBudget` reserves costs in a shared PostgreSQL ledger and stops new inference at US$4.50. Uncertain calls retain their reservations; resets and restarts cannot erase spending. Manual completion remains available when inference is unavailable.
 
+Public sandboxes allow three AI runs. Dexter can activate a privately signed owner pass at `/api/owner-access` to bypass only that sandbox run count. The secure, HttpOnly, host-only cookie persists across resets and new sandboxes until the signed pass expires (up to 90 days); the page also lets the owner disable it in that browser. The monthly spending cap, per-run limits, ownership and manual-only actions still apply. The public demo has no new navigation or screens.
+
+The app contains only the separate owner public verification key. Keep its private signing key encrypted with Windows DPAPI under `.local/owner-access/`, separate from the gateway key. `pwsh -NoProfile -File scripts/create-owner-pass.ps1` issues a fresh pass into an encrypted local file; it never prints the pass. Activate it privately through the password form, never through a URL, chat, source control or a log. Issuing a new pass needs no application deployment. Replacing the owner public key revokes previous passes without changing gateway keys.
+
 Owned 24-hour sandboxes, secure cookies, CSRF protection, source validation and command/version checks protect saved work. GitHub Actions verifies application changes before publishing the checked source to Hostless. Documentation changes receive link and formatting checks without deploying the app.
 
 Deterministic API and browser regression runs use a test-only scripted adapter, with no inference. Real-AI macOS acceptance additionally requires the explicit `LIVE_AI_ACCEPTANCE_ENABLED=true` repository variable; leave it unset for zero-AI releases. Connected Chrome live acceptance uses manual actions with the AI endpoint blocked. The evaluated model, prompt and inference/spending limits are unchanged by the latency and cleanup release.
