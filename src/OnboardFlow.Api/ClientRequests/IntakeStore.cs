@@ -55,7 +55,7 @@ public sealed class IntakeStore(FoundationDb db, TimeProvider clock, IntakeSpeci
         }
         if (!SandboxSessionAccess.Active(session, clock)) throw new IntakeException(401, "This sandbox expired.");
         // This method owns the transaction and abandons it on any failure. A nested
-        // savepoint/release adds two database round trips without a recovery use here.
+        // savepoint and separate release round trip have no recovery use here.
         var savepoints = db.Database.AutoSavepointsEnabled;
         try
         {
