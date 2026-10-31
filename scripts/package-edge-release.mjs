@@ -34,12 +34,7 @@ export async function packageEdgeRelease(
   for (const name of (await readdir(resolve(build, 'assets'))).sort()) {
     if (publicAssetType('/assets/' + name)) await copyPublic('/assets/' + name);
   }
-  for (const path of [
-    '/onboardflow-local-ai-20261025.mp4',
-    '/onboardflow-local-ai-20261025.webm',
-    '/onboardflow-local-ai-20261025.webp',
-  ])
-    await copyPublic(path);
+  for (const path of ['/onboardflow-local-ai-20261025.webp']) await copyPublic(path);
   const html = await readFile(resolve(build, 'index.html'), 'utf8');
   for (const [, path] of html.matchAll(/(?:src|href)="(\/assets\/[^"?#]+)"/g)) {
     assert(

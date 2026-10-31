@@ -34,7 +34,7 @@ test('package contains only approved public bytes and a revision-stamped worker,
   const revision = 'a'.repeat(40);
   const manifest = await packageEdgeRelease(revision, output, build);
   assert.equal(manifest.revision, revision);
-  assert.equal(manifest.files.length, 6);
+  assert.equal(manifest.files.length, 4);
   const worker = await readFile(resolve(output, 'site/_worker.js'), 'utf8');
   assert(worker.includes(`const ASSET_RELEASE = '${revision}';`));
   assert.equal(manifest.workerSha256, createHash('sha256').update(worker).digest('hex'));
@@ -42,8 +42,6 @@ test('package contains only approved public bytes and a revision-stamped worker,
     '404.html',
     '_worker.js',
     'assets',
-    'onboardflow-local-ai-20261025.mp4',
-    'onboardflow-local-ai-20261025.webm',
     'onboardflow-local-ai-20261025.webp',
   ]);
   assert.equal((await readdir(resolve(output, 'site/assets'))).length, 3);
