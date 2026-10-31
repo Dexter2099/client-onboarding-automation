@@ -58,7 +58,10 @@ public static class ApiSafety
                 http.Response.Headers["Server-Timing"] = "app;dur=" +
                     Stopwatch.GetElapsedTime(started).TotalMilliseconds.ToString("F1", CultureInfo.InvariantCulture);
                 // Apply after static/error handling; preserve the document through proxy transformations.
-                http.Response.Headers.ContentSecurityPolicy = BrowserPolicy;
+                // Only the private operator page uses native forms; public screens keep forms disabled.
+                http.Response.Headers.ContentSecurityPolicy = http.Request.Path.Equals("/api/owner-access", StringComparison.OrdinalIgnoreCase)
+                    ? BrowserPolicy.Replace("form-action 'none'", "form-action 'self'", StringComparison.Ordinal)
+                    : BrowserPolicy;
                 if (http.Response.ContentType?.StartsWith("text/html", StringComparison.OrdinalIgnoreCase) == true)
                     http.Response.Headers.CacheControl = IsApi(http) ? "no-store" : "no-cache, no-transform";
                 return Task.CompletedTask;
