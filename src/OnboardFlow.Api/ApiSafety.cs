@@ -60,7 +60,7 @@ public static class ApiSafety
                 // Apply after static/error handling; preserve the document through proxy transformations.
                 http.Response.Headers.ContentSecurityPolicy = BrowserPolicy;
                 if (http.Response.ContentType?.StartsWith("text/html", StringComparison.OrdinalIgnoreCase) == true)
-                    http.Response.Headers.CacheControl = "no-cache, no-transform";
+                    http.Response.Headers.CacheControl = IsApi(http) ? "no-store" : "no-cache, no-transform";
                 return Task.CompletedTask;
             });
             if (IsApi(http))

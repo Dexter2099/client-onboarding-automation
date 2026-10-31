@@ -34,7 +34,7 @@ public sealed class IntakeAgentService(IntakeStore store, IntakeSpecification sp
     After a client reply, read the reply document through the tool, then draft the missing answer and finish.
     You have six model calls total including continuation. Keep each response below 512 tokens. No prose or markdown.
     """;
-    public async Task<IntakeSnapshot> Run(string? token, AgentCommand command, CancellationToken cancellation)
+    public async Task<IntakeSnapshot> Run(string? token, AgentCommand command, CancellationToken cancellation, bool ownerAccess = false)
     {
         var execute = false;
         var claim = Guid.NewGuid();
@@ -60,7 +60,7 @@ public sealed class IntakeAgentService(IntakeStore store, IntakeSpecification sp
             }
             else
             {
-                if (state.RunsStarted >= 3) throw new IntakeException(429, "This sandbox has used its three AI runs.");
+                if (!ownerAccess && state.RunsStarted >= 3) throw new IntakeException(429, "This sandbox has used its three AI runs.");
                 state.RunsStarted++;
                 state.Run = new() { Model = model.Model, PromptVersion = "intake-" + Convert.ToHexString(
                     System.Security.Cryptography.SHA256.HashData(System.Text.Encoding.UTF8.GetBytes(Instructions)))[..12] };

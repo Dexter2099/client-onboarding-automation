@@ -1,5 +1,13 @@
 # OnboardFlow agent instructions
 
+## Private owner run-count exception — 31 October 2026
+
+Dexter explicitly requested removal of the three-run sandbox cap for himself only. Implement the private signed owner pass, leave visitor limits and shared spending/per-run/ownership safeguards unchanged, and verify with zero inference. The separate owner private key and bearer pass stay DPAPI-encrypted in ignored `.local/owner-access/`; only the owner public verification key is committed. Never print or put a pass in a URL, chat, artifact upload or repository. Enroll through the CSRF-protected HTTPS owner form and secure HttpOnly host cookie; no public demo flow/UI changes. Do not implement the reassessment proposals without separate authority. Owner verification uses test doubles and the read-only private status page, not a paid AI run. Frontend/edge bytes are unchanged, so preserve the existing Pages release and publish only one app rollout after checks.
+
+## Cold public metadata correction — 31 October 2026
+
+Live probes proved the hosting CDN converts a cold cacheable HEAD into GET before method-bound signature verification, even with caller cache bypass. For approved public-file HEAD only, explicitly sign/fetch an origin GET with identity encoding, cancel its body and return native metadata without a body. Keep private/API HEAD, writes and range GETs unchanged; do not add a signature-method exception or implement media slicing. Verify first HEAD on fresh query keys before any warming GET. Caller cache bypass alone failed live acceptance; do not repeat that as a complete fix. This is an edge-only correction; keep the live backend and zero-inference authority unchanged.
+
 ## Latency, cleanup and recovery authority — 31 October 2026
 
 Dexter authorised the request-latency, obsolete-frontend/completed-conversation cleanup and save-recovery fixes, unchanged screens/flow, connected Chrome verification with **zero AI calls**, and one consolidated release. This supersedes older real-model acceptance requirements for this non-model release. Preserve locking, ownership/expiry, command receipts, source/trace/spending records, model/prompt/limits, signed gateway, native media semantics and existing health/monitoring. Ordinary read/save timeouts use the existing Load saved work action; do not replay uncertain writes. Removing redundant savepoints is scoped to IntakeStore's owned, whole-transaction rollback. Real-model macOS acceptance now requires explicit `LIVE_AI_ACCEPTANCE_ENABLED=true`; keep it unset for this release. Retire only the superseded frontend and exclusive dependency; legacy stored-project APIs and used local adapters remain supported.
