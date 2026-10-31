@@ -28,19 +28,9 @@ public static class ApiSafety
         {
             // Keep global bounds; caller partitions use only signature-verified gateway metadata.
             // Reject excess work instead of queuing it or retrying uncertain writes.
+            // Fixed-window permits are not refunded when a later limiter rejects a request.
+            // Check caller/readiness bounds first so their rejected traffic cannot spend the global budget.
             options.GlobalLimiter = PartitionedRateLimiter.CreateChained(
-                PartitionedRateLimiter.Create<HttpContext, string>(http => IsLimited(http)
-                    ? RateLimitPartition.GetConcurrencyLimiter("api", _ => new() { PermitLimit = 6, QueueLimit = 0 })
-                    : RateLimitPartition.GetNoLimiter("static")),
-                PartitionedRateLimiter.Create<HttpContext, string>(http => IsLimited(http)
-                    ? RateLimitPartition.GetFixedWindowLimiter("api", _ => new()
-                    {
-                        PermitLimit = builder.Configuration.GetValue("ApiLimits:RequestsPerMinute", 240),
-                        Window = TimeSpan.FromMinutes(1),
-                        QueueLimit = 0,
-                        AutoReplenishment = true
-                    })
-                    : RateLimitPartition.GetNoLimiter("static")),
                 PartitionedRateLimiter.Create<HttpContext, string>(http => http.Features.Get<VerifiedCaller>() is { } caller && IsLimited(http)
                     ? RateLimitPartition.GetConcurrencyLimiter(caller.Network, _ => new()
                     {
@@ -54,7 +44,16 @@ public static class ApiSafety
                     }) : RateLimitPartition.GetNoLimiter("unpartitioned")),
                 PartitionedRateLimiter.Create<HttpContext, string>(http => ProtectedRequests.Matches(http.Request.Path, "/health/ready")
                     ? RateLimitPartition.GetConcurrencyLimiter("readiness", _ => new() { PermitLimit = 1, QueueLimit = 0 })
-                    : RateLimitPartition.GetNoLimiter("other")));
+                    : RateLimitPartition.GetNoLimiter("other")),
+                PartitionedRateLimiter.Create<HttpContext, string>(http => IsLimited(http)
+                    ? RateLimitPartition.GetConcurrencyLimiter("api", _ => new() { PermitLimit = 6, QueueLimit = 0 })
+                    : RateLimitPartition.GetNoLimiter("static")),
+                PartitionedRateLimiter.Create<HttpContext, string>(http => IsLimited(http)
+                    ? RateLimitPartition.GetFixedWindowLimiter("api", _ => new()
+                    {
+                        PermitLimit = builder.Configuration.GetValue("ApiLimits:RequestsPerMinute", 240),
+                        Window = TimeSpan.FromMinutes(1), QueueLimit = 0, AutoReplenishment = true
+                    }) : RateLimitPartition.GetNoLimiter("static")));
             options.OnRejected = async (context, cancellationToken) =>
             {
                 var seconds = context.Lease.TryGetMetadata(MetadataName.RetryAfter, out var retryAfter)

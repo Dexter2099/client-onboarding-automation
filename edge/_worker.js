@@ -2,6 +2,7 @@ const PUBLIC_ORIGIN = 'https://dexter-onboardflow.pages.dev';
 const UPSTREAM_ORIGIN = 'https://onboardflow.hostless.app';
 const MAX_BODY_BYTES = 16384;
 const ASSET_RELEASE = 'unpackaged';
+const GATEWAY_HASH = 'unpackaged';
 const ASSET_POLICY =
   "default-src 'none'; script-src 'self'; script-src-attr 'none'; " +
   "style-src 'self'; style-src-attr 'none'; img-src 'self'; font-src 'self'; media-src 'self'; connect-src 'self'; " +
@@ -101,6 +102,7 @@ async function publicAsset(request, env, expectedType) {
     responseHeaders.set('Strict-Transport-Security', 'max-age=86400');
     responseHeaders.set('X-OnboardFlow-Asset-Source', 'pages');
     responseHeaders.set('X-OnboardFlow-Asset-Revision', ASSET_RELEASE);
+    responseHeaders.set('X-OnboardFlow-Gateway-Hash', GATEWAY_HASH);
     return new Response(asset.body, {
       status: asset.status,
       headers: responseHeaders,

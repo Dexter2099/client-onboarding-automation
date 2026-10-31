@@ -37,6 +37,8 @@ test('package contains only approved public bytes and a revision-stamped worker,
   assert.equal(manifest.files.length, 4);
   const worker = await readFile(resolve(output, 'site/_worker.js'), 'utf8');
   assert(worker.includes(`const ASSET_RELEASE = '${revision}';`));
+  assert.match(manifest.gatewaySourceSha256, /^[a-f0-9]{64}$/);
+  assert(worker.includes(`const GATEWAY_HASH = '${manifest.gatewaySourceSha256}';`));
   assert.equal(manifest.workerSha256, createHash('sha256').update(worker).digest('hex'));
   assert.deepEqual((await readdir(resolve(output, 'site'))).sort(), [
     '404.html',

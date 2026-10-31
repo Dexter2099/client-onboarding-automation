@@ -49,13 +49,19 @@ export async function packageEdgeRelease(
   const sourceWorker = await readFile(resolve(root, 'edge/_worker.js'), 'utf8');
   const stamp = "const ASSET_RELEASE = 'unpackaged';";
   assert.equal(sourceWorker.split(stamp).length, 2);
-  const worker = sourceWorker.replace(stamp, `const ASSET_RELEASE = '${revision}';`);
+  const gatewaySourceSha256 = createHash('sha256').update(sourceWorker).digest('hex');
+  const gatewayStamp = "const GATEWAY_HASH = 'unpackaged';";
+  assert.equal(sourceWorker.split(gatewayStamp).length, 2);
+  const worker = sourceWorker
+    .replace(stamp, `const ASSET_RELEASE = '${revision}';`)
+    .replace(gatewayStamp, `const GATEWAY_HASH = '${gatewaySourceSha256}';`);
   await writeFile(resolve(site, '_worker.js'), worker);
   // No index.html: an asset miss must be a 404, never an SPA fallback. HTML and
   // release/readiness/API responses continue to require the actual application.
   await writeFile(resolve(site, '404.html'), '<!doctype html><title>Not found</title>');
   const manifest = {
     revision,
+    gatewaySourceSha256,
     workerSha256: createHash('sha256').update(worker).digest('hex'),
     files,
   };

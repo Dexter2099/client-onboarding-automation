@@ -160,15 +160,17 @@ public sealed class DemoAbuseTests(FoundationFixture fixture) : IClassFixture<Fo
         await using var factory = fixture.Factory.WithWebHostBuilder(builder =>
         {
             builder.ConfigureAppConfiguration((_, config) => config.AddInMemoryCollection(new Dictionary<string, string?>
-                { ["ApiLimits:CallerRequestsPerMinute"] = "2" }));
+                { ["ApiLimits:CallerRequestsPerMinute"] = "2", ["ApiLimits:RequestsPerMinute"] = "4" }));
             builder.ConfigureServices(services => services.AddSingleton<IStartupFilter, CallerFixture>());
         });
         using var client = factory.CreateClient(new() { BaseAddress = new Uri("https://localhost") });
         client.DefaultRequestHeaders.Add("X-Test-Network", new string('e', 64));
         Assert.Equal(HttpStatusCode.NotFound, (await client.GetAsync("/api/unknown")).StatusCode);
         Assert.Equal(HttpStatusCode.NotFound, (await client.GetAsync("/api/unknown")).StatusCode);
-        Assert.Equal(HttpStatusCode.TooManyRequests, (await client.GetAsync("/api/unknown")).StatusCode);
+        for (var i = 0; i < 10; i++)
+            Assert.Equal(HttpStatusCode.TooManyRequests, (await client.GetAsync("/api/unknown")).StatusCode);
         client.DefaultRequestHeaders.Remove("X-Test-Network"); client.DefaultRequestHeaders.Add("X-Test-Network", new string('f', 64));
+        Assert.Equal(HttpStatusCode.NotFound, (await client.GetAsync("/api/unknown")).StatusCode);
         Assert.Equal(HttpStatusCode.NotFound, (await client.GetAsync("/api/unknown")).StatusCode);
     }
 
