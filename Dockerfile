@@ -2,7 +2,7 @@ FROM node:24-alpine@sha256:44fce696f38ba8c987c4db89954051000bbd05ffd8d8659ba15ed
 WORKDIR /build
 COPY package.json package-lock.json ./
 RUN npm ci
-COPY index.html tsconfig.json vite.config.ts playwright.config.ts ./
+COPY tsconfig.json vite.config.ts playwright.config.ts ./
 COPY preview/content-snare/ preview/content-snare/
 COPY public/ public/
 COPY src/OnboardFlow.Api/ClientRequests/demo.json src/OnboardFlow.Api/ClientRequests/demo.json

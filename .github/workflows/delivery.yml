@@ -171,7 +171,8 @@ jobs:
     name: Verify live demo on macOS
     needs: deploy
     # Standard public-repository runner only; no production environment or secrets.
-    if: needs.deploy.result == 'success' && github.event.repository.private == false && vars.HOSTLESS_ACCEPTANCE_ENABLED == 'true'
+    # Real inference is opt-in. Zero-AI releases retain deterministic browser CI and HTTPS acceptance.
+    if: needs.deploy.result == 'success' && github.event.repository.private == false && vars.HOSTLESS_ACCEPTANCE_ENABLED == 'true' && vars.LIVE_AI_ACCEPTANCE_ENABLED == 'true'
     runs-on: macos-15
     timeout-minutes: 6
     steps:

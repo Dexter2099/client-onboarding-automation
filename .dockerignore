@@ -8,7 +8,6 @@
 !package.json
 !package-lock.json
 !global.json
-!index.html
 !tsconfig.json
 !vite.config.ts
 !playwright.config.ts
