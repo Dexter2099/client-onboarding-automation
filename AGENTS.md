@@ -1,5 +1,9 @@
 # OnboardFlow agent instructions
 
+## Permanent owner access and security assessment — 31 October 2026
+
+Dexter explicitly requested permanent owner exemption while retaining the three-run limit for everyone else, plus a review of obvious abuse risks. This supersedes the owner's 90-day expiry only. Use a separately domain-separated, signed permanent grant and automatically renew its Secure/HttpOnly/host-only browser cookie on existing no-store startup/status reads, respecting Chrome's 400-day cookie limit. Browser clearing/eviction still requires activation; no browser storage can be promised permanent. Retain bounded v1 compatibility, the public cap and all spending/per-run/ownership protections. Verify signature tampering, key revocation, renewal after 90 days and real Chrome form activation with zero inference, before one scoped app rollout. Do not implement unrelated anti-abuse controls from the read-only security assessment without further authority. Disabling access clears only that browser's cookie; key rotation revokes copied passes.
+
 ## Private owner run-count exception — 31 October 2026
 
 Chrome exposed that native owner-form submission was blocked by the public `form-action 'none'` CSP, which API-only tests cannot exercise. Permit `form-action 'self'` only on `/api/owner-access`, retain the public policy, and require real browser form submission in regression before publishing the correction. Preserve the first rollout and failed live-check evidence; do not rerun the deployment job to repair a switchover timeout.
