@@ -7,6 +7,63 @@ const ASSET_POLICY =
   "style-src 'self'; style-src-attr 'none'; img-src 'self'; font-src 'self'; media-src 'self'; connect-src 'self'; " +
   "base-uri 'none'; object-src 'none'; frame-ancestors 'none'; form-action 'none'";
 let importedKey;
+let callerHashKey;
+const NETWORK_QUERY = '__of_network';
+
+export function networkAddress(address) {
+  if (address.length > 64) return null;
+  if (/^\d{1,3}(\.\d{1,3}){3}$/.test(address) && address.split('.').every((n) => Number(n) < 256))
+    return address;
+  // Cloudflare supplies a canonical client address. Group IPv6 privacy addresses by /64.
+  if (!/^[0-9a-f:]+$/i.test(address) || !address.includes(':')) return null;
+  const halves = address.toLowerCase().split('::');
+  if (halves.length > 2) return null;
+  const left = halves[0] ? halves[0].split(':') : [];
+  const right = halves.length === 2 && halves[1] ? halves[1].split(':') : [];
+  const expanded =
+    halves.length === 2
+      ? [...left, ...Array(Math.max(0, 8 - left.length - right.length)).fill('0'), ...right]
+      : left;
+  if (expanded.length !== 8 || expanded.some((part) => !/^[0-9a-f]{1,4}$/.test(part))) return null;
+  return (
+    expanded
+      .slice(0, 4)
+      .map((part) => part.padStart(4, '0'))
+      .join(':') + '::/64'
+  );
+}
+
+async function networkBucket(request, env) {
+  const address = networkAddress(request.headers.get('CF-Connecting-IP') ?? '');
+  if (!address) return null;
+  // HKDF derives an independent HMAC key from the existing protected gateway secret.
+  // No new provider, secret binding or raw-IP database storage is introduced.
+  callerHashKey ??= crypto.subtle
+    .importKey(
+      'raw',
+      Uint8Array.from(atob(env.EDGE_SIGNING_KEY), (c) => c.charCodeAt(0)),
+      'HKDF',
+      false,
+      ['deriveKey'],
+    )
+    .then((key) =>
+      crypto.subtle.deriveKey(
+        {
+          name: 'HKDF',
+          hash: 'SHA-256',
+          salt: new Uint8Array(),
+          info: new TextEncoder().encode('onboardflow-network-v1'),
+        },
+        key,
+        { name: 'HMAC', hash: 'SHA-256', length: 256 },
+        false,
+        ['sign'],
+      ),
+    );
+  const value = new TextEncoder().encode(new Date().toISOString().slice(0, 10) + '\n' + address);
+  const digest = new Uint8Array(await crypto.subtle.sign('HMAC', await callerHashKey, value));
+  return Array.from(digest, (b) => b.toString(16).padStart(2, '0')).join('');
+}
 
 export function publicAssetType(path) {
   const extension = /^\/assets\/[A-Za-z0-9_-]+-[A-Za-z0-9_-]{8,}\.(js|css|woff2)$/.exec(path)?.[1];
@@ -118,6 +175,16 @@ export default {
     const body = await readBody(request);
     if (body === null) return new Response('Request too large.', { status: 413 });
     try {
+      if (
+        /^\/api(?:\/|$)/i.test(incoming.pathname) ||
+        incoming.pathname.replace(/\/+$/, '').toLowerCase() === '/health/ready'
+      ) {
+        const caller = await networkBucket(request, env);
+        if (!caller) return unavailable();
+        for (const name of Array.from(incoming.searchParams.keys()))
+          if (name.toLowerCase() === NETWORK_QUERY) incoming.searchParams.delete(name);
+        incoming.searchParams.set(NETWORK_QUERY, caller);
+      } else incoming.searchParams.delete(NETWORK_QUERY);
       // Only this edge holds the private key. The app receives a public verification key.
       importedKey ??= crypto.subtle.importKey(
         'pkcs8',

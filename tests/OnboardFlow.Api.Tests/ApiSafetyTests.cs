@@ -48,8 +48,21 @@ public sealed class ApiSafetyTests
         Assert.Equal(HttpStatusCode.TooManyRequests, rejected.StatusCode);
         Assert.NotNull(rejected.Headers.RetryAfter);
         Assert.True(rejected.Headers.CacheControl?.NoStore);
+        Assert.Equal(HttpStatusCode.TooManyRequests, (await client.GetAsync("/health/ready")).StatusCode);
         Assert.Equal("application/problem+json", rejected.Content.Headers.ContentType?.MediaType);
         Assert.Equal(HttpStatusCode.OK, (await client.GetAsync("/favicon.svg")).StatusCode);
+    }
+
+    [Theory]
+    [InlineData("/health/ready/")]
+    [InlineData("/HeAlTh/ReAdY/")]
+    public async Task Readiness_route_aliases_cannot_bypass_the_request_limiter(string path)
+    {
+        await using var factory = Factory(1);
+        using var client = factory.CreateClient(new() { BaseAddress = new Uri("https://localhost") });
+        Assert.Equal(HttpStatusCode.NotFound, (await client.GetAsync("/api/unknown")).StatusCode);
+        Assert.Equal(HttpStatusCode.TooManyRequests, (await client.GetAsync(path)).StatusCode);
+        Assert.Equal(HttpStatusCode.OK, (await client.GetAsync("/health")).StatusCode);
     }
 
     [Fact]

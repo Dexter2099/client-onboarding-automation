@@ -4,6 +4,14 @@ using System.Threading.RateLimiting;
 
 namespace OnboardFlow.Api;
 
+internal static class ProtectedRequests
+{
+    // ASP.NET routing accepts a trailing slash and ignores case. Protection must match routing.
+    internal static bool Matches(PathString path, string expected) =>
+        string.Equals(path.Value?.TrimEnd('/'), expected, StringComparison.OrdinalIgnoreCase);
+    internal static bool Includes(PathString path) => path.StartsWithSegments("/api") || Matches(path, "/health/ready");
+}
+
 public static class ApiSafety
 {
     private const int MaxBodyBytes = 16 * 1024;
@@ -18,13 +26,13 @@ public static class ApiSafety
         builder.WebHost.ConfigureKestrel(options => options.Limits.MaxRequestBodySize = MaxBodyBytes);
         builder.Services.AddRateLimiter(options =>
         {
-            // Global bounds avoid trusting visitor-supplied IP/cookie partition keys.
-            // This small public demo deliberately rejects excess work instead of queuing it.
+            // Keep global bounds; caller partitions use only signature-verified gateway metadata.
+            // Reject excess work instead of queuing it or retrying uncertain writes.
             options.GlobalLimiter = PartitionedRateLimiter.CreateChained(
-                PartitionedRateLimiter.Create<HttpContext, string>(http => IsApi(http)
+                PartitionedRateLimiter.Create<HttpContext, string>(http => IsLimited(http)
                     ? RateLimitPartition.GetConcurrencyLimiter("api", _ => new() { PermitLimit = 6, QueueLimit = 0 })
                     : RateLimitPartition.GetNoLimiter("static")),
-                PartitionedRateLimiter.Create<HttpContext, string>(http => IsApi(http)
+                PartitionedRateLimiter.Create<HttpContext, string>(http => IsLimited(http)
                     ? RateLimitPartition.GetFixedWindowLimiter("api", _ => new()
                     {
                         PermitLimit = builder.Configuration.GetValue("ApiLimits:RequestsPerMinute", 240),
@@ -32,7 +40,21 @@ public static class ApiSafety
                         QueueLimit = 0,
                         AutoReplenishment = true
                     })
-                    : RateLimitPartition.GetNoLimiter("static")));
+                    : RateLimitPartition.GetNoLimiter("static")),
+                PartitionedRateLimiter.Create<HttpContext, string>(http => http.Features.Get<VerifiedCaller>() is { } caller && IsLimited(http)
+                    ? RateLimitPartition.GetConcurrencyLimiter(caller.Network, _ => new()
+                    {
+                        PermitLimit = 3, QueueLimit = 0
+                    }) : RateLimitPartition.GetNoLimiter("unpartitioned")),
+                PartitionedRateLimiter.Create<HttpContext, string>(http => http.Features.Get<VerifiedCaller>() is { } caller && IsLimited(http)
+                    ? RateLimitPartition.GetFixedWindowLimiter(caller.Network, _ => new()
+                    {
+                        PermitLimit = builder.Configuration.GetValue("ApiLimits:CallerRequestsPerMinute", 120),
+                        Window = TimeSpan.FromMinutes(1), QueueLimit = 0, AutoReplenishment = true
+                    }) : RateLimitPartition.GetNoLimiter("unpartitioned")),
+                PartitionedRateLimiter.Create<HttpContext, string>(http => ProtectedRequests.Matches(http.Request.Path, "/health/ready")
+                    ? RateLimitPartition.GetConcurrencyLimiter("readiness", _ => new() { PermitLimit = 1, QueueLimit = 0 })
+                    : RateLimitPartition.GetNoLimiter("other")));
             options.OnRejected = async (context, cancellationToken) =>
             {
                 var seconds = context.Lease.TryGetMetadata(MetadataName.RetryAfter, out var retryAfter)
@@ -59,14 +81,14 @@ public static class ApiSafety
                     Stopwatch.GetElapsedTime(started).TotalMilliseconds.ToString("F1", CultureInfo.InvariantCulture);
                 // Apply after static/error handling; preserve the document through proxy transformations.
                 // Only the private operator page uses native forms; public screens keep forms disabled.
-                http.Response.Headers.ContentSecurityPolicy = http.Request.Path.Equals("/api/owner-access", StringComparison.OrdinalIgnoreCase)
+                http.Response.Headers.ContentSecurityPolicy = ProtectedRequests.Matches(http.Request.Path, "/api/owner-access")
                     ? BrowserPolicy.Replace("form-action 'none'", "form-action 'self'", StringComparison.Ordinal)
                     : BrowserPolicy;
                 if (http.Response.ContentType?.StartsWith("text/html", StringComparison.OrdinalIgnoreCase) == true)
                     http.Response.Headers.CacheControl = IsApi(http) ? "no-store" : "no-cache, no-transform";
                 return Task.CompletedTask;
             });
-            if (IsApi(http))
+            if (IsLimited(http))
             {
                 http.Response.Headers.CacheControl = "no-store";
                 if (http.Request.ContentLength > MaxBodyBytes)
@@ -81,4 +103,5 @@ public static class ApiSafety
     }
 
     private static bool IsApi(HttpContext http) => http.Request.Path.StartsWithSegments("/api");
+    private static bool IsLimited(HttpContext http) => ProtectedRequests.Includes(http.Request.Path);
 }

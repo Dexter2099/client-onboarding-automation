@@ -52,6 +52,7 @@ public sealed partial class FoundationDb(DbContextOptions<FoundationDb> options)
         ConfigureWorkflow(model);
         ConfigureIntake(model);
         ConfigureIntakeSpend(model);
+        ConfigureDemoAbuse(model);
     }
 }
 

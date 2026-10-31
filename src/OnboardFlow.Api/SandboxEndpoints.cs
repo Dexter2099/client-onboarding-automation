@@ -42,15 +42,19 @@ public static class SandboxEndpoints
                 intake = IntakeStore.View(new(1, initial)) });
         });
 
-        app.MapPost("/api/session/reset", async (HttpContext http, FoundationDb db, TimeProvider clock) =>
+        app.MapPost("/api/session/reset", async (HttpContext http, FoundationDb db, TimeProvider clock, IntakeSpecification spec) =>
         {
             await using var transaction = await db.Database.BeginTransactionAsync(http.RequestAborted);
             var previous = await SandboxSessionAccess.Find(http.Request.Cookies[CookieName], db, true, http.RequestAborted);
             if (!SandboxSessionAccess.Active(previous, clock)) return Unavailable(http);
 
+            var oldRequest = await db.ClientRequests.AsNoTracking().SingleOrDefaultAsync(x => x.SandboxSessionId == previous!.Id, http.RequestAborted);
+            var used = oldRequest is null ? 0 : JsonSerializer.Deserialize<IntakeState>(oldRequest.StateJson, IntakeSpecification.Json)!.RunsStarted;
             var (session, token) = NewSandbox(clock);
             db.SandboxSessions.Remove(previous!);
             db.SandboxSessions.Add(session);
+            db.ClientRequests.Add(new() { Id = Guid.NewGuid(), SandboxSessionId = session.Id, Version = 1,
+                StateJson = JsonSerializer.Serialize(new IntakeState { RunsStarted = used, SpecificationVersion = spec.Hash }, IntakeSpecification.Json) });
             await db.SaveChangesAsync(http.RequestAborted);
             if (!SandboxSessionAccess.Active(previous, clock)) return Unavailable(http);
             await transaction.CommitAsync(http.RequestAborted);
@@ -124,5 +128,11 @@ public static class SandboxEndpoints
         if (expired.Length > 0)
             await db.SandboxSessions.Where(x => expired.Contains(x.Id) && x.ExpiresAt <= now)
                 .ExecuteDeleteAsync(cancellation);
+        // Request-owned bounded cleanup, using the same existing transaction, not a new service.
+        var day = DateOnly.FromDateTime(now.UtcDateTime).AddDays(-2);
+        await db.Database.ExecuteSqlInterpolatedAsync($"""
+            DELETE FROM "NetworkRunUsage" WHERE ("Network", "Day") IN
+            (SELECT "Network", "Day" FROM "NetworkRunUsage" WHERE "Day" < {day} ORDER BY "Day" LIMIT 20)
+            """, cancellation);
     }
 }

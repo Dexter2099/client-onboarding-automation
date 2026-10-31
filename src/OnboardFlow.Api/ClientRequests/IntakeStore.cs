@@ -16,7 +16,10 @@ public sealed class IntakeStore(FoundationDb db, TimeProvider clock, IntakeSpeci
                 schemaVersion = "draft-array-v1", sourceVersion = state.SpecificationVersion },
             run?.Model ?? "");
     }
-    public async Task<IntakeSnapshot> Update(string? token, Action<IntakeState, long> change, CancellationToken cancellation)
+    public Task<IntakeSnapshot> Update(string? token, Action<IntakeState, long> change, CancellationToken cancellation) =>
+        Update(token, (state, version) => { change(state, version); return Task.CompletedTask; }, cancellation);
+
+    public async Task<IntakeSnapshot> Update(string? token, Func<IntakeState, long, Task> change, CancellationToken cancellation)
     {
         await using var transaction = await db.Database.BeginTransactionAsync(cancellation);
         var session = await SandboxSessionAccess.Find(token, db, true, cancellation);
@@ -44,7 +47,7 @@ public sealed class IntakeStore(FoundationDb db, TimeProvider clock, IntakeSpeci
             running.Status = "interrupted";
             running.Error = "The review was interrupted. Saved drafts are available; no model call was repeated.";
         }
-        change(state, record.Version);
+        await change(state, record.Version);
         // Completed conversations cannot resume. Keep evidence, trace, receipts and spending metadata.
         if (state.Run is { Status: "complete" } complete) complete.Messages.Clear();
         var json = JsonSerializer.Serialize(state, IntakeSpecification.Json);

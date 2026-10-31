@@ -147,7 +147,12 @@ app.UseStaticFiles(new StaticFileOptions
 app.MapGet("/health/ready", async (HttpContext http, FoundationDb database) =>
 {
     http.Response.Headers.CacheControl = "no-store";
-    return await database.Database.CanConnectAsync(http.RequestAborted)
+    using var timeout = CancellationTokenSource.CreateLinkedTokenSource(http.RequestAborted);
+    timeout.CancelAfter(TimeSpan.FromSeconds(2));
+    var ready = false;
+    try { ready = await database.Database.CanConnectAsync(timeout.Token); }
+    catch (OperationCanceledException) when (!http.RequestAborted.IsCancellationRequested) { }
+    return ready
         ? Results.Ok(new { status = "ok" })
         : Results.Json(new { status = "unavailable" }, statusCode: 503);
 });
