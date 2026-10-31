@@ -78,6 +78,26 @@ public sealed class VerifiedEdgeTests
         await using var factory = Factory(key);
         var response = await Send(factory, key, query: "?probe=a%2Fb&x=%25");
         Assert.Equal(200, response.Response.StatusCode);
+        Assert.NotNull(response.Features.Get<VerifiedCaller>());
+    }
+
+    [Theory]
+    [InlineData("", "/api/csrf")]
+    [InlineData("forged", "/api/csrf")]
+    [InlineData("duplicate", "/api/csrf")]
+    [InlineData("", "/health/ready/")]
+    [InlineData("", "/HeAlTh/ReAdY/")]
+    public async Task A_valid_signature_without_one_well_formed_network_bucket_cannot_dispatch(string network, string path)
+    {
+        using var key = ECDsa.Create(ECCurve.NamedCurves.nistP256);
+        await using var factory = Factory(key);
+        var query = network == "" ? "?without=network" : network == "duplicate"
+            ? "?__of_network=" + new string('a', 64) + "&__of_network=" + new string('b', 64)
+            : "?__of_network=forged";
+        var response = await Send(factory, key, query: query, addNetwork: false, path: path);
+        Assert.Equal(403, response.Response.StatusCode);
+        Assert.Null(response.Features.Get<VerifiedCaller>());
+        Assert.False(response.Response.Headers.ContainsKey("Set-Cookie"));
     }
 
     private static WebApplicationFactory<Program> Factory(ECDsa key)
@@ -96,8 +116,9 @@ public sealed class VerifiedEdgeTests
 
     private static Task<HttpContext> Send(WebApplicationFactory<Program> factory, ECDsa key,
         string peer = "203.0.113.7", string fault = "", string method = "GET", string path = "/api/csrf",
-        string query = "", string body = "")
+        string query = "", string body = "", bool addNetwork = true)
     {
+        if (addNetwork && fault == "") query += (query.Length == 0 ? "?" : "&") + "__of_network=" + new string('a', 64);
         var seconds = DateTimeOffset.UtcNow.ToUnixTimeSeconds() + (fault == "expired" ? -120 : fault == "future" ? 120 : 0);
         var timestamp = fault == "overflow" ? long.MaxValue.ToString(CultureInfo.InvariantCulture) : seconds.ToString(CultureInfo.InvariantCulture);
         var signedPath = fault == "path" ? "/other" : path;

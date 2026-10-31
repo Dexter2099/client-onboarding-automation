@@ -6,8 +6,13 @@ using Microsoft.AspNetCore.Http.Features;
 
 namespace OnboardFlow.Api;
 
+public sealed record VerifiedCaller(string Network);
+
 public static class VerifiedEdge
 {
+    // Internal origin query metadata is covered by the existing method/target/body signature.
+    // The Worker overwrites it, so callers cannot choose their own bucket. Old app images ignore it.
+    internal const string NetworkQuery = "__of_network";
     private const string TimeHeader = "X-OnboardFlow-Edge-Time";
     private const string SignatureHeader = "X-OnboardFlow-Edge-Signature";
     private const int MaxBodyBytes = 16384;
@@ -74,6 +79,16 @@ public static class VerifiedEdge
             }
             // HTTPS is attested by the edge signature, bound to this method, target and body.
             // It does not depend on a shared host's rotating private ingress addresses.
+            if (ProtectedRequests.Includes(http.Request.Path))
+            {
+                var network = http.Request.Query[NetworkQuery];
+                if (network.Count != 1 || network[0] is not { Length: 64 } value || !value.All(Uri.IsHexDigit))
+                {
+                    http.Response.StatusCode = StatusCodes.Status403Forbidden;
+                    return;
+                }
+                http.Features.Set(new VerifiedCaller(value.ToLowerInvariant()));
+            }
             http.Request.Scheme = "https";
             await next(http);
         });

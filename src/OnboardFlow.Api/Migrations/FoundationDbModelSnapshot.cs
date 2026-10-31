@@ -183,6 +183,28 @@ namespace OnboardFlow.Api.Migrations
                         });
                 });
 
+            modelBuilder.Entity("OnboardFlow.Api.NetworkRunUsage", b =>
+                {
+                    b.Property<string>("Network")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<DateOnly>("Day")
+                        .HasColumnType("date");
+
+                    b.Property<int>("Starts")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Network", "Day");
+
+                    b.HasIndex("Day");
+
+                    b.ToTable("NetworkRunUsage", t =>
+                        {
+                            t.HasCheckConstraint("CK_NetworkRunUsage_Positive", "\"Starts\" > 0");
+                        });
+                });
+
             modelBuilder.Entity("OnboardFlow.Api.Onboarding", b =>
                 {
                     b.Property<Guid>("Id")
@@ -381,6 +403,20 @@ namespace OnboardFlow.Api.Migrations
                         {
                             t.HasCheckConstraint("CK_RequestItem_Kind", "\"Kind\" IN ('goals', 'pages', 'assets')");
                         });
+                });
+
+            modelBuilder.Entity("OnboardFlow.Api.RevokedOwnerGrant", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
+
+                    b.Property<DateTimeOffset>("RevokedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("RevokedOwnerGrants");
                 });
 
             modelBuilder.Entity("OnboardFlow.Api.SandboxSession", b =>

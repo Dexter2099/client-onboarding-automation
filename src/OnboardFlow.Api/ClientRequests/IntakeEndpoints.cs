@@ -8,6 +8,8 @@ public static class IntakeEndpoints
     {
         services.AddSingleton<IntakeSpecification>();
         services.AddSingleton<OwnerAccess>();
+        services.AddScoped<OwnerAccessPolicy>();
+        services.AddScoped<NetworkRunAllowance>();
         services.AddScoped<IntakeStore>();
         services.AddScoped<IntakeAgentService>();
         services.AddScoped<IIntakeSpendBudget, IntakeSpendBudget>();
@@ -57,8 +59,10 @@ public static class IntakeEndpoints
             Respond(http, () => store.Read(Token(http), http.RequestAborted)));
         routes.MapPost("/command", (IntakeCommand command, HttpContext http, IntakeStore store) =>
             Respond(http, () => store.Command(Token(http), command, http.RequestAborted)));
-        routes.MapPost("/agent", (AgentCommand command, HttpContext http, IntakeAgentService agent, OwnerAccess owner) =>
-            Respond(http, () => agent.Run(Token(http), command, http.RequestAborted, owner.HasAccess(http))));
+        routes.MapPost("/agent", (AgentCommand command, HttpContext http, IntakeAgentService agent, OwnerAccessPolicy owner) =>
+            Respond(http, async () => await agent.Run(Token(http), command, http.RequestAborted,
+                await owner.Read(http.Request.Cookies[OwnerAccess.CookieName], http.RequestAborted) is not null,
+                http.Features.Get<VerifiedCaller>()?.Network)));
     }
     private static string? Token(HttpContext http) => http.Request.Cookies[SandboxEndpoints.CookieName];
     private static async Task<IResult> Respond(HttpContext http, Func<Task<IntakeSnapshot>> action)
