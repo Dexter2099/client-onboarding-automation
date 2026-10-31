@@ -34,9 +34,9 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
 builder.Services.AddSingleton(TimeProvider.System);
 builder.Services.AddScoped<WorkflowService>();
 builder.Services.AddIntake();
-builder.Services.AddDbContext<FoundationDb>((services, options) => options.UseNpgsql(
+builder.Services.AddDbContext<FoundationDb>((services, options) => options.UseNpgsql(PostgresTransport.WithoutOptionalGss(
     services.GetRequiredService<IConfiguration>().GetConnectionString("OnboardFlow")
-    ?? throw new InvalidOperationException("Set ConnectionStrings__OnboardFlow; see HARNESS.md.")));
+    ?? throw new InvalidOperationException("Set ConnectionStrings__OnboardFlow; see HARNESS.md."))));
 builder.Services.AddAntiforgery(options =>
 {
     options.HeaderName = "X-CSRF-TOKEN";
