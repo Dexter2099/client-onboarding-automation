@@ -1,5 +1,9 @@
 # OnboardFlow agent instructions
 
+## Lean startup release authority — 31 October 2026
+
+Dexter authorised implementing the reassessed startup, one-query intake read and old-demo cleanup first, verifying in connected Chrome with minimal paid inference and publishing one consolidated release. Keep screens/flow and existing stored-project compatibility. Startup uses CSRF plus intake, preserves explicit expired-workspace recovery and receives a new request from the existing session POST. Ordinary reads must retain ownership/expiry, missing-request initialization, changed-source invalidation and expired-run transitions. New visitors must not seed legacy project records; legacy regression data belongs in test fixtures. Preserve reset, model/call/budget controls, signed gateway, health/restart and the single availability monitor. Public asset delivery and unrelated legacy source/provider retirement are outside this release.
+
 ## Current consolidated release authority — 31 October 2026
 
 Dexter authorised implementing performance-review fixes 1–4 with the always-available reset, verifying the full demo in connected Chrome and publishing one consolidated release. Keep existing screens, routes and flow. Coalesce only adjacent unsent same-field edits, preserve ordering before other actions, use an ownership-checked normal read without write locking, overlap independent startup checks and skip unchanged polling/navigation work. Keep the eight-draft batch, evaluated model, source checks and spending limits unchanged; the batch-size experiment is excluded.

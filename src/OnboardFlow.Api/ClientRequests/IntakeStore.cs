@@ -58,9 +58,16 @@ public sealed class IntakeStore(FoundationDb db, TimeProvider clock, IntakeSpeci
     }
     public async Task<IntakeSnapshot> Read(string? token, CancellationToken cancellation)
     {
-        var session = await SandboxSessionAccess.Find(token, db, false, cancellation);
+        var hash = SandboxSessionAccess.Hash(token);
+        if (hash is null) throw new IntakeException(401, "This sandbox expired. Start a fresh workspace.");
+        var owned = await (from owner in db.SandboxSessions.AsNoTracking()
+                           where owner.TokenHash == hash
+                           join request in db.ClientRequests.AsNoTracking() on owner.Id equals request.SandboxSessionId into requests
+                           from request in requests.DefaultIfEmpty()
+                           select new { Session = owner, Request = request }).SingleOrDefaultAsync(cancellation);
+        var session = owned?.Session;
         if (!SandboxSessionAccess.Active(session, clock)) throw new IntakeException(401, "This sandbox expired. Start a fresh workspace.");
-        var record = await db.ClientRequests.AsNoTracking().SingleOrDefaultAsync(x => x.SandboxSessionId == session!.Id, cancellation);
+        var record = owned!.Request;
         if (record is null) return await Update(token, (_, _) => { }, cancellation);
         var state = JsonSerializer.Deserialize<IntakeState>(record.StateJson, IntakeSpecification.Json)!;
         // Only initialization, changed sources or expired runs need the existing locked transition.

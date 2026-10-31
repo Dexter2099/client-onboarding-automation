@@ -27,7 +27,9 @@ public sealed partial class WorkflowTests : IClassFixture<FoundationFixture>
         var token = protection!["token"];
         var created = await Send(client, token, "/api/session", new { });
         Assert.Equal(HttpStatusCode.Created, created.StatusCode);
-        return new(client, token, (await created.Content.ReadFromJsonAsync<SessionView>())!,
+        var session = (await created.Content.ReadFromJsonAsync<SessionView>())!;
+        await fixture.SeedLegacyProjects(session.Id);
+        return new(client, token, session,
             (await client.GetFromJsonAsync<ProjectView[]>("/api/projects"))!);
     }
 

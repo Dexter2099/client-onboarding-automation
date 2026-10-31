@@ -112,7 +112,9 @@ public sealed partial class WorkflowTests
         var first = await Success(await Post(visitor, "start", new { }));
         Assert.Single(first.Onboarding!.WelcomeAttempts);
         Assert.Single(first.Outbox);
-        Assert.True((await Send(visitor.Client, visitor.Token, "/api/session/reset", new { })).IsSuccessStatusCode);
+        var replacement = await Send(visitor.Client, visitor.Token, "/api/session/reset", new { });
+        Assert.True(replacement.IsSuccessStatusCode);
+        await fixture.SeedLegacyProjects((await replacement.Content.ReadFromJsonAsync<SessionView>())!.Id);
         var freshProjects = (await visitor.Client.GetFromJsonAsync<ProjectView[]>("/api/projects"))!;
         var fresh = await Success(await Send(visitor.Client, visitor.Token, $"/api/projects/{freshProjects[1].Id}/start", new { }));
         Assert.NotEqual(view.Onboarding.Id, fresh.Onboarding!.Id);
@@ -247,7 +249,8 @@ public sealed partial class WorkflowTests
         {
             using var client = upgrade.Client();
             var token = (await client.GetFromJsonAsync<Dictionary<string, string>>("/api/csrf"))!["token"];
-            await Send(client, token, "/api/session", new { });
+            var created = await Send(client, token, "/api/session", new { });
+            await upgrade.SeedLegacyProjects((await created.Content.ReadFromJsonAsync<SessionView>())!.Id);
             var projects = (await client.GetFromJsonAsync<ProjectView[]>("/api/projects"))!;
             var original = await Success(await Send(client, token, $"/api/projects/{projects[0].Id}/start", new { }));
             await using (var scope = upgrade.Factory.Services.CreateAsyncScope())

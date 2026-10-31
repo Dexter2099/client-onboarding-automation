@@ -1,5 +1,6 @@
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 
 namespace OnboardFlow.Api;
@@ -16,7 +17,7 @@ public static class SandboxEndpoints
             return SandboxSessionAccess.Active(session, clock) ? Results.Ok(View(session!)) : Unavailable(http);
         });
 
-        app.MapPost("/api/session", async (HttpContext http, FoundationDb db, TimeProvider clock) =>
+        app.MapPost("/api/session", async (HttpContext http, FoundationDb db, TimeProvider clock, IntakeSpecification spec) =>
         {
             await using var transaction = await db.Database.BeginTransactionAsync(http.RequestAborted);
             var existing = await SandboxSessionAccess.Find(http.Request.Cookies[CookieName], db, true, http.RequestAborted);
@@ -28,12 +29,17 @@ public static class SandboxEndpoints
 
             var (session, token) = NewSandbox(clock);
             db.SandboxSessions.Add(session);
+            // Create the current request in the same transaction; no older project demo is seeded.
+            var initial = new IntakeState { SpecificationVersion = spec.Hash };
+            db.ClientRequests.Add(new() { Id = Guid.NewGuid(), SandboxSessionId = session.Id, Version = 1,
+                StateJson = JsonSerializer.Serialize(initial, IntakeSpecification.Json) });
             await DeleteExpired(db, clock, http.RequestAborted);
             await db.SaveChangesAsync(http.RequestAborted);
             if (!SandboxSessionAccess.Active(session, clock)) return Unavailable(http);
             await transaction.CommitAsync(http.RequestAborted);
             SetCookie(http, session, token, app.Environment.IsDevelopment());
-            return Results.Created("/api/session", View(session));
+            return Results.Created("/api/session", new { session.Id, session.CreatedAt, session.ExpiresAt,
+                intake = IntakeStore.View(new(1, initial)) });
         });
 
         app.MapPost("/api/session/reset", async (HttpContext http, FoundationDb db, TimeProvider clock) =>
@@ -100,16 +106,8 @@ public static class SandboxEndpoints
             CreatedAt = now,
             ExpiresAt = now.AddHours(24)
         };
-        session.Projects = [SeedProject("OF-1042", "Website redesign"), SeedProject("OF-1043", "Website refresh")];
         return (session, token);
     }
-
-    private static Project SeedProject(string reference, string name) => new()
-    {
-        Id = Guid.NewGuid(), Reference = reference, Name = name, ClientName = "Juniper Studio",
-        ClientContact = "Maya Ellis", Owner = "Alex Morgan", Service = "Website design",
-        SignedPages = ["Home", "About", "Services", "Projects", "Contact"]
-    };
 
     private static void SetCookie(HttpContext http, SandboxSession session, string token, bool development) =>
         http.Response.Cookies.Append(CookieName, token, new CookieOptions

@@ -53,16 +53,17 @@ public static class IntakeEndpoints
         }
         var routes = app.MapGroup("/api/intake");
         routes.MapGet("/", (HttpContext http, IntakeStore store) =>
-            Respond(() => store.Read(Token(http), http.RequestAborted)));
+            Respond(http, () => store.Read(Token(http), http.RequestAborted)));
         routes.MapPost("/command", (IntakeCommand command, HttpContext http, IntakeStore store) =>
-            Respond(() => store.Command(Token(http), command, http.RequestAborted)));
+            Respond(http, () => store.Command(Token(http), command, http.RequestAborted)));
         routes.MapPost("/agent", (AgentCommand command, HttpContext http, IntakeAgentService agent) =>
-            Respond(() => agent.Run(Token(http), command, http.RequestAborted)));
+            Respond(http, () => agent.Run(Token(http), command, http.RequestAborted)));
     }
     private static string? Token(HttpContext http) => http.Request.Cookies[SandboxEndpoints.CookieName];
-    private static async Task<IResult> Respond(Func<Task<IntakeSnapshot>> action)
+    private static async Task<IResult> Respond(HttpContext http, Func<Task<IntakeSnapshot>> action)
     {
         try { return Results.Ok(IntakeStore.View(await action())); }
+        catch (IntakeException error) when (error.Status == 401) { return SandboxEndpoints.Unavailable(http); }
         catch (IntakeException error) { return Results.Problem(statusCode: error.Status, title: error.Message); }
     }
 }
