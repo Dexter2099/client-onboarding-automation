@@ -63,10 +63,7 @@ test('public assets use Pages with security/cache headers and no visitor credent
   assert.equal(response.headers.get('strict-transport-security'), 'max-age=86400');
 });
 
-test('Pages preserves HEAD, conditional responses and video byte ranges', async () => {
-  globalThis.fetch = () => {
-    throw new Error('must not contact origin');
-  };
+test('metadata and video ranges retain the signed origin handler; Pages serves conditional public GETs', async () => {
   const scenarios = [
     {
       method: 'HEAD',
@@ -98,11 +95,25 @@ test('Pages preserves HEAD, conditional responses and video byte ranges', async 
     },
   ];
   for (const scenario of scenarios) {
+    let forwards = 0;
+    globalThis.fetch = async (_url, init) => {
+      forwards++;
+      assert(init.headers.has('x-onboardflow-edge-signature'));
+      for (const [name, value] of Object.entries(scenario.input))
+        assert.equal(init.headers.get(name), value);
+      return new Response(scenario.body, { status: scenario.status, headers: scenario.output });
+    };
     const response = await worker.fetch(
-      new Request(origin + '/onboardflow-local-ai-20261025.mp4', {
-        method: scenario.method,
-        headers: scenario.input,
-      }),
+      new Request(
+        origin +
+          (scenario.status === 304
+            ? '/assets/index-Abcd1234.js'
+            : '/onboardflow-local-ai-20261025.mp4'),
+        {
+          method: scenario.method,
+          headers: scenario.input,
+        },
+      ),
       {
         ...env,
         ASSETS: {
@@ -119,11 +130,14 @@ test('Pages preserves HEAD, conditional responses and video byte ranges', async 
       },
     );
     assert.equal(response.status, scenario.status);
-    assert.equal(response.headers.get('x-onboardflow-asset-source'), 'pages');
+    assert.equal(
+      response.headers.get('x-onboardflow-asset-source'),
+      scenario.status === 304 ? 'pages' : null,
+    );
+    assert.equal(forwards, scenario.status === 304 ? 0 : 1);
     assert.equal(await response.text(), scenario.body ?? '');
     for (const [name, value] of Object.entries(scenario.output))
       assert.equal(response.headers.get(name), value);
-    if (scenario.status === 416) assert.equal(response.headers.get('cache-control'), 'no-store');
   }
 });
 
@@ -186,6 +200,12 @@ test('HTML, release, health, private APIs and mutations cannot be served from Pa
     ).text(),
     'signed origin',
   );
+  assert.equal(assets, 0);
+  for (const request of [
+    new Request(origin + '/assets/index-Abcd1234.js', { method: 'HEAD' }),
+    new Request(origin + '/assets/index-Abcd1234.js', { headers: { Range: 'bytes=0-15' } }),
+  ])
+    assert.equal(await (await worker.fetch(request, assetEnv)).text(), 'signed origin');
   assert.equal(assets, 0);
   globalThis.fetch = async () => {
     throw new Error('origin down');

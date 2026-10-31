@@ -12,8 +12,6 @@ export function publicAssetType(path) {
   const extension = /^\/assets\/[A-Za-z0-9_-]+-[A-Za-z0-9_-]{8,}\.(js|css|woff2)$/.exec(path)?.[1];
   if (extension) return { js: 'javascript', css: 'text/css', woff2: 'font/woff2' }[extension];
   return {
-    '/onboardflow-local-ai-20261025.mp4': 'video/mp4',
-    '/onboardflow-local-ai-20261025.webm': 'video/webm',
     '/onboardflow-local-ai-20261025.webp': 'image/webp',
   }[path];
 }
@@ -23,35 +21,22 @@ async function publicAsset(request, env, expectedType) {
   try {
     // Public immutable files never need visitor credentials or forwarding headers.
     const headers = new Headers();
-    for (const name of [
-      'Range',
-      'If-Range',
-      'If-None-Match',
-      'If-Modified-Since',
-      'Accept-Encoding',
-    ]) {
+    for (const name of ['If-None-Match', 'If-Modified-Since', 'Accept-Encoding']) {
       if (request.headers.has(name)) headers.set(name, request.headers.get(name));
     }
     const asset = await env.ASSETS.fetch(
       new Request(request.url, { method: request.method, headers }),
     );
     const type = asset.headers.get('content-type') ?? '';
-    const valid = [200, 206].includes(asset.status) && type.includes(expectedType);
+    const valid = asset.status === 200 && type.includes(expectedType);
     const conditional =
       asset.status === 304 && (headers.has('If-None-Match') || headers.has('If-Modified-Since'));
-    const rangeError =
-      asset.status === 416 &&
-      headers.has('Range') &&
-      /^bytes \*\/\d+$/.test(asset.headers.get('content-range') ?? '');
     // A missing file or SPA fallback must never be returned as JavaScript. Old hashes
     // can still use the signed origin, including while release versions overlap.
-    if (!valid && !conditional && !rangeError) return null;
+    if (!valid && !conditional) return null;
     const responseHeaders = new Headers(asset.headers);
     responseHeaders.delete('Set-Cookie');
-    responseHeaders.set(
-      'Cache-Control',
-      rangeError ? 'no-store' : 'public, max-age=31536000, immutable',
-    );
+    responseHeaders.set('Cache-Control', 'public, max-age=31536000, immutable');
     responseHeaders.set('Content-Security-Policy', ASSET_POLICY);
     responseHeaders.set('X-Content-Type-Options', 'nosniff');
     responseHeaders.set('X-Frame-Options', 'DENY');
@@ -59,12 +44,12 @@ async function publicAsset(request, env, expectedType) {
     responseHeaders.set('Strict-Transport-Security', 'max-age=86400');
     responseHeaders.set('X-OnboardFlow-Asset-Source', 'pages');
     responseHeaders.set('X-OnboardFlow-Asset-Revision', ASSET_RELEASE);
-    return new Response(request.method === 'HEAD' ? null : asset.body, {
+    return new Response(asset.body, {
       status: asset.status,
       headers: responseHeaders,
     });
   } catch {
-    return null; // Only a public GET/HEAD can fall back; never replay an API mutation.
+    return null; // Only a public GET can fall back; never replay an API mutation.
   }
 }
 
@@ -110,8 +95,12 @@ export default {
       return Response.redirect(PUBLIC_ORIGIN + incoming.pathname + incoming.search, 308);
     }
     if (!env.EDGE_SIGNING_KEY) return unavailable();
+    // Pages' binding does not preserve metadata/range semantics. Retain the
+    // existing origin handler for those requests and for the lazy-loaded video.
     const assetType =
-      ['GET', 'HEAD'].includes(request.method) && publicAssetType(incoming.pathname);
+      request.method === 'GET' &&
+      !request.headers.has('Range') &&
+      publicAssetType(incoming.pathname);
     if (assetType) {
       const asset = await publicAsset(request, env, assetType);
       if (asset) return asset;
