@@ -32,29 +32,87 @@ async function noOverflow(page: Page) {
   );
 }
 
-test('startup requests session information while the CSRF request is still pending', async ({
+test('startup reads intake while CSRF is pending and avoids redundant bootstrap requests', async ({
   page,
 }) => {
   let release!: () => void;
   const held = new Promise<void>((resolve) => {
     release = resolve;
   });
-  let sessionRequested = false;
+  let intakeRequested = false;
+  const requests: string[] = [];
+  page.on('request', (request) => {
+    const path = new URL(request.url()).pathname;
+    if (path.startsWith('/api/')) requests.push(request.method() + ' ' + path);
+  });
   await page.route('**/api/csrf', async (route) => {
     await held;
     await route.continue();
   });
-  await page.route('**/api/session', async (route) => {
-    if (route.request().method() === 'GET') sessionRequested = true;
+  await page.route('**/api/intake/', async (route) => {
+    if (route.request().method() === 'GET') intakeRequested = true;
     await route.continue();
   });
   try {
     await page.goto('/l/instructions');
-    await expect.poll(() => sessionRequested).toBe(true);
+    await expect.poll(() => intakeRequested).toBe(true);
   } finally {
     release();
   }
   await expect.poll(async () => (await saved(page)).version).toBeGreaterThan(0);
+  expect(requests.sort()).toEqual(['GET /api/csrf', 'GET /api/intake/', 'POST /api/session']);
+  requests.length = 0;
+  await page.reload();
+  await expect.poll(() => requests.length).toBe(2);
+  await expect.poll(async () => (await saved(page)).version).toBeGreaterThan(0);
+  expect(requests.sort()).toEqual(['GET /api/csrf', 'GET /api/intake/']);
+});
+
+test('expired startup keeps the existing fresh-workspace recovery and does not silently replace it', async ({
+  page,
+}) => {
+  let creations = 0;
+  await page.route('**/api/intake/', (route) =>
+    route.fulfill({
+      status: 401,
+      contentType: 'application/problem+json',
+      body: JSON.stringify({ code: 'sandbox_unavailable' }),
+    }),
+  );
+  await page.route('**/api/session', async (route) => {
+    creations++;
+    await route.continue();
+  });
+  await page.goto('/l/instructions');
+  await expect(page.getByRole('alert')).toContainText(
+    'This sandbox expired. Start a fresh workspace.',
+  );
+  await expect(
+    page.getByRole('button', { name: 'Start fresh workspace', exact: true }),
+  ).toBeVisible();
+  expect(creations).toBe(0);
+});
+
+test('unavailable startup reports the original failure without creating a replacement workspace', async ({
+  page,
+}) => {
+  let creations = 0;
+  await page.route('**/api/intake/', (route) =>
+    route.fulfill({
+      status: 503,
+      contentType: 'application/problem+json',
+      body: JSON.stringify({ title: 'The workspace database is unavailable. Try loading again.' }),
+    }),
+  );
+  await page.route('**/api/session', async (route) => {
+    creations++;
+    await route.continue();
+  });
+  await page.goto('/l/instructions');
+  await expect(page.getByRole('alert')).toContainText(
+    'The workspace database is unavailable. Try loading again.',
+  );
+  expect(creations).toBe(0);
 });
 
 test('rapid edits retain the latest value and finish saving before submission', async ({

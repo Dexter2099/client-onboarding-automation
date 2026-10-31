@@ -1,5 +1,15 @@
 # Development harness
 
+## Lean startup, read and old-demo cleanup — 31 October 2026
+
+Dexter authorised these three changes together with connected-Chrome verification and one consolidated release. The existing interface, endpoints, reset and inference controls remain. Startup GETs CSRF and the owned intake concurrently: two requests for an existing visitor; a new visitor adds the session POST, whose transaction creates and returns the initial current request. A concurrent session start can fall back to reading the existing request. Expired workspaces retain explicit fresh-workspace recovery; non-401 failures retain their original problem message. The explicit fresh action also uses the created snapshot when available.
+
+Ordinary reads use one ownership-constrained left join without a write lock. A missing request, changed source or expired active run retains the locked transition. Token validation and expiry checks remain before returning data. Session creation no longer inserts the older two-project demo; existing project APIs/data remain compatible and regression fixtures seed historical records explicitly.
+
+Local validation passes **165 backend checks**, **33 browser cases across Chromium/Firefox/WebKit**, **six gateway checks**, build/typecheck, formatting and whitespace checks. Tests directly count one query for an owned read, exercise missing-request/expired-owner handling, and verify new/returning startup counts plus unchanged recovery for expired/unavailable state. Connected Chrome verified manual saving, submission, persisted reload and reset against the candidate. The full three-engine journey uses the existing test-assembly model double; no paid local inference was used. Local Ollama could not finish loading in its preload deadline, so no complete real-local-model acceptance is claimed for this release.
+
+The release PR records production connected-Chrome acceptance, request/query counts and the exact published revision. Local evidence belongs under `.local/lean-startup-20261031/`. Production acceptance must identify the live marker and native rollout; a successful build alone is not live verification. No public-asset delivery or model change is included.
+
 ## Consolidated performance fixes and reset — 31 October 2026
 
 Dexter authorised performance-review fixes 1–4 together with the easy reset, verification of the full journey in connected Chrome, and one consolidated release. Existing screens and API routes are retained. **Reset demo** appears in the desktop sidebar footer and sticky mobile header, with confirmation before clearing answers, questions, submissions, clarification and AI state. It returns to Instructions and preserves an active visitor's owner/expiry, run allowance and shared spending ledger.
