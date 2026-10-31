@@ -70,7 +70,7 @@ test('metadata and video ranges retain the signed origin handler; Pages serves c
       input: {},
       status: 200,
       output: { 'Content-Type': 'video/mp4', 'Content-Length': '100' },
-      body: null,
+      body: 'upstream body must not reach a HEAD client',
     },
     {
       method: 'GET',
@@ -101,6 +101,24 @@ test('metadata and video ranges retain the signed origin handler; Pages serves c
       assert(init.headers.has('x-onboardflow-edge-signature'));
       for (const [name, value] of Object.entries(scenario.input))
         assert.equal(init.headers.get(name), value);
+      assert.equal(init.method, 'GET');
+      const target = new URL(_url);
+      const canonical = [
+        'v1',
+        init.headers.get('x-onboardflow-edge-time'),
+        origin,
+        init.method,
+        target.pathname + target.search,
+        'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
+      ].join('\n');
+      assert(
+        await webcrypto.subtle.verify(
+          { name: 'ECDSA', hash: 'SHA-256' },
+          pair.publicKey,
+          Buffer.from(init.headers.get('x-onboardflow-edge-signature'), 'base64'),
+          new TextEncoder().encode(canonical),
+        ),
+      );
       // Model the CDN's cold-cache HEAD rewrite; bypass must preserve the signed method.
       if (init.method === 'HEAD' && init.cache !== 'no-store')
         return new Response(null, { status: 308, headers: { Location: origin } });
@@ -139,7 +157,7 @@ test('metadata and video ranges retain the signed origin handler; Pages serves c
       scenario.status === 304 ? 'pages' : null,
     );
     assert.equal(forwards, scenario.status === 304 ? 0 : 1);
-    assert.equal(await response.text(), scenario.body ?? '');
+    assert.equal(await response.text(), scenario.method === 'HEAD' ? '' : (scenario.body ?? ''));
     for (const [name, value] of Object.entries(scenario.output))
       assert.equal(response.headers.get(name), value);
   }
@@ -209,13 +227,45 @@ test('HTML, release, health, private APIs and mutations cannot be served from Pa
     new Request(origin + '/assets/index-Abcd1234.js', { method: 'HEAD' }),
     new Request(origin + '/assets/index-Abcd1234.js', { headers: { Range: 'bytes=0-15' } }),
   ])
-    assert.equal(await (await worker.fetch(request, assetEnv)).text(), 'signed origin');
+    assert.equal(
+      await (await worker.fetch(request, assetEnv)).text(),
+      request.method === 'HEAD' ? '' : 'signed origin',
+    );
   assert.equal(assets, 0);
   globalThis.fetch = async () => {
     throw new Error('origin down');
   };
   assert.equal((await worker.fetch(new Request(origin + '/'), assetEnv)).status, 503);
   assert.equal(assets, 0);
+});
+
+test('public HEAD ignores range while private HEAD keeps its original method and status', async () => {
+  globalThis.fetch = async (_url, init) => {
+    assert.equal(init.method, 'GET');
+    assert.equal(init.headers.get('accept-encoding'), 'identity');
+    assert.equal(init.headers.has('range'), false);
+    assert.equal(init.headers.has('if-range'), false);
+    assert.equal(init.headers.get('if-none-match'), 'etag');
+    return new Response(null, { status: 304, headers: { ETag: 'etag' } });
+  };
+  const metadata = await worker.fetch(
+    new Request(origin + '/onboardflow-local-ai-20261025.mp4', {
+      method: 'HEAD',
+      headers: { Range: 'bytes=0-1', 'If-Range': 'old', 'If-None-Match': 'etag' },
+    }),
+    env,
+  );
+  assert.equal(metadata.status, 304);
+  assert.equal(metadata.headers.get('etag'), 'etag');
+  assert.equal(metadata.body, null);
+  globalThis.fetch = async (_url, init) => {
+    assert.equal(init.method, 'HEAD');
+    return new Response(null, { status: 405 });
+  };
+  assert.equal(
+    (await worker.fetch(new Request(origin + '/api/intake/', { method: 'HEAD' }), env)).status,
+    405,
+  );
 });
 
 test('edge binds method, encoded target and body, preserving session and CSRF headers', async () => {

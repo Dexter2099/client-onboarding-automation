@@ -105,6 +105,16 @@ export default {
       const asset = await publicAsset(request, env, assetType);
       if (asset) return asset;
     }
+    // The hosting CDN rewrites cold public-file HEAD to GET even with cache bypass.
+    // Sign the actual upstream GET and return its native metadata without a body.
+    // Private/API HEAD and all range GETs retain their original methods and handlers.
+    const metadataOnly =
+      request.method === 'HEAD' &&
+      (publicAssetType(incoming.pathname) ||
+        ['/onboardflow-local-ai-20261025.mp4', '/onboardflow-local-ai-20261025.webm'].includes(
+          incoming.pathname,
+        ));
+    const upstreamMethod = metadataOnly ? 'GET' : request.method;
     const body = await readBody(request);
     if (body === null) return new Response('Request too large.', { status: 413 });
     try {
@@ -123,7 +133,7 @@ export default {
         'v1',
         timestamp,
         PUBLIC_ORIGIN,
-        request.method,
+        upstreamMethod,
         incoming.pathname + incoming.search,
         bodyHash,
       ].join('\n');
@@ -133,6 +143,11 @@ export default {
         new TextEncoder().encode(canonical),
       );
       const headers = new Headers(request.headers);
+      if (metadataOnly) {
+        headers.delete('Range');
+        headers.delete('If-Range');
+        headers.set('Accept-Encoding', 'identity');
+      }
       for (const name of Array.from(headers.keys())) {
         if (/^(host|forwarded|x-forwarded-.*|cf-visitor|x-onboardflow-.*)$/i.test(name))
           headers.delete(name);
@@ -147,18 +162,21 @@ export default {
       upstream.pathname = incoming.pathname;
       upstream.search = incoming.search;
       const response = await fetch(upstream, {
-        method: request.method,
+        method: upstreamMethod,
         headers,
         body: body.byteLength ? body : undefined,
         redirect: 'manual',
-        // Cache fills may rewrite HEAD to GET, invalidating the method-bound signature.
-        // Pages assets retain native caching; signed origin requests must reach origin unchanged.
+        // Avoid cached signed-origin responses; Pages assets retain native caching.
         cache: 'no-store',
         signal: request.signal,
       });
       // A failed origin must fail visibly rather than redirect visitors into a loop.
       if (response.status >= 300 && response.status < 400 && response.headers.has('Location'))
         return unavailable();
+      if (metadataOnly) {
+        await response.body?.cancel().catch(() => {});
+        return new Response(null, { status: response.status, headers: response.headers });
+      }
       return response;
     } catch {
       // Never retry a mutation or inference after an uncertain upstream result.
