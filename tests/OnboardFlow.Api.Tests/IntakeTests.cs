@@ -279,6 +279,75 @@ public sealed class IntakeTests(FoundationFixture fixture) : IClassFixture<Found
         }
     }
     [Fact]
+    public async Task An_unchanged_read_does_not_wait_for_the_sessions_write_lock()
+    {
+        var v = await Visitor(new FakeModel()); await using var factory = v.Factory;
+        var before = await Read(v.Client);
+        var session = (await v.Client.GetFromJsonAsync<SessionView>("/api/session"))!;
+        await using var scope = factory.Services.CreateAsyncScope();
+        var db = scope.ServiceProvider.GetRequiredService<FoundationDb>();
+        await using var transaction = await db.Database.BeginTransactionAsync();
+        await db.Database.ExecuteSqlInterpolatedAsync($"SELECT * FROM \"SandboxSessions\" WHERE \"Id\" = {session.Id} FOR UPDATE");
+        var after = await Read(v.Client).WaitAsync(TimeSpan.FromSeconds(3));
+        Assert.Equal(before.Version, after.Version);
+        Assert.Empty(after.Answers);
+        await transaction.RollbackAsync();
+    }
+    [Fact]
+    public async Task Reset_during_inference_accepts_a_stale_view_and_late_output_cannot_restore_work()
+    {
+        var model = new HeldModel(); var v = await Visitor(model); await using var factory = v.Factory;
+        var session = (await v.Client.GetFromJsonAsync<SessionView>("/api/session"))!;
+        var before = await Read(v.Client);
+        var pending = Post(v.Client, v.Csrf, "/api/intake/agent", new AgentCommand(Guid.NewGuid(), before.Version));
+        await model.Entered.Task.WaitAsync(TimeSpan.FromSeconds(5));
+        try
+        {
+            var command = new IntakeCommand(Guid.NewGuid(), before.Version, "reset");
+            var response = await Post(v.Client, v.Csrf, "/api/intake/command", command);
+            response.EnsureSuccessStatusCode();
+            var reset = await Read(v.Client);
+            Assert.Equal("idle", reset.Ai);
+            Assert.Null(reset.Run);
+            Assert.Empty(reset.Answers);
+            Assert.Empty(reset.Questions);
+            Assert.False(reset.ReplyReady);
+            await Post(v.Client, v.Csrf, "/api/intake/command", command);
+            Assert.Equal(reset.Version, (await Read(v.Client)).Version);
+            Assert.Equal(session, await v.Client.GetFromJsonAsync<SessionView>("/api/session"));
+            Assert.Equal(HttpStatusCode.Conflict, (await Post(v.Client, v.Csrf, "/api/intake/command",
+                new IntakeCommand(Guid.NewGuid(), reset.Version + 1, "reset"))).StatusCode);
+            await using var scope = factory.Services.CreateAsyncScope();
+            var row = await scope.ServiceProvider.GetRequiredService<FoundationDb>().ClientRequests.SingleAsync(x => x.SandboxSessionId == session.Id);
+            Assert.Equal(1, JsonNode.Parse(row.StateJson)!["runsStarted"]!.GetValue<int>());
+        }
+        finally { model.Release.TrySetResult(); }
+        await pending;
+        var after = await Read(v.Client);
+        Assert.Null(after.Run);
+        Assert.Empty(after.Answers);
+        Assert.Equal(1, model.Calls);
+    }
+    [Fact]
+    public async Task Reset_clears_submissions_questions_and_reply_without_resetting_run_allowance()
+    {
+        var v = await Visitor(new FakeModel()); await using var factory = v.Factory;
+        var before = await Read(v.Client);
+        await Post(v.Client, v.Csrf, "/api/intake/agent", new AgentCommand(Guid.NewGuid(), before.Version));
+        await Command(v.Client, v.Csrf, "reply");
+        await Command(v.Client, v.Csrf, "question", "legal", "A fictional question");
+        await Command(v.Client, v.Csrf, "submit", "legal");
+        var reset = await Command(v.Client, v.Csrf, "reset");
+        Assert.Empty(reset.Answers);
+        Assert.Empty(reset.Questions);
+        Assert.False(reset.ReplyReady);
+        Assert.Null(reset.Run);
+        var session = (await v.Client.GetFromJsonAsync<SessionView>("/api/session"))!;
+        await using var scope = factory.Services.CreateAsyncScope();
+        var row = await scope.ServiceProvider.GetRequiredService<FoundationDb>().ClientRequests.SingleAsync(x => x.SandboxSessionId == session.Id);
+        Assert.Equal(1, JsonNode.Parse(row.StateJson)!["runsStarted"]!.GetValue<int>());
+    }
+    [Fact]
     public async Task Concurrent_start_is_rejected_and_an_expired_claim_cannot_overwrite_a_new_run()
     {
         var model = new HeldModel(); var v = await Visitor(model); await using var factory = v.Factory;

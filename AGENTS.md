@@ -1,5 +1,11 @@
 # OnboardFlow agent instructions
 
+## Current consolidated release authority — 31 October 2026
+
+Dexter authorised implementing performance-review fixes 1–4 with the always-available reset, verifying the full demo in connected Chrome and publishing one consolidated release. Keep existing screens, routes and flow. Coalesce only adjacent unsent same-field edits, preserve ordering before other actions, use an ownership-checked normal read without write locking, overlap independent startup checks and skip unchanged polling/navigation work. Keep the eight-draft batch, evaluated model, source checks and spending limits unchanged; the batch-size experiment is excluded.
+
+Monitoring has already been simplified: native HTTP `/health` every 10 seconds with restart protection, plus one free UptimeRobot five-minute monitor for the actual public demo with redirect following and DOWN/RECOVERY emails. The duplicate GitHub availability workflow is manually disabled. Keep technical diagnostics in the dashboard and preserve this notification setup; historical hourly-monitor instructions below are superseded. Reset must not erase run allowance or the shared spending ledger, and cancelled/late AI results must not restore cleared work.
+
 ## Current reliability repair — 31 October 2026
 
 Dexter requested a lasting repair after the Hostless HTTPS redirect loop recurred, and requires the complete live demo journey to be verified in Chrome before calling it fixed. Another observed-IP addition is insufficient. The repair uses a Cloudflare Pages gateway at `https://dexter-onboardflow.pages.dev/` signing requests with ECDSA P-256; production validates the signature with a public key and no longer depends on Hostless's rotating private ingress addresses. Original-host page URLs redirect to that stable address; unverified mutations fail closed. This supersedes the exact-peer-only scheme strategy below for the current production image. Do not replace this with arbitrary proxy/network trust or an unconditional HTTPS scheme override.

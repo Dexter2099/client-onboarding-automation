@@ -17,22 +17,48 @@ export interface RequestSnapshot {
     trace: { action: string; detail: string; tokens: number; milliseconds: number }[];
   };
 }
+export class IntakeRequestCancelled extends Error {}
+
 export class IntakeApi {
   private csrf = '';
   private currentVersion = 0;
   private start: Promise<RequestSnapshot> | null = null;
   private queue: Promise<unknown> = Promise.resolve();
-  private async request(path: string, body?: unknown): Promise<unknown> {
-    const response = await fetch('/api/' + path, {
-      method: body === undefined ? 'GET' : 'POST',
-      credentials: 'same-origin',
-      headers:
-        body === undefined ? {} : { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': this.csrf },
-      ...(body === undefined ? {} : { body: JSON.stringify(body) }),
-    });
-    const data = await response.json();
-    if (!response.ok) throw new Error(data.title || 'Load saved work before trying again.');
-    return data;
+  private pendingEdit: {
+    fields: { field?: string; value?: string; page?: string };
+    result: Promise<RequestSnapshot>;
+  } | null = null;
+  private generation = 0;
+  private lifetime = new AbortController();
+  private assertCurrent(generation: number) {
+    if (generation !== this.generation) throw new IntakeRequestCancelled();
+  }
+  private async request(
+    path: string,
+    body?: unknown,
+    generation = this.generation,
+    deadline?: AbortSignal,
+  ): Promise<unknown> {
+    this.assertCurrent(generation);
+    try {
+      const response = await fetch('/api/' + path, {
+        method: body === undefined ? 'GET' : 'POST',
+        credentials: 'same-origin',
+        headers:
+          body === undefined
+            ? {}
+            : { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': this.csrf },
+        ...(body === undefined ? {} : { body: JSON.stringify(body) }),
+        signal: deadline ? AbortSignal.any([this.lifetime.signal, deadline]) : this.lifetime.signal,
+      });
+      const data = await response.json();
+      this.assertCurrent(generation);
+      if (!response.ok) throw new Error(data.title || 'Load saved work before trying again.');
+      return data;
+    } catch (error) {
+      this.assertCurrent(generation);
+      throw error;
+    }
   }
   private accept(value: unknown): RequestSnapshot {
     const snapshot = value as RequestSnapshot;
@@ -40,66 +66,136 @@ export class IntakeApi {
     return snapshot;
   }
   initialize(): Promise<RequestSnapshot> {
+    const generation = this.generation;
     return (this.start ??= (async () => {
-      const protection = (await this.request('csrf')) as { token: string };
-      this.csrf = protection.token;
-      const response = await fetch('/api/session', { credentials: 'same-origin' });
-      if (!response.ok) {
-        const problem = await response.json();
-        if (problem.code !== 'sandbox_missing')
-          throw new Error('This sandbox expired. Start a fresh workspace.');
-        await this.request('session', {});
+      try {
+        const [protection, response] = await Promise.all([
+          this.request('csrf', undefined, generation) as Promise<{ token: string }>,
+          fetch('/api/session', { credentials: 'same-origin', signal: this.lifetime.signal }),
+        ]);
+        this.assertCurrent(generation);
+        this.csrf = protection.token;
+        const session = await response.json();
+        this.assertCurrent(generation);
+        if (!response.ok) {
+          if (session.code !== 'sandbox_missing')
+            throw new Error('This sandbox expired. Start a fresh workspace.');
+          await this.request('session', {}, generation);
+        }
+        return this.accept(await this.request('intake/', undefined, generation));
+      } catch (error) {
+        this.assertCurrent(generation);
+        throw error;
       }
-      return this.accept(await this.request('intake/'));
     })());
   }
   async read(): Promise<RequestSnapshot> {
+    const generation = this.generation;
     await this.initialize();
-    return this.accept(await this.request('intake/'));
+    return this.accept(await this.request('intake/', undefined, generation));
   }
   command(
     operation: string,
     fields: { field?: string; value?: string; page?: string } = {},
   ): Promise<RequestSnapshot> {
+    const generation = this.generation;
+    if (operation === 'edit' && fields.field && this.pendingEdit?.fields.field === fields.field) {
+      // Only combine adjacent, unsent edits. A different field/action remains an ordering barrier.
+      Object.assign(this.pendingEdit.fields, fields);
+      return this.pendingEdit.result;
+    }
+    const pendingFields = { ...fields };
     const task = this.queue.then(async () => {
+      if (this.pendingEdit?.fields === pendingFields) this.pendingEdit = null;
+      this.assertCurrent(generation);
       await this.initialize();
       return this.accept(
-        await this.request('intake/command', {
-          commandId: crypto.randomUUID(),
-          expectedVersion: this.currentVersion,
-          operation,
-          ...fields,
-        }),
+        await this.request(
+          'intake/command',
+          {
+            commandId: crypto.randomUUID(),
+            expectedVersion: this.currentVersion,
+            operation,
+            ...pendingFields,
+          },
+          generation,
+        ),
       );
     });
     this.queue = task;
+    this.pendingEdit = operation === 'edit' ? { fields: pendingFields, result: task } : null;
     return task;
   }
   async reload(): Promise<RequestSnapshot> {
+    this.pendingEdit = null;
     this.queue = Promise.resolve();
     this.start = null;
     this.currentVersion = 0;
     return this.read();
   }
   async fresh(): Promise<RequestSnapshot> {
-    const protection = (await this.request('csrf')) as { token: string };
+    this.pendingEdit = null;
+    const generation = this.generation;
+    const protection = (await this.request('csrf', undefined, generation)) as { token: string };
     this.csrf = protection.token;
-    await this.request('session', {});
+    await this.request('session', {}, generation);
     this.currentVersion = 0;
     this.queue = Promise.resolve();
-    const snapshot = this.accept(await this.request('intake/'));
+    const snapshot = this.accept(await this.request('intake/', undefined, generation));
     this.start = Promise.resolve(snapshot);
     return snapshot;
   }
   async agent(resume: boolean): Promise<RequestSnapshot> {
+    this.pendingEdit = null;
+    const generation = this.generation;
     await this.queue;
+    this.assertCurrent(generation);
     await this.initialize();
     return this.accept(
-      await this.request('intake/agent', {
-        commandId: crypto.randomUUID(),
-        expectedVersion: this.currentVersion,
-        resume,
-      }),
+      await this.request(
+        'intake/agent',
+        {
+          commandId: crypto.randomUUID(),
+          expectedVersion: this.currentVersion,
+          resume,
+        },
+        generation,
+      ),
     );
+  }
+  reset(): Promise<RequestSnapshot> {
+    // Discard queued work and reject late responses before they can restore cleared answers.
+    this.generation++;
+    this.pendingEdit = null;
+    this.lifetime.abort();
+    this.lifetime = new AbortController();
+    this.currentVersion = 0;
+    const generation = this.generation;
+    const deadline = AbortSignal.timeout(15000);
+    const operation = (async () => {
+      if (!this.csrf) {
+        const protection = (await this.request('csrf', undefined, generation, deadline)) as {
+          token: string;
+        };
+        this.csrf = protection.token;
+      }
+      // This existing endpoint preserves an active owner and creates one only if missing/expired.
+      await this.request('session', {}, generation, deadline);
+      return this.accept(
+        await this.request(
+          'intake/command',
+          {
+            commandId: crypto.randomUUID(),
+            expectedVersion: 0,
+            operation: 'reset',
+          },
+          generation,
+          deadline,
+        ),
+      );
+    })();
+    this.start = operation;
+    this.queue = operation;
+    return operation;
   }
 }

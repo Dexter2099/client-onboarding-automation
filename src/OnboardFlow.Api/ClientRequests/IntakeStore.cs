@@ -56,7 +56,19 @@ public sealed class IntakeStore(FoundationDb db, TimeProvider clock, IntakeSpeci
         await transaction.CommitAsync(cancellation);
         return new(record.Version, state);
     }
-    public Task<IntakeSnapshot> Read(string? token, CancellationToken cancellation) => Update(token, (_, _) => { }, cancellation);
+    public async Task<IntakeSnapshot> Read(string? token, CancellationToken cancellation)
+    {
+        var session = await SandboxSessionAccess.Find(token, db, false, cancellation);
+        if (!SandboxSessionAccess.Active(session, clock)) throw new IntakeException(401, "This sandbox expired. Start a fresh workspace.");
+        var record = await db.ClientRequests.AsNoTracking().SingleOrDefaultAsync(x => x.SandboxSessionId == session!.Id, cancellation);
+        if (record is null) return await Update(token, (_, _) => { }, cancellation);
+        var state = JsonSerializer.Deserialize<IntakeState>(record.StateJson, IntakeSpecification.Json)!;
+        // Only initialization, changed sources or expired runs need the existing locked transition.
+        if (state.SpecificationVersion != spec.Hash || state.Run is { Status: "filling" } run && clock.GetUtcNow() >= run.Deadline)
+            return await Update(token, (_, _) => { }, cancellation);
+        if (!SandboxSessionAccess.Active(session, clock)) throw new IntakeException(401, "This sandbox expired.");
+        return new(record.Version, state);
+    }
     public Task<IntakeSnapshot> Command(string? token, IntakeCommand command, CancellationToken cancellation) =>
         Update(token, (state, version) =>
         {
@@ -67,9 +79,11 @@ public sealed class IntakeStore(FoundationDb db, TimeProvider clock, IntakeSpeci
                 if (prior.Fingerprint != fingerprint) throw new IntakeException(409, "Command identity was reused with different input.");
                 return;
             }
-            if (command.CommandId == Guid.Empty || command.ExpectedVersion != version)
+            // Explicit reset discards current work, including a run that advanced since the last poll.
+            var reset = command.Operation == "reset" && command.ExpectedVersion >= 0 && command.ExpectedVersion <= version;
+            if (command.CommandId == Guid.Empty || (!reset && command.ExpectedVersion != version))
                 throw new IntakeException(409, "The request changed. Load saved work before continuing.");
-            if (state.Run?.Status == "filling") throw new IntakeException(409, "Wait for the active AI review.");
+            if (state.Run?.Status == "filling" && !reset) throw new IntakeException(409, "Wait for the active AI review.");
             var field = spec.Fields.SingleOrDefault(x => x.Id == command.Field);
             switch (command.Operation)
             {
