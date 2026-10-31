@@ -48,6 +48,7 @@ public sealed class ApiSafetyTests
         Assert.Equal(HttpStatusCode.TooManyRequests, rejected.StatusCode);
         Assert.NotNull(rejected.Headers.RetryAfter);
         Assert.True(rejected.Headers.CacheControl?.NoStore);
+        Assert.Equal(HttpStatusCode.TooManyRequests, (await client.GetAsync("/health/ready")).StatusCode);
         Assert.Equal("application/problem+json", rejected.Content.Headers.ContentType?.MediaType);
         Assert.Equal(HttpStatusCode.OK, (await client.GetAsync("/favicon.svg")).StatusCode);
     }

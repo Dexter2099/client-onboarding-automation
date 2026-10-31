@@ -21,6 +21,7 @@ jobs:
     timeout-minutes: 20
     outputs:
       app_changed: ${{ steps.scope.outputs.app_changed }}
+      gateway_changed: ${{ steps.scope.outputs.gateway_changed }}
     defaults:
       run:
         shell: pwsh
@@ -36,6 +37,7 @@ jobs:
           $PSNativeCommandUseErrorActionPreference = $true
           $changed = $true
           $edgeChanged = $true
+          $gatewayChanged = $false
           if ($env:GITHUB_EVENT_NAME -in @('push', 'pull_request')) {
             $event = Get-Content -Raw -LiteralPath $env:GITHUB_EVENT_PATH | ConvertFrom-Json
             $base = if ($env:GITHUB_EVENT_NAME -eq 'pull_request') { $event.pull_request.base.sha } else { $event.before }
@@ -44,10 +46,12 @@ jobs:
               # Workflow definitions are omitted from the runtime release branch.
               $changed = @($paths | Where-Object { $_ -notmatch '^(README\.md|AGENTS\.md|PLAN\.md|HARNESS\.md|docs/.*|\.github/workflows/.*|\.gitignore|edge/.*|scripts/package-edge-release\.mjs|scripts/package-edge-release\.test\.mjs)$' }).Count -gt 0
               $edgeChanged = $changed -or @($paths | Where-Object { $_ -match '^(edge/|scripts/package-edge-release)' }).Count -gt 0
+              $gatewayChanged = @($paths | Where-Object { $_ -match '^(edge/_worker\.js|edge/wrangler\.jsonc|scripts/package-edge-release\.mjs)$' }).Count -gt 0
             }
           }
           "app_changed=$($changed.ToString().ToLowerInvariant())" >> $env:GITHUB_OUTPUT
           "edge_changed=$($edgeChanged.ToString().ToLowerInvariant())" >> $env:GITHUB_OUTPUT
+          "gateway_changed=$($gatewayChanged.ToString().ToLowerInvariant())" >> $env:GITHUB_OUTPUT
       - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
           node-version: '24.19.0'
@@ -158,6 +162,9 @@ jobs:
         with:
           name: verified-release
           path: .local/release
+      - name: Require the checked gateway before publishing a coordinated release
+        if: needs.verify.outputs.gateway_changed == 'true'
+        run: node scripts/verify-edge-ready.mjs
       - name: Publish the checked package to Hostless's deployment branch
         env:
           GITHUB_TOKEN: ${{ github.token }}

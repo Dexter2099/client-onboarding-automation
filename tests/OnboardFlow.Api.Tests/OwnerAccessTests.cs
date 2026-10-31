@@ -207,6 +207,17 @@ public sealed class OwnerAccessTests(FoundationFixture fixture) : IClassFixture<
             value => value.StartsWith(OwnerAccess.CookieName + "="));
         Assert.Equal(HttpStatusCode.OK, (await client.PostAsync("/api/owner-access", Form("", action: "disable"))).StatusCode);
         Assert.Contains("Enable owner access", await client.GetStringAsync("/api/owner-access"));
+        // Deleting a cookie is insufficient: the same signed pass must fail in a different client
+        // and through the activation form. Its signed nonce, not its signature bytes, is revoked.
+        using var copied = factory.CreateClient(new() { BaseAddress = new Uri(Origin), HandleCookies = false });
+        copied.DefaultRequestHeaders.Add("Cookie", OwnerAccess.CookieName + "=" + pass);
+        Assert.Contains("Enable owner access", await copied.GetStringAsync("/api/owner-access"));
+        Assert.Equal(HttpStatusCode.Forbidden, (await client.PostAsync("/api/owner-access", Form(pass))).StatusCode);
+        await using (var scope = factory.Services.CreateAsyncScope())
+        {
+            Assert.Null(await scope.ServiceProvider.GetRequiredService<OwnerAccessPolicy>().Read(pass, CancellationToken.None));
+            Assert.True(await scope.ServiceProvider.GetRequiredService<FoundationDb>().RevokedOwnerGrants.AnyAsync());
+        }
         Assert.Equal(HttpStatusCode.TooManyRequests, (await Run(client, csrf)).StatusCode);
         Assert.Equal(1, model.Calls);
     }
