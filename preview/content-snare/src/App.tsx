@@ -127,10 +127,11 @@ export function App() {
       true,
     );
   }
-  function applySnapshot(snapshot: RequestSnapshot) {
+  function applySnapshot(snapshot: RequestSnapshot, recovery = false) {
     setState((previous) =>
-      snapshot.version < previous.version ||
-      (snapshot.version === previous.version && snapshot.ai === previous.ai)
+      !recovery &&
+      (snapshot.version < previous.version ||
+        (snapshot.version === previous.version && snapshot.ai === previous.ai))
         ? previous
         : { ...previous, ...snapshot },
     );
@@ -139,9 +140,11 @@ export function App() {
     if (trace) setFillingLabel(trace.detail);
   }
   async function reloadSaved() {
+    const sequence = ++editSequence.current;
     try {
       setApiError('');
-      applySnapshot(await api.current.reload());
+      const snapshot = await api.current.reload();
+      if (sequence === editSequence.current) applySnapshot(snapshot, true);
     } catch (error) {
       reportApiError(error);
     }

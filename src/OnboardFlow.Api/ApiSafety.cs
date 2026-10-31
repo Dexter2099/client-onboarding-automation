@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Diagnostics;
 using System.Threading.RateLimiting;
 
 namespace OnboardFlow.Api;
@@ -47,11 +48,15 @@ public static class ApiSafety
     {
         app.Use(async (http, next) =>
         {
+            var started = Stopwatch.GetTimestamp();
             http.Response.Headers.XContentTypeOptions = "nosniff";
             http.Response.Headers.XFrameOptions = "DENY";
             http.Response.Headers["Referrer-Policy"] = "no-referrer";
             http.Response.OnStarting(() =>
             {
+                // Numeric application time only: distinguish origin work from transport waits.
+                http.Response.Headers["Server-Timing"] = "app;dur=" +
+                    Stopwatch.GetElapsedTime(started).TotalMilliseconds.ToString("F1", CultureInfo.InvariantCulture);
                 // Apply after static/error handling; preserve the document through proxy transformations.
                 http.Response.Headers.ContentSecurityPolicy = BrowserPolicy;
                 if (http.Response.ContentType?.StartsWith("text/html", StringComparison.OrdinalIgnoreCase) == true)

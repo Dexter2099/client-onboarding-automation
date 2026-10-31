@@ -40,6 +40,11 @@ export class IntakeApi {
     deadline?: AbortSignal,
   ): Promise<unknown> {
     this.assertCurrent(generation);
+    // AI has its existing server deadline; ordinary reads/writes must not hang forever.
+    const timeout = deadline ?? (path === 'intake/agent' ? undefined : AbortSignal.timeout(15000));
+    const signal = timeout
+      ? AbortSignal.any([this.lifetime.signal, timeout])
+      : this.lifetime.signal;
     try {
       const response = await fetch('/api/' + path, {
         method: body === undefined ? 'GET' : 'POST',
@@ -49,7 +54,7 @@ export class IntakeApi {
             ? {}
             : { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': this.csrf },
         ...(body === undefined ? {} : { body: JSON.stringify(body) }),
-        signal: deadline ? AbortSignal.any([this.lifetime.signal, deadline]) : this.lifetime.signal,
+        signal,
       });
       const data = await response.json();
       this.assertCurrent(generation);
@@ -57,6 +62,8 @@ export class IntakeApi {
       return data;
     } catch (error) {
       this.assertCurrent(generation);
+      if (signal.reason?.name === 'TimeoutError')
+        throw new Error('The request took too long. Load saved work before trying again.');
       throw error;
     }
   }
@@ -68,10 +75,14 @@ export class IntakeApi {
   initialize(): Promise<RequestSnapshot> {
     const generation = this.generation;
     return (this.start ??= (async () => {
+      const deadline = AbortSignal.timeout(15000);
       try {
         const [protection, response] = await Promise.all([
-          this.request('csrf', undefined, generation) as Promise<{ token: string }>,
-          fetch('/api/intake/', { credentials: 'same-origin', signal: this.lifetime.signal }),
+          this.request('csrf', undefined, generation, deadline) as Promise<{ token: string }>,
+          fetch('/api/intake/', {
+            credentials: 'same-origin',
+            signal: AbortSignal.any([this.lifetime.signal, deadline]),
+          }),
         ]);
         this.assertCurrent(generation);
         this.csrf = protection.token;
@@ -93,6 +104,8 @@ export class IntakeApi {
         return this.accept(snapshot);
       } catch (error) {
         this.assertCurrent(generation);
+        if (deadline.aborted)
+          throw new Error('The request took too long. Load saved work before trying again.');
         throw error;
       }
     })());
@@ -135,11 +148,17 @@ export class IntakeApi {
     return task;
   }
   async reload(): Promise<RequestSnapshot> {
+    // Recovery must discard queued writes and late results, just like reset, without clearing saved work.
+    this.generation++;
+    this.lifetime.abort();
+    this.lifetime = new AbortController();
     this.pendingEdit = null;
     this.queue = Promise.resolve();
     this.start = null;
     this.currentVersion = 0;
-    return this.read();
+    const operation = this.initialize();
+    this.queue = operation;
+    return operation;
   }
   async fresh(): Promise<RequestSnapshot> {
     this.pendingEdit = null;

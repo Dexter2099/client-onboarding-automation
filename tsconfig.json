@@ -13,5 +13,5 @@
     "esModuleInterop": true,
     "types": ["node", "vite/client"]
   },
-  "include": ["src/web", "vite.config.ts", "playwright.config.ts", "tests/browser"]
+  "include": ["preview/content-snare/src", "vite.config.ts", "playwright.config.ts"]
 }

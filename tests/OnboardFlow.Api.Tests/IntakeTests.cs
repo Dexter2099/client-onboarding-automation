@@ -196,6 +196,43 @@ public sealed class IntakeTests(FoundationFixture fixture) : IClassFixture<Found
         Assert.Empty((await Read(v.Client)).Answers);
     }
     [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task Only_completed_conversations_are_trimmed_without_losing_sources_trace_or_usage(bool resume)
+    {
+        var model = new FakeModel(); var visitor = await Visitor(model); await using var factory = visitor.Factory;
+        var initial = await Read(visitor.Client);
+        (await Post(visitor.Client, visitor.Csrf, "/api/intake/agent", new AgentCommand(Guid.NewGuid(), initial.Version))).EnsureSuccessStatusCode();
+        var owner = (await visitor.Client.GetFromJsonAsync<SessionView>("/api/session"))!;
+        async Task<IntakeState> Stored()
+        {
+            await using var scope = factory.Services.CreateAsyncScope();
+            var json = await scope.ServiceProvider.GetRequiredService<FoundationDb>().ClientRequests.AsNoTracking()
+                .Where(x => x.SandboxSessionId == owner.Id).Select(x => x.StateJson).SingleAsync();
+            return JsonSerializer.Deserialize<IntakeState>(json, IntakeSpecification.Json)!;
+        }
+        var waiting = await Stored();
+        Assert.Equal("waiting", waiting.Run!.Status);
+        Assert.NotEmpty(waiting.Run.Messages);
+        if (resume)
+        {
+            var replied = await Command(visitor.Client, visitor.Csrf, "reply");
+            Assert.NotEmpty((await Stored()).Run!.Messages);
+            (await Post(visitor.Client, visitor.Csrf, "/api/intake/agent", new AgentCommand(Guid.NewGuid(), replied.Version, true))).EnsureSuccessStatusCode();
+        }
+        else await Command(visitor.Client, visitor.Csrf, "edit", "tax", "DEMO-EIN-1042");
+        var complete = await Stored();
+        Assert.Equal("complete", complete.Run!.Status);
+        Assert.Empty(complete.Run.Messages);
+        Assert.Equal(19, complete.Answers.Count);
+        Assert.Equal(waiting.Answers["legal"].Evidence, complete.Answers["legal"].Evidence);
+        Assert.True(complete.Run.Trace.Count >= waiting.Run.Trace.Count);
+        Assert.Equal(model.Calls, complete.Run.Calls);
+        Assert.Equal(waiting.RunsStarted, complete.RunsStarted);
+        Assert.NotEmpty(complete.Receipts);
+        Assert.Equal(owner, await visitor.Client.GetFromJsonAsync<SessionView>("/api/session"));
+    }
+    [Theory]
     [InlineData("unknown", "failed")]
     [InlineData("malformed", "failed")]
     [InlineData("timeout", "interrupted")]
