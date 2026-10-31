@@ -15,9 +15,13 @@ React/TypeScript, C# / ASP.NET Core / .NET 10, PostgreSQL and server-side OpenAI
 
 The request has 11 information fields and 12 task items. Submitted items await review; the AI cannot submit, approve or perform external actions. The demo uses fictional data and sample attachments. Refresh restores saved progress. The Instructions video is labelled as the earlier local Ollama recording.
 
+**Reset demo** is available throughout the request, including during AI filling, with confirmation before clearing answers, questions and submissions. Reset preserves the visitor's lifetime and AI usage limits. The mobile header keeps the control reachable while scrolling.
+
 ## How it works
 
 `IntakeAgentService` coordinates two read-only tools through the small `IIntakeModelClient` interface. `IntakeRules` validates each draft and its source before `IntakeStore` saves it in PostgreSQL. Editing an answer clears its source attribution and requires resubmission. React components separate navigation, field rendering, source inspection and media from application state.
+
+The client combines adjacent unsent edits to the same field, preserving field/action ordering and saving the latest value before submission. Independent startup checks run together. Ordinary intake reads avoid write locks and reserialization; initialization, source changes and expired runs retain their locked transitions. Unchanged polling responses do not repeat navigation updates.
 
 The hosted adapter uses a pinned, evaluated OpenAI model. Each sandbox permits three runs, with six model calls per run including continuation, 512 output tokens per call and a 15-second call timeout. There is no automatic retry or provider fallback.
 
@@ -25,7 +29,7 @@ The dedicated OpenAI project has a US$5 monthly limit. `IntakeSpendBudget` reser
 
 Owned 24-hour sandboxes, secure cookies, CSRF protection, source validation and command/version checks protect saved work. GitHub Actions verifies application changes before publishing the checked source to Hostless. Documentation changes receive link and formatting checks without deploying the app.
 
-The public demo uses a [signed Cloudflare gateway](edge/README.md), so changing hosting proxy addresses cannot cause the earlier HTTPS self-redirect loop. An hourly availability check tests page access, protected sessions and database readiness without AI calls. Current live acceptance belongs in the [release evidence](HARNESS.md).
+The public demo uses a [signed Cloudflare gateway](edge/README.md), so changing hosting proxy addresses cannot cause the earlier HTTPS self-redirect loop. Hostless checks HTTP `/health` every 10 seconds for process recovery. One free UptimeRobot monitor checks the actual demo URL every five minutes, follows redirects and sends DOWN/RECOVERY emails. Technical incidents stay in the hosting dashboard. Current release verification belongs in the [release evidence](HARNESS.md).
 
 ## Run locally
 

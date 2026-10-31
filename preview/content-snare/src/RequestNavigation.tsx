@@ -12,6 +12,7 @@ interface Props {
   navigate: (page: Page, id?: string, focus?: boolean) => void;
   statusFor: (field: RequestedField) => string;
   submittedCount: (page: Page) => number;
+  onReset: () => void;
 }
 const groupNames = [...new Set(taskFields.map((field) => field.group))];
 
@@ -24,6 +25,7 @@ export function RequestNavigation({
   navigate,
   statusFor,
   submittedCount,
+  onReset,
 }: Props) {
   function fieldNavigation(list: RequestedField[], number: string) {
     return (
@@ -173,6 +175,10 @@ export function RequestNavigation({
         )}
       </nav>
       <div className="preview-note">
+        <button type="button" className="reset-demo" onClick={onReset}>
+          Reset demo
+        </button>
+        <br />
         OnboardFlow · AI demo
         <br />
         <span>Fictional client data</span>

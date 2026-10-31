@@ -285,6 +285,34 @@ p {
   color: #858089;
   font-size: 11px;
 }
+.reset-demo {
+  color: var(--purple);
+  text-decoration: underline;
+  font-size: 12px;
+  min-height: 34px;
+  padding: 4px 0;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.reset-dialog {
+  width: min(420px, calc(100% - 36px));
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 28px;
+  color: inherit;
+}
+.reset-dialog::backdrop {
+  background: #2c22374f;
+}
+.reset-dialog p {
+  margin-top: 16px;
+}
+.reset-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+}
 .workspace {
   margin-left: 350px;
   min-height: 100dvh;
@@ -953,9 +981,12 @@ blockquote {
 @media (max-width: 760px) {
   .mobile-bar {
     display: flex;
+    position: sticky;
+    top: 0;
+    z-index: 11;
     justify-content: space-between;
     align-items: center;
-    gap: 12px;
+    gap: 8px;
     height: 58px;
     padding: 10px 17px;
     background: #fff;
@@ -981,6 +1012,9 @@ blockquote {
     display: flex;
   }
   .sidebar .brand {
+    display: none;
+  }
+  .sidebar .reset-demo {
     display: none;
   }
   .request-heading {
