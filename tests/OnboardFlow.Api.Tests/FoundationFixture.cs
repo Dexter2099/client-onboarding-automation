@@ -67,6 +67,18 @@ public sealed class FoundationFixture : IAsyncLifetime
         AllowAutoRedirect = false
     });
 
+    // Existing project records remain supported; only legacy regression fixtures seed them now.
+    public async Task SeedLegacyProjects(Guid sessionId)
+    {
+        await using var scope = Factory.Services.CreateAsyncScope();
+        var db = scope.ServiceProvider.GetRequiredService<FoundationDb>();
+        db.Projects.AddRange(new[] { ("OF-1042", "Website redesign"), ("OF-1043", "Website refresh") }
+            .Select(item => new Project { Id = Guid.NewGuid(), SandboxSessionId = sessionId,
+                Reference = item.Item1, Name = item.Item2, ClientName = "Juniper Studio", ClientContact = "Maya Ellis",
+                Owner = "Alex Morgan", Service = "Website design", SignedPages = ["Home", "About", "Services", "Projects", "Contact"] }));
+        await db.SaveChangesAsync();
+    }
+
     private async Task AdminSql(string sql)
     {
         await using var connection = new NpgsqlConnection(adminConnection);

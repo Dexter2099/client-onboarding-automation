@@ -31,6 +31,7 @@ public sealed class SandboxTests : IClassFixture<FoundationFixture>
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
         var authCookie = response.Headers.GetValues("Set-Cookie").Single().Split(';')[0];
         var session = (await response.Content.ReadFromJsonAsync<SessionView>())!;
+        await fixture.SeedLegacyProjects(session.Id);
         var projects = (await client.GetFromJsonAsync<ProjectView[]>("/api/projects"))!;
         return new Visitor(client, session, token, csrfCookie, authCookie, projects);
     }
@@ -43,7 +44,7 @@ public sealed class SandboxTests : IClassFixture<FoundationFixture>
     }
 
     [Fact]
-    public async Task Creates_two_independent_signed_projects_with_24_hour_lifetime()
+    public async Task Existing_legacy_projects_retain_their_owned_data_and_24_hour_lifetime()
     {
         var visitor = await Start();
         Assert.Equal(TimeSpan.FromHours(24), visitor.Session.ExpiresAt - visitor.Session.CreatedAt);
@@ -87,7 +88,7 @@ public sealed class SandboxTests : IClassFixture<FoundationFixture>
     }
 
     [Fact]
-    public async Task Reset_replaces_both_projects_and_revokes_old_cookie_without_affecting_other_visitor()
+    public async Task Reset_removes_legacy_projects_and_revokes_old_cookie_without_affecting_other_visitor()
     {
         var owner = await Start();
         var other = await Start();
@@ -96,7 +97,7 @@ public sealed class SandboxTests : IClassFixture<FoundationFixture>
         var replacement = (await reset.Content.ReadFromJsonAsync<SessionView>())!;
         Assert.NotEqual(owner.Session.Id, replacement.Id);
         var projects = (await owner.Client.GetFromJsonAsync<ProjectView[]>("/api/projects"))!;
-        Assert.Equal(2, projects.Length);
+        Assert.Empty(projects);
         Assert.Empty(owner.Projects.Select(x => x.Id).Intersect(projects.Select(x => x.Id)));
         Assert.Equal(other.Projects.Select(x => x.Id),
             (await other.Client.GetFromJsonAsync<ProjectView[]>("/api/projects"))!.Select(x => x.Id));

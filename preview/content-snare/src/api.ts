@@ -71,18 +71,26 @@ export class IntakeApi {
       try {
         const [protection, response] = await Promise.all([
           this.request('csrf', undefined, generation) as Promise<{ token: string }>,
-          fetch('/api/session', { credentials: 'same-origin', signal: this.lifetime.signal }),
+          fetch('/api/intake/', { credentials: 'same-origin', signal: this.lifetime.signal }),
         ]);
         this.assertCurrent(generation);
         this.csrf = protection.token;
-        const session = await response.json();
+        const snapshot = await response.json();
         this.assertCurrent(generation);
         if (!response.ok) {
-          if (session.code !== 'sandbox_missing')
+          if (response.status !== 401)
+            throw new Error(snapshot.title || 'Load saved work before trying again.');
+          if (snapshot.code !== 'sandbox_missing')
             throw new Error('This sandbox expired. Start a fresh workspace.');
-          await this.request('session', {}, generation);
+          const created = (await this.request('session', {}, generation)) as {
+            intake?: RequestSnapshot;
+          };
+          // A concurrent start can reuse an existing owner; read its current request in that case.
+          return this.accept(
+            created.intake ?? (await this.request('intake/', undefined, generation)),
+          );
         }
-        return this.accept(await this.request('intake/', undefined, generation));
+        return this.accept(snapshot);
       } catch (error) {
         this.assertCurrent(generation);
         throw error;
@@ -138,10 +146,12 @@ export class IntakeApi {
     const generation = this.generation;
     const protection = (await this.request('csrf', undefined, generation)) as { token: string };
     this.csrf = protection.token;
-    await this.request('session', {}, generation);
+    const created = (await this.request('session', {}, generation)) as { intake?: RequestSnapshot };
     this.currentVersion = 0;
     this.queue = Promise.resolve();
-    const snapshot = this.accept(await this.request('intake/', undefined, generation));
+    const snapshot = this.accept(
+      created.intake ?? (await this.request('intake/', undefined, generation)),
+    );
     this.start = Promise.resolve(snapshot);
     return snapshot;
   }

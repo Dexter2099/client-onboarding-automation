@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Http.Json;
+using System.Text.Json;
 using System.Text.Json.Nodes;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -7,6 +8,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
+using System.Data.Common;
 using OnboardFlow.Api;
 
 namespace OnboardFlow.Api.Tests;
@@ -90,6 +93,72 @@ public sealed class IntakeTests(FoundationFixture fixture) : IClassFixture<Found
         var result = await Post(client, csrf, "/api/intake/command", new IntakeCommand(Guid.NewGuid(), current.Version, operation, field, value, page));
         result.EnsureSuccessStatusCode();
         return (await result.Content.ReadFromJsonAsync<IntakeView>())!;
+    }
+    [Fact]
+    public async Task New_session_atomically_returns_current_request_without_legacy_project_rows()
+    {
+        using var client = fixture.Client();
+        var csrf = (await client.GetFromJsonAsync<Dictionary<string, string>>("/api/csrf"))!["token"];
+        var missing = await client.GetAsync("/api/intake/");
+        Assert.Equal(HttpStatusCode.Unauthorized, missing.StatusCode);
+        Assert.Equal("sandbox_missing", (await missing.Content.ReadFromJsonAsync<JsonObject>())!["code"]!.GetValue<string>());
+        var created = await Post(client, csrf, "/api/session", new { });
+        Assert.Equal(HttpStatusCode.Created, created.StatusCode);
+        var body = (await created.Content.ReadFromJsonAsync<JsonObject>())!;
+        var session = body.Deserialize<SessionView>(IntakeSpecification.Json)!;
+        var initial = body["intake"]!.Deserialize<IntakeView>(IntakeSpecification.Json)!;
+        Assert.Equal(1, initial.Version);
+        Assert.Equal("idle", initial.Ai);
+        Assert.Empty(initial.Answers);
+        Assert.Equal(TimeSpan.FromHours(24), session.ExpiresAt - session.CreatedAt);
+        await using var scope = fixture.Factory.Services.CreateAsyncScope();
+        var db = scope.ServiceProvider.GetRequiredService<FoundationDb>();
+        Assert.False(await db.Projects.AnyAsync(x => x.SandboxSessionId == session.Id));
+        Assert.Equal(initial.Version, (await db.ClientRequests.SingleAsync(x => x.SandboxSessionId == session.Id)).Version);
+        var loaded = await Read(client);
+        Assert.Equal(initial.Version, loaded.Version);
+        Assert.Empty(loaded.Answers);
+    }
+
+    private sealed class ReadCounter : DbCommandInterceptor
+    {
+        public int Count;
+        public override ValueTask<InterceptionResult<DbDataReader>> ReaderExecutingAsync(DbCommand command,
+            CommandEventData eventData, InterceptionResult<DbDataReader> result, CancellationToken cancellationToken = default)
+        {
+            Interlocked.Increment(ref Count);
+            return ValueTask.FromResult(result);
+        }
+    }
+
+    [Fact]
+    public async Task Owned_read_uses_one_query_and_preserves_missing_request_and_expired_owner_handling()
+    {
+        var counter = new ReadCounter();
+        await using var factory = fixture.Factory.WithWebHostBuilder(builder => builder.ConfigureServices(services =>
+            services.AddDbContext<FoundationDb>(options => options.AddInterceptors(counter))));
+        using var client = factory.CreateClient(new() { BaseAddress = new Uri("https://localhost") });
+        var csrf = (await client.GetFromJsonAsync<Dictionary<string, string>>("/api/csrf"))!["token"];
+        var created = await Post(client, csrf, "/api/session", new { });
+        created.EnsureSuccessStatusCode();
+        var session = (await created.Content.ReadFromJsonAsync<SessionView>())!;
+        counter.Count = 0;
+        var snapshot = await Read(client);
+        Assert.Equal(1, counter.Count);
+        await using (var scope = factory.Services.CreateAsyncScope())
+            await scope.ServiceProvider.GetRequiredService<FoundationDb>().ClientRequests
+                .Where(x => x.SandboxSessionId == session.Id).ExecuteDeleteAsync();
+        var initialized = await Read(client);
+        Assert.Equal(snapshot.Version, initialized.Version);
+        Assert.Empty(initialized.Answers);
+        fixture.Clock.Now = session.ExpiresAt;
+        try
+        {
+            var expired = await client.GetAsync("/api/intake/");
+            Assert.Equal(HttpStatusCode.Unauthorized, expired.StatusCode);
+            Assert.Equal("sandbox_unavailable", (await expired.Content.ReadFromJsonAsync<JsonObject>())!["code"]!.GetValue<string>());
+        }
+        finally { fixture.Clock.Now = DateTimeOffset.UtcNow; }
     }
     [Fact]
     public async Task Real_pipeline_saves_drafts_requires_reply_never_completes_manual_items_and_replays_without_inference()

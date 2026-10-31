@@ -21,7 +21,7 @@ The request has 11 information fields and 12 task items. Submitted items await r
 
 `IntakeAgentService` coordinates two read-only tools through the small `IIntakeModelClient` interface. `IntakeRules` validates each draft and its source before `IntakeStore` saves it in PostgreSQL. Editing an answer clears its source attribution and requires resubmission. React components separate navigation, field rendering, source inspection and media from application state.
 
-The client combines adjacent unsent edits to the same field, preserving field/action ordering and saving the latest value before submission. Independent startup checks run together. Ordinary intake reads avoid write locks and reserialization; initialization, source changes and expired runs retain their locked transitions. Unchanged polling responses do not repeat navigation updates.
+The client combines adjacent unsent edits to the same field, preserving field/action ordering and saving the latest value before submission. Startup fetches CSRF protection and the owned intake together, without a separate session lookup. Creating a visitor returns the initial request in the same transaction and seeds no older-demo projects. Ordinary intake reads fetch ownership and request state in one unlocked query; initialization, source changes and expired runs retain their locked transitions. Unchanged polling responses do not repeat navigation updates. Existing stored project records remain supported without being created for new visitors.
 
 The hosted adapter uses a pinned, evaluated OpenAI model. Each sandbox permits three runs, with six model calls per run including continuation, 512 output tokens per call and a 15-second call timeout. There is no automatic retry or provider fallback.
 
