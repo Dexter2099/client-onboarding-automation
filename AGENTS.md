@@ -88,4 +88,3 @@ Follow the connection's supplied managed PMB instructions. Before substantive wo
 At the start of a non-trivial task, recall relevant lessons/failures. Before a new tool, command or pattern, check `find_lessons` and `recall`; follow settled decisions unless concrete new evidence warrants a change. Log substantive completions, decisions, corrections and failures in one `record_batch` per turn, scoped to `OnboardFlow`. Record future intent as a goal, not a completed fact; do not record secrets or transient listings. Use absolute dates and `session_brief` to recover context after compaction. Do not recall after writing merely to verify the write.
 
 Reference: [OpenAI's AGENTS.md guidance](https://learn.chatgpt.com/docs/agent-configuration/agents-md).
-
