@@ -2,6 +2,10 @@
 
 ## Minimal abuse protection — 31 October 2026
 
+Final review reproduced global allowance consumption by requests already rejected at the caller layer. Moving caller/readiness bounds ahead of the global fixed window fixes it: ten rejected requests from a two-permit caller no longer consume the other caller's remaining two of four global permits. The red test failed at the second caller, and corrected regression must pass before publication. Main run 41187977631 was cancelled while still verifying, with no gateway promotion or Hostless source publication; this does not add an application rollout.
+
+The corrected deployment gate compares actual gateway source fingerprints rather than commit-delta flags or app asset revision. A cancelled verification cannot make a later backend skip a required gateway promotion, while an unchanged installed gateway satisfies backend-only releases without republishing. The packager stamps the public source fingerprint and tests verify it alongside the artifact checksum; existing public asset/media bytes remain unchanged.
+
 The authorised release keeps public UI/assets and permanent owner grants unchanged, with no paid inference. Signed pass verification, durable revocation and HTTP cookie/form handling are separated. Disable stores the signed nonce ID (not signature bytes or credentials) and clears the cookie; new clients and activation attempts using a revoked pass fail. The original owner grant must remain valid; use the separate ignored revocation probe for live verification.
 
 Public new starts consume an atomic PostgreSQL network/day counter inside the same owned request transaction. Failed commits roll back both state and allowance; command replay/resume do not consume new starts. Public allowance defaults to 12 per IPv4 address or IPv6 /64 per UTC day, in addition to three per sandbox, with owner exemption and the independent shared spending cap unchanged. Both reset paths retain RunsStarted. Old network counters receive bounded indexed cleanup during existing workspace creation, with no background service. Two additive tables/indexes are the only schema changes.

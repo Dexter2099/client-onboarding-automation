@@ -61,6 +61,7 @@ test('public assets use Pages with security/cache headers and no visitor credent
   assert.equal(captured.headers.get('if-none-match'), 'etag');
   assert.equal(response.headers.get('set-cookie'), null);
   assert.equal(response.headers.get('x-onboardflow-asset-source'), 'pages');
+  assert.equal(response.headers.get('x-onboardflow-gateway-hash'), 'unpackaged');
   assert.equal(response.headers.get('x-content-type-options'), 'nosniff');
   assert.equal(response.headers.get('referrer-policy'), 'no-referrer');
   assert.match(response.headers.get('cache-control'), /max-age=31536000, immutable/);
