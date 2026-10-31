@@ -119,8 +119,8 @@ test('metadata and video ranges retain the signed origin handler; Pages serves c
           new TextEncoder().encode(canonical),
         ),
       );
-      // Model the CDN's cold-cache HEAD rewrite; bypass must preserve the signed method.
-      if (init.method === 'HEAD' && init.cache !== 'no-store')
+      // The hosting CDN rewrites cold HEAD even when the caller requests cache bypass.
+      if (init.method === 'HEAD')
         return new Response(null, { status: 308, headers: { Location: origin } });
       assert.equal(init.cache, 'no-store');
       return new Response(scenario.body, { status: scenario.status, headers: scenario.output });
