@@ -9,6 +9,78 @@ const evidence = process.env.ONBOARDFLOW_EVIDENCE_DIR
   : fileURLToPath(new URL('../../../.local/content-snare-evidence/', import.meta.url));
 mkdirSync(evidence, { recursive: true });
 const saved = async (page: Page) => (await page.request.get('/api/intake/')).json();
+
+test('a failed save recovers through Load saved work and accepts a subsequent edit', async ({
+  page,
+}) => {
+  await page.goto('/l/general-information');
+  await expect.poll(async () => (await saved(page)).version).toBeGreaterThan(0);
+  const input = page.getByRole('textbox', { name: 'Legal Company Name', exact: true });
+  let writes = 0;
+  await page.route('**/api/intake/command', async (route) => {
+    writes++;
+    if (writes === 1) return route.abort('failed');
+    await route.continue();
+  });
+  await input.fill('Fictional unsaved value');
+  await expect(page.getByRole('alert')).toBeVisible();
+  await page.getByRole('button', { name: 'Load saved work', exact: true }).click();
+  await expect(input).toHaveValue('');
+  await input.fill('Fictional recovered save');
+  await expect
+    .poll(async () => (await saved(page)).answers.legal?.value)
+    .toBe('Fictional recovered save');
+  expect(writes).toBe(2);
+});
+
+test('a timed-out committed save is reconciled without replay and a late response cannot restore stale input', async ({
+  page,
+}) => {
+  await page.goto('/l/general-information');
+  await expect.poll(async () => (await saved(page)).version).toBeGreaterThan(0);
+  const input = page.getByRole('textbox', { name: 'Legal Company Name', exact: true });
+  let release!: () => void;
+  const held = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  let writes = 0;
+  let served = false;
+  await page.route('**/api/intake/command', async (route) => {
+    writes++;
+    const response = await route.fetch();
+    if (writes === 1) {
+      served = true;
+      await held;
+    }
+    await route.fulfill({ response }).catch(() => {});
+  });
+  try {
+    await input.fill('Fictional committed before timeout');
+    await expect.poll(() => served).toBe(true);
+    await input.fill('Fictional queued value');
+    await expect(page.getByRole('alert')).toContainText('The request took too long', {
+      timeout: 20000,
+    });
+    expect(writes).toBe(1);
+    const reads: string[] = [];
+    page.on('request', (request) => {
+      if (request.method() === 'GET' && /\/api\/(csrf|intake\/)\??$/.test(request.url()))
+        reads.push(new URL(request.url()).pathname);
+    });
+    await page.getByRole('button', { name: 'Load saved work', exact: true }).click();
+    await expect(input).toHaveValue('Fictional committed before timeout');
+    expect(reads.sort()).toEqual(['/api/csrf', '/api/intake/']);
+    await input.fill('Fictional latest recovered value');
+    await expect
+      .poll(async () => (await saved(page)).answers.legal?.value)
+      .toBe('Fictional latest recovered value');
+    release();
+    await expect(input).toHaveValue('Fictional latest recovered value');
+    expect(writes).toBe(2);
+  } finally {
+    release();
+  }
+});
 async function fill(page: Page) {
   await page.getByRole('button', { name: 'FILL WITH AI', exact: true }).click();
   await expect(page.getByText('Not found in the client documents.', { exact: true })).toBeVisible({

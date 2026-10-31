@@ -45,6 +45,8 @@ public sealed class IntakeStore(FoundationDb db, TimeProvider clock, IntakeSpeci
             running.Error = "The review was interrupted. Saved drafts are available; no model call was repeated.";
         }
         change(state, record.Version);
+        // Completed conversations cannot resume. Keep evidence, trace, receipts and spending metadata.
+        if (state.Run is { Status: "complete" } complete) complete.Messages.Clear();
         var json = JsonSerializer.Serialize(state, IntakeSpecification.Json);
         if (!System.Text.Json.Nodes.JsonNode.DeepEquals(System.Text.Json.Nodes.JsonNode.Parse(json), System.Text.Json.Nodes.JsonNode.Parse(record.StateJson)))
         {
@@ -52,7 +54,15 @@ public sealed class IntakeStore(FoundationDb db, TimeProvider clock, IntakeSpeci
             record.Version++;
         }
         if (!SandboxSessionAccess.Active(session, clock)) throw new IntakeException(401, "This sandbox expired.");
-        await db.SaveChangesAsync(cancellation);
+        // This method owns the transaction and abandons it on any failure. A nested
+        // savepoint/release adds two database round trips without a recovery use here.
+        var savepoints = db.Database.AutoSavepointsEnabled;
+        try
+        {
+            db.Database.AutoSavepointsEnabled = false;
+            await db.SaveChangesAsync(cancellation);
+        }
+        finally { db.Database.AutoSavepointsEnabled = savepoints; }
         await transaction.CommitAsync(cancellation);
         return new(record.Version, state);
     }

@@ -1,5 +1,9 @@
 # OnboardFlow agent instructions
 
+## Latency, cleanup and recovery authority — 31 October 2026
+
+Dexter authorised the request-latency, obsolete-frontend/completed-conversation cleanup and save-recovery fixes, unchanged screens/flow, connected Chrome verification with **zero AI calls**, and one consolidated release. This supersedes older real-model acceptance requirements for this non-model release. Preserve locking, ownership/expiry, command receipts, source/trace/spending records, model/prompt/limits, signed gateway, native media semantics and existing health/monitoring. Ordinary read/save timeouts use the existing Load saved work action; do not replay uncertain writes. Removing redundant savepoints is scoped to IntakeStore's owned, whole-transaction rollback. Real-model macOS acceptance now requires explicit `LIVE_AI_ACCEPTANCE_ENABLED=true`; keep it unset for this release. Retire only the superseded frontend and exclusive dependency; legacy stored-project APIs and used local adapters remain supported.
+
 ## Public asset release authority — 31 October 2026
 
 Native Pages verification showed video Range returned 200 and HEAD omitted the existing file length. Keep the faster path limited to ordinary GETs for hashed JS/CSS/fonts and the poster; route all HEAD/range requests and lazy-loaded video to the existing signed origin. Do not reimplement media slicing or weaken acceptance to allow changed semantics. The correction retains zero inference and no Hostless rollout.
@@ -79,7 +83,7 @@ Dexter has now authorised the C#/.NET request backend, real local AI and connect
 - Canonical checkout: C:\Users\User\Documents\Project_Directories2\OnboardFlow. Preserve unrelated changes and tag codex/legacy-prototype-2026-10-19.
 - Existing .NET 10/EF Core/Npgsql/PostgreSQL on Deplexo Free/Neon Free remains deployed. Preserve exact-peer Cloudflare scheme handling, secure cookies, CSRF, CSP/HSTS and fixed-lifetime owned sandboxes.
 - No card/paid upgrade/temporary-credit dependency/provider contact/warning bypass. Preserve GitHub delivery/secret controls and disabled push auto-deploy. No rebuild release or portfolio changes during local review.
-- Root npm run build targets old app. Use preview commands from README/HARNESS; never write preview output into src/OnboardFlow.Api/wwwroot.
+- Root npm run build typechecks and packages the current interface into src/OnboardFlow.Api/wwwroot for the application release. The separate reference-preview command remains available from README/HARNESS.
 
 ## PMB project memory
 
