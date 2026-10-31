@@ -8,6 +8,8 @@ Hostless emailed **Application errors detected** at **10:07:41** and **10:12:04 
 
 Four DI-level connection tests cover the main database, ledger fallback, dedicated ledger, quoted credentials, TLS/certificate/channel-binding settings and explicit GSS Require/Disable. The two optional-GSS cases failed before the fix; all four pass afterward, alongside the seven liveness and 16 signature-boundary cases (**27 targeted checks**). Production log acceptance is pending at this checkpoint; do not claim the alerts are fixed from the passing request tests alone.
 
+The first main delivery of the GSS repair passed all 160 backend cases, but WebKit's edit-persistence check read the database before its asynchronous edit finished. The retained trace from [run 41149711220](https://github.com/Dexter2099/client-onboarding-automation/actions/runs/41149711220) shows the edit POST starting at `00:23:58.756Z` and returning draft after 36.788 ms, while the GET started at `00:23:58.762Z` and returned the previous submitted state after 19.429 ms. The check now polls the same persisted-draft assertion, matching the existing evidence-persistence check; there is no fixed delay, retry policy, assertion relaxation or application/UI behavior change. This failed gate did not publish a runtime.
+
 A separate CPU-throttling warning captured **29.38% peak / 0.67% last sample**, threshold 25%, over **10:03:10–10:13:10** on the existing 0.25-core/512-MiB release. That overlaps deployment/testing, but time overlap does not establish causation. Its automatic recovery remains to be observed; no resource or alert-threshold change was made.
 
 ## Native HTTP liveness — 31 October 2026
