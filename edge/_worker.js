@@ -177,10 +177,12 @@ export default {
     try {
       if (
         /^\/api(?:\/|$)/i.test(incoming.pathname) ||
-        incoming.pathname.toLowerCase() === '/health/ready'
+        incoming.pathname.replace(/\/+$/, '').toLowerCase() === '/health/ready'
       ) {
         const caller = await networkBucket(request, env);
         if (!caller) return unavailable();
+        for (const name of Array.from(incoming.searchParams.keys()))
+          if (name.toLowerCase() === NETWORK_QUERY) incoming.searchParams.delete(name);
         incoming.searchParams.set(NETWORK_QUERY, caller);
       } else incoming.searchParams.delete(NETWORK_QUERY);
       // Only this edge holds the private key. The app receives a public verification key.

@@ -8,7 +8,7 @@ public static class OwnerAccessEndpoints
     public static IApplicationBuilder UseOwnerAccess(this IApplicationBuilder app) => app.Use(async (http, next) =>
     {
         // Normal startup renews only an existing, unrevoked grant. Public assets stay unpersonalized.
-        if (HttpMethods.IsGet(http.Request.Method) && http.Request.Path.Equals("/api/csrf", StringComparison.OrdinalIgnoreCase))
+        if (HttpMethods.IsGet(http.Request.Method) && ProtectedRequests.Matches(http.Request.Path, "/api/csrf"))
         {
             var policy = http.RequestServices.GetRequiredService<OwnerAccessPolicy>();
             var pass = http.Request.Cookies[OwnerAccess.CookieName];

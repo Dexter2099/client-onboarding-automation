@@ -82,17 +82,19 @@ public sealed class VerifiedEdgeTests
     }
 
     [Theory]
-    [InlineData("")]
-    [InlineData("forged")]
-    [InlineData("duplicate")]
-    public async Task A_valid_signature_without_one_well_formed_network_bucket_cannot_dispatch(string network)
+    [InlineData("", "/api/csrf")]
+    [InlineData("forged", "/api/csrf")]
+    [InlineData("duplicate", "/api/csrf")]
+    [InlineData("", "/health/ready/")]
+    [InlineData("", "/HeAlTh/ReAdY/")]
+    public async Task A_valid_signature_without_one_well_formed_network_bucket_cannot_dispatch(string network, string path)
     {
         using var key = ECDsa.Create(ECCurve.NamedCurves.nistP256);
         await using var factory = Factory(key);
         var query = network == "" ? "?without=network" : network == "duplicate"
             ? "?__of_network=" + new string('a', 64) + "&__of_network=" + new string('b', 64)
             : "?__of_network=forged";
-        var response = await Send(factory, key, query: query, addNetwork: false);
+        var response = await Send(factory, key, query: query, addNetwork: false, path: path);
         Assert.Equal(403, response.Response.StatusCode);
         Assert.Null(response.Features.Get<VerifiedCaller>());
         Assert.False(response.Response.Headers.ContainsKey("Set-Cookie"));

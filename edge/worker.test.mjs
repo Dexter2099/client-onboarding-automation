@@ -209,6 +209,7 @@ test('HTML, release, health, private APIs and mutations cannot be served from Pa
     '/l/instructions',
     '/release.json',
     '/health/ready',
+    '/HeAlTh/ReAdY/',
     '/api/csrf',
     '/api/intake/',
     '/assets/%2Fapi%2Fsecret.js',
@@ -396,7 +397,7 @@ test('network buckets are signed, keyed, spoof-resistant and group IPv6 privacy 
     '2001:db8:abcd:5678::1',
   ]) {
     const r = await worker.fetch(
-      edgeRequest(origin + '/api/csrf?__of_network=' + 'f'.repeat(64), {
+      edgeRequest(origin + '/api/csrf?__OF_NETWORK=' + 'f'.repeat(64), {
         headers: { 'CF-Connecting-IP': address },
       }),
       env,

@@ -4,6 +4,14 @@ using System.Threading.RateLimiting;
 
 namespace OnboardFlow.Api;
 
+internal static class ProtectedRequests
+{
+    // ASP.NET routing accepts a trailing slash and ignores case. Protection must match routing.
+    internal static bool Matches(PathString path, string expected) =>
+        string.Equals(path.Value?.TrimEnd('/'), expected, StringComparison.OrdinalIgnoreCase);
+    internal static bool Includes(PathString path) => path.StartsWithSegments("/api") || Matches(path, "/health/ready");
+}
+
 public static class ApiSafety
 {
     private const int MaxBodyBytes = 16 * 1024;
@@ -44,7 +52,7 @@ public static class ApiSafety
                         PermitLimit = builder.Configuration.GetValue("ApiLimits:CallerRequestsPerMinute", 120),
                         Window = TimeSpan.FromMinutes(1), QueueLimit = 0, AutoReplenishment = true
                     }) : RateLimitPartition.GetNoLimiter("unpartitioned")),
-                PartitionedRateLimiter.Create<HttpContext, string>(http => http.Request.Path.Equals("/health/ready", StringComparison.OrdinalIgnoreCase)
+                PartitionedRateLimiter.Create<HttpContext, string>(http => ProtectedRequests.Matches(http.Request.Path, "/health/ready")
                     ? RateLimitPartition.GetConcurrencyLimiter("readiness", _ => new() { PermitLimit = 1, QueueLimit = 0 })
                     : RateLimitPartition.GetNoLimiter("other")));
             options.OnRejected = async (context, cancellationToken) =>
@@ -73,7 +81,7 @@ public static class ApiSafety
                     Stopwatch.GetElapsedTime(started).TotalMilliseconds.ToString("F1", CultureInfo.InvariantCulture);
                 // Apply after static/error handling; preserve the document through proxy transformations.
                 // Only the private operator page uses native forms; public screens keep forms disabled.
-                http.Response.Headers.ContentSecurityPolicy = http.Request.Path.Equals("/api/owner-access", StringComparison.OrdinalIgnoreCase)
+                http.Response.Headers.ContentSecurityPolicy = ProtectedRequests.Matches(http.Request.Path, "/api/owner-access")
                     ? BrowserPolicy.Replace("form-action 'none'", "form-action 'self'", StringComparison.Ordinal)
                     : BrowserPolicy;
                 if (http.Response.ContentType?.StartsWith("text/html", StringComparison.OrdinalIgnoreCase) == true)
@@ -95,5 +103,5 @@ public static class ApiSafety
     }
 
     private static bool IsApi(HttpContext http) => http.Request.Path.StartsWithSegments("/api");
-    private static bool IsLimited(HttpContext http) => IsApi(http) || http.Request.Path.Equals("/health/ready", StringComparison.OrdinalIgnoreCase);
+    private static bool IsLimited(HttpContext http) => ProtectedRequests.Includes(http.Request.Path);
 }

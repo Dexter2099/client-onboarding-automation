@@ -53,6 +53,18 @@ public sealed class ApiSafetyTests
         Assert.Equal(HttpStatusCode.OK, (await client.GetAsync("/favicon.svg")).StatusCode);
     }
 
+    [Theory]
+    [InlineData("/health/ready/")]
+    [InlineData("/HeAlTh/ReAdY/")]
+    public async Task Readiness_route_aliases_cannot_bypass_the_request_limiter(string path)
+    {
+        await using var factory = Factory(1);
+        using var client = factory.CreateClient(new() { BaseAddress = new Uri("https://localhost") });
+        Assert.Equal(HttpStatusCode.NotFound, (await client.GetAsync("/api/unknown")).StatusCode);
+        Assert.Equal(HttpStatusCode.TooManyRequests, (await client.GetAsync(path)).StatusCode);
+        Assert.Equal(HttpStatusCode.OK, (await client.GetAsync("/health")).StatusCode);
+    }
+
     [Fact]
     public async Task Oversized_requests_are_rejected_before_session_or_database_work()
     {

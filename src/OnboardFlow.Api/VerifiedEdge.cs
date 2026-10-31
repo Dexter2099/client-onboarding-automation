@@ -79,7 +79,7 @@ public static class VerifiedEdge
             }
             // HTTPS is attested by the edge signature, bound to this method, target and body.
             // It does not depend on a shared host's rotating private ingress addresses.
-            if (http.Request.Path.StartsWithSegments("/api") || http.Request.Path.Equals("/health/ready", StringComparison.OrdinalIgnoreCase))
+            if (ProtectedRequests.Includes(http.Request.Path))
             {
                 var network = http.Request.Query[NetworkQuery];
                 if (network.Count != 1 || network[0] is not { Length: 64 } value || !value.All(Uri.IsHexDigit))
