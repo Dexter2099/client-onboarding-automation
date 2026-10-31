@@ -18,7 +18,7 @@ import {
 import { documents, fieldList, fields, taskFields, taxReply } from './demo-data';
 import type { Evidence, Page, RequestedField } from './demo-data';
 import { initialState, isAnswered, isSubmitted } from './state';
-import { IntakeApi } from './api';
+import { IntakeApi, IntakeRequestCancelled } from './api';
 import type { RequestSnapshot } from './api';
 import type { Answer } from './state';
 
@@ -56,6 +56,11 @@ export function App() {
   const [checks, setChecks] = useState<string[]>([]);
   const fillGeneration = useRef(0);
   const mainHeading = useRef<HTMLHeadingElement>(null);
+  const resetDialog = useRef<HTMLDialogElement>(null);
+  const [resetting, setResetting] = useState(false);
+  function reportApiError(error: unknown) {
+    if (!(error instanceof IntakeRequestCancelled)) setApiError((error as Error).message);
+  }
   function inspectSource(value: Evidence, fieldName?: string) {
     setSourceField(fieldName || null);
     setSource(value);
@@ -74,7 +79,7 @@ export function App() {
         if (current) applySnapshot(snapshot);
       })
       .catch((error) => {
-        if (current) setApiError(error.message);
+        if (current) reportApiError(error);
       });
     return () => {
       current = false;
@@ -124,7 +129,10 @@ export function App() {
   }
   function applySnapshot(snapshot: RequestSnapshot) {
     setState((previous) =>
-      snapshot.version < previous.version ? previous : { ...previous, ...snapshot },
+      snapshot.version < previous.version ||
+      (snapshot.version === previous.version && snapshot.ai === previous.ai)
+        ? previous
+        : { ...previous, ...snapshot },
     );
     if (snapshot.run?.error) setApiError(snapshot.run.error);
     const trace = snapshot.run?.trace.at(-1);
@@ -135,7 +143,7 @@ export function App() {
       setApiError('');
       applySnapshot(await api.current.reload());
     } catch (error) {
-      setApiError((error as Error).message);
+      reportApiError(error);
     }
   }
   function writeAnswer(id: string, value: string) {
@@ -150,7 +158,7 @@ export function App() {
       .then((snapshot) => {
         if (sequence === editSequence.current) applySnapshot(snapshot);
       })
-      .catch((error) => setApiError(error.message));
+      .catch(reportApiError);
   }
   function validAnswer(field: RequestedField, answer?: Answer): boolean {
     if (!isAnswered(answer)) return false;
@@ -168,7 +176,7 @@ export function App() {
       applySnapshot(await api.current.command('submit', { field: field.id }));
       nextField();
     } catch (error) {
-      setApiError((error as Error).message);
+      reportApiError(error);
     }
   }
   async function submitPage() {
@@ -182,7 +190,7 @@ export function App() {
       applySnapshot(await api.current.command('submitPage', { page: state.page }));
       setNotice('Page submitted for review.');
     } catch (error) {
-      setApiError((error as Error).message);
+      reportApiError(error);
     }
   }
   async function runAgent(resume: boolean) {
@@ -193,14 +201,17 @@ export function App() {
     setState((previous) => ({ ...previous, ai: 'filling' }));
     setFillingLabel('Reading the required fields and client documents…');
     let polling = false;
+    let finished = false;
+    const observedAnswers = new Set(Object.keys(state.answers));
     const timer = setInterval(async () => {
       if (polling) return;
       polling = true;
       try {
         const snapshot = await api.current.read();
-        if (generation === fillGeneration.current) {
+        if (generation === fillGeneration.current && !finished) {
           applySnapshot(snapshot);
-          const ids = Object.keys(snapshot.answers).filter((id) => !state.answers[id]);
+          const ids = Object.keys(snapshot.answers).filter((id) => !observedAnswers.has(id));
+          ids.forEach((id) => observedAnswers.add(id));
           const latest = fields.find((field) => field.id === ids.at(-1));
           if (latest && snapshot.ai === 'filling') navigate(latest.page, latest.id);
         }
@@ -212,21 +223,25 @@ export function App() {
     }, 900);
     try {
       const snapshot = await api.current.agent(resume);
+      finished = true;
       if (generation !== fillGeneration.current) return;
       applySnapshot(snapshot);
       const pending = fields.find((field) => field.id === snapshot.run?.question?.fieldId);
       if (pending) navigate(pending.page, pending.id, true);
       else if (snapshot.ai === 'complete') navigate('general', 'summary', true);
     } catch (error) {
+      finished = true;
+      if (generation !== fillGeneration.current || error instanceof IntakeRequestCancelled) return;
       try {
         applySnapshot(await api.current.reload());
       } catch {
         /* Keep the original failure visible. */
       }
-      setApiError((error as Error).message);
+      reportApiError(error);
     } finally {
+      finished = true;
       clearInterval(timer);
-      activeRequest.current = false;
+      if (generation === fillGeneration.current) activeRequest.current = false;
     }
   }
   const fillFromDocument = () => runAgent(false);
@@ -235,7 +250,7 @@ export function App() {
     try {
       applySnapshot(await api.current.command('reply'));
     } catch (error) {
-      setApiError((error as Error).message);
+      reportApiError(error);
     }
   }
   async function saveQuestion() {
@@ -248,21 +263,36 @@ export function App() {
       setQuestionOpen(false);
       setQuestion('');
     } catch (error) {
-      setApiError((error as Error).message);
+      reportApiError(error);
     }
   }
   async function reset() {
+    if (resetting) return;
+    setResetting(true);
+    fillGeneration.current++;
+    activeRequest.current = false;
     try {
-      const snapshot = await api.current.command('reset');
-      applySnapshot(snapshot);
-      navigate('instructions');
+      const snapshot = await api.current.reset();
+      setState({ ...initialState(), ...snapshot });
+      navigate('instructions', 'intro', true);
       setSource(null);
+      setSourceField(null);
+      setQuestionOpen(false);
+      setQuestion('');
+      setMessage('');
+      setFillingLabel('');
+      setTraceOpen(false);
+      setChecks([]);
       setNotice('');
       setApiError('');
     } catch (error) {
-      setApiError((error as Error).message);
+      reportApiError(error);
+    } finally {
+      setResetting(false);
+      resetDialog.current?.close();
     }
   }
+  const requestReset = () => resetDialog.current?.showModal();
   const statusFor = (field: RequestedField) =>
     isSubmitted(state.answers[field.id])
       ? 'submitted'
@@ -285,6 +315,9 @@ export function App() {
           <Menu size={21} />
         </button>
         <span>OnboardFlow</span>
+        <button type="button" className="reset-demo" onClick={requestReset}>
+          Reset demo
+        </button>
         <span className="status-badge">ACTIVE</span>
       </div>
       <RequestNavigation
@@ -295,6 +328,7 @@ export function App() {
         navigate={navigate}
         statusFor={statusFor}
         submittedCount={submittedCount}
+        onReset={requestReset}
       />
       <main className="workspace">
         {apiError && (
@@ -314,7 +348,7 @@ export function App() {
                     applySnapshot(snapshot);
                     setApiError('');
                   } catch (error) {
-                    setApiError((error as Error).message);
+                    reportApiError(error);
                   }
                 }}
               >
@@ -572,7 +606,11 @@ export function App() {
                         </button>
                       )}
                       {complete && (
-                        <button type="button" className="text-link next-page" onClick={reset}>
+                        <button
+                          type="button"
+                          className="text-link next-page"
+                          onClick={requestReset}
+                        >
                           Restart fictional request
                         </button>
                       )}
@@ -727,6 +765,39 @@ export function App() {
           )}
         </div>
       </main>
+      <dialog
+        ref={resetDialog}
+        className="reset-dialog"
+        aria-labelledby="reset-title"
+        aria-describedby="reset-description"
+        onCancel={(event) => {
+          if (resetting) event.preventDefault();
+        }}
+      >
+        <h2 id="reset-title">Reset demo?</h2>
+        <p id="reset-description">
+          This clears your demo answers, questions and submissions and returns you to Instructions.
+        </p>
+        <div className="reset-actions">
+          <button
+            type="button"
+            className="outline"
+            autoFocus
+            disabled={resetting}
+            onClick={() => resetDialog.current?.close()}
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            className="primary"
+            disabled={resetting}
+            onClick={() => void reset()}
+          >
+            {resetting ? 'Resetting…' : 'Reset demo'}
+          </button>
+        </div>
+      </dialog>
       <SourceDocument
         source={source}
         sourceField={sourceField}

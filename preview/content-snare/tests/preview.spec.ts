@@ -32,6 +32,178 @@ async function noOverflow(page: Page) {
   );
 }
 
+test('startup requests session information while the CSRF request is still pending', async ({
+  page,
+}) => {
+  let release!: () => void;
+  const held = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  let sessionRequested = false;
+  await page.route('**/api/csrf', async (route) => {
+    await held;
+    await route.continue();
+  });
+  await page.route('**/api/session', async (route) => {
+    if (route.request().method() === 'GET') sessionRequested = true;
+    await route.continue();
+  });
+  try {
+    await page.goto('/l/instructions');
+    await expect.poll(() => sessionRequested).toBe(true);
+  } finally {
+    release();
+  }
+  await expect.poll(async () => (await saved(page)).version).toBeGreaterThan(0);
+});
+
+test('rapid edits retain the latest value and finish saving before submission', async ({
+  page,
+}) => {
+  await page.goto('/l/general-information');
+  await expect.poll(async () => (await saved(page)).version).toBeGreaterThan(0);
+  let release!: () => void;
+  let entered!: () => void;
+  const held = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  const started = new Promise<void>((resolve) => {
+    entered = resolve;
+  });
+  const edits: string[] = [];
+  await page.route('**/api/intake/command', async (route) => {
+    const command = route.request().postDataJSON();
+    if (command.operation === 'edit') {
+      edits.push(command.value);
+      if (edits.length === 1) {
+        entered();
+        await held;
+      }
+    }
+    await route.continue();
+  });
+  const input = page.getByRole('textbox', { name: 'Legal Company Name', exact: true });
+  await input.fill('J');
+  await started;
+  await input.pressSequentially('uniper Review Studio');
+  await page.getByRole('button', { name: 'SUBMIT FOR REVIEW', exact: true }).click();
+  release();
+  await expect.poll(async () => (await saved(page)).answers.legal?.status).toBe('submitted');
+  expect(edits).toEqual(['J', 'Juniper Review Studio']);
+  expect((await saved(page)).answers.legal.value).toBe('Juniper Review Studio');
+  await expect(page.getByRole('textbox', { name: 'DBA Name', exact: true })).toBeVisible();
+});
+
+test('unchanged AI polls do not add duplicate navigation history', async ({ page }) => {
+  await page.goto('/l/general-information');
+  await expect.poll(async () => (await saved(page)).version).toBeGreaterThan(0);
+  let release!: () => void;
+  const held = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  let progress: Record<string, unknown> | undefined;
+  let polls = 0;
+  await page.route('**/api/intake/agent', async (route) => {
+    const response = await route.fetch();
+    const final = await response.json();
+    progress = {
+      ...final,
+      version: final.version - 1,
+      ai: 'filling',
+      answers: Object.fromEntries(Object.entries(final.answers).slice(0, 8)),
+      run: { ...final.run, status: 'filling', question: null },
+    };
+    await held;
+    await route.fulfill({ response, json: final });
+  });
+  await page.route('**/api/intake/', async (route) => {
+    if (!progress) return route.continue();
+    polls++;
+    await route.fulfill({ json: progress });
+  });
+  try {
+    await page.getByRole('button', { name: 'FILL WITH AI', exact: true }).click();
+    await expect.poll(() => polls).toBeGreaterThanOrEqual(1);
+    await expect(
+      page.getByRole('article', { name: 'Date Business Started', exact: true }),
+    ).toBeVisible();
+    const history = await page.evaluate(() => window.history.length);
+    await expect.poll(() => polls).toBeGreaterThanOrEqual(3);
+    expect(await page.evaluate(() => window.history.length)).toBe(history);
+  } finally {
+    progress = undefined;
+    release();
+  }
+  await expect(page.getByText('Not found in the client documents.', { exact: true })).toBeVisible();
+});
+
+test('reset is available before completion on desktop and mobile and cancel preserves saved work', async ({
+  page,
+}) => {
+  await page.goto('/l/instructions');
+  await expect(page.getByRole('button', { name: 'Reset demo', exact: true })).toBeVisible();
+  await page.getByRole('button', { name: "LET'S GET STARTED", exact: true }).click();
+  await page
+    .getByRole('textbox', { name: 'Legal Company Name', exact: true })
+    .fill('Fictional reset example');
+  await expect
+    .poll(async () => (await saved(page)).answers?.legal?.value)
+    .toBe('Fictional reset example');
+  await page.getByRole('button', { name: 'Reset demo', exact: true }).click();
+  const dialog = page.getByRole('dialog', { name: 'Reset demo?', exact: true });
+  await expect(dialog).toBeVisible();
+  await dialog.getByRole('button', { name: 'Cancel', exact: true }).click();
+  expect((await saved(page)).answers.legal.value).toBe('Fictional reset example');
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.getByRole('button', { name: 'Reset demo', exact: true }).click();
+  await dialog.getByRole('button', { name: 'Reset demo', exact: true }).click();
+  await expect(
+    page.getByRole('heading', { name: 'Welcome to your new client onboarding!', exact: true }),
+  ).toBeVisible();
+  await expect.poll(async () => Object.keys((await saved(page)).answers).length).toBe(0);
+  await expect(page.getByRole('alert')).toHaveCount(0);
+  await noOverflow(page);
+});
+
+test('reset interrupts a held save and discards queued edits without restoring old answers', async ({
+  page,
+}) => {
+  await page.goto('/l/general-information');
+  await saved(page);
+  let release!: () => void;
+  let entered!: () => void;
+  const held = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  const started = new Promise<void>((resolve) => {
+    entered = resolve;
+  });
+  let sentEdits = 0;
+  await page.route('**/api/intake/command', async (route) => {
+    if (route.request().postDataJSON().operation !== 'edit') return route.continue();
+    sentEdits++;
+    entered();
+    await held;
+    await route.abort().catch(() => {});
+  });
+  const input = page.getByRole('textbox', { name: 'Legal Company Name', exact: true });
+  await input.fill('Old value');
+  await started;
+  await input.fill('Queued old value');
+  await page.getByRole('button', { name: 'Reset demo', exact: true }).click();
+  await page
+    .getByRole('dialog', { name: 'Reset demo?', exact: true })
+    .getByRole('button', { name: 'Reset demo', exact: true })
+    .click();
+  await expect(
+    page.getByRole('heading', { name: 'Welcome to your new client onboarding!', exact: true }),
+  ).toBeVisible();
+  release();
+  await expect.poll(async () => Object.keys((await saved(page)).answers).length).toBe(0);
+  expect(sentEdits).toBe(1);
+  await expect(page.getByRole('alert')).toHaveCount(0);
+});
+
 test('no-typing request: supported drafts, explicit clarification, manual actions and submission', async ({
   page,
 }) => {
@@ -150,6 +322,10 @@ test('no-typing request: supported drafts, explicit clarification, manual action
   await expect(page.getByRole('button', { name: 'FILL WITH AI', exact: true })).toHaveCount(0);
   await page.getByRole('button', { name: 'Page Summary', exact: true }).click();
   await page.getByRole('button', { name: 'Restart fictional request', exact: true }).click();
+  await page
+    .getByRole('dialog', { name: 'Reset demo?', exact: true })
+    .getByRole('button', { name: 'Reset demo', exact: true })
+    .click();
   // Navigation follows the committed reset; the click alone only dispatches its async command.
   await expect(page).toHaveURL(/\/l\/instructions$/);
   expect(Object.keys((await saved(page)).answers)).toHaveLength(0);
