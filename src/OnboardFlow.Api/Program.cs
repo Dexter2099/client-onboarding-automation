@@ -112,6 +112,7 @@ app.UseExceptionHandler(handler => handler.Run(async http =>
             : "The workspace could not complete this request.").ExecuteAsync(http);
 }));
 app.UseApiSafety();
+app.UseOwnerAccess();
 app.Use(async (http, next) =>
 {
     if (http.Request.Path.StartsWithSegments("/api"))

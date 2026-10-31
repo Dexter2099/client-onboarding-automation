@@ -33,6 +33,37 @@ public sealed class OwnerAccessTests(FoundationFixture fixture) : IClassFixture<
             HashAlgorithmName.SHA256, DSASignatureFormat.IeeeP1363FixedFieldConcatenation);
         return $"v1.{expires}.{nonce}.{WebEncoders.Base64UrlEncode(signature)}";
     }
+    private string PermanentPass(string origin = Origin, string purpose = OwnerAccess.PermanentPurpose, ECDsa? signer = null)
+    {
+        var nonce = Convert.ToHexStringLower(RandomNumberGenerator.GetBytes(16));
+        var signature = (signer ?? key).SignData(Encoding.UTF8.GetBytes(string.Join('\n', purpose, origin, "permanent", nonce)),
+            HashAlgorithmName.SHA256, DSASignatureFormat.IeeeP1363FixedFieldConcatenation);
+        return $"v2.permanent.{nonce}.{WebEncoders.Base64UrlEncode(signature)}";
+    }
+
+    [Fact]
+    public void Permanent_grants_remain_valid_after_years_but_cannot_be_forged_or_reused_after_key_rotation()
+    {
+        var config = new ConfigurationBuilder().AddInMemoryCollection(Settings()).Build();
+        var owner = new OwnerAccess(config, fixture.Clock);
+        var pass = PermanentPass();
+        Assert.Null(Assert.IsType<OwnerGrant>(owner.Read(pass)).ExpiresAt);
+        var previous = fixture.Clock.Now;
+        try
+        {
+            fixture.Clock.Now = previous.AddYears(10);
+            Assert.NotNull(owner.Read(pass));
+        }
+        finally { fixture.Clock.Now = previous; }
+        using var other = ECDsa.Create(ECCurve.NamedCurves.nistP256);
+        foreach (var invalid in new[] { PermanentPass(origin: "https://somebody.example"), PermanentPass(purpose: OwnerAccess.Purpose),
+            PermanentPass(signer: other), pass.Replace("permanent", "permanentx"), pass.Replace("v2.", "v3."),
+            Pass().Replace("v1.", "v2."), pass.Replace("v2.", "v1.") })
+            Assert.Null(owner.Read(invalid));
+        var rotated = Settings();
+        rotated["OwnerAccess:PublicKey"] = Convert.ToBase64String(other.ExportSubjectPublicKeyInfo());
+        Assert.Null(new OwnerAccess(new ConfigurationBuilder().AddInMemoryCollection(rotated).Build(), fixture.Clock).Read(pass));
+    }
     [Theory]
     [InlineData("valid")]
     [InlineData("expired")]
@@ -60,13 +91,15 @@ public sealed class OwnerAccessTests(FoundationFixture fixture) : IClassFixture<
             _ => Pass()
         };
         if (scenario == "tampered") pass = pass.Replace("v1.", "v1.1");
-        Assert.Equal(scenario == "valid", owner.Expires(pass) is not null);
-        Assert.Null(owner.Expires(null));
-        Assert.Null(new OwnerAccess(new ConfigurationBuilder().Build(), fixture.Clock).Expires(pass));
+        Assert.Equal(scenario == "valid", owner.Read(pass) is not null);
+        Assert.Null(owner.Read(null));
+        Assert.Null(new OwnerAccess(new ConfigurationBuilder().Build(), fixture.Clock).Read(pass));
     }
 
-    [Fact]
-    public async Task Private_activation_bypasses_only_owner_run_count_and_preserves_public_limits_reset_and_expiry()
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task Private_activation_bypasses_only_owner_run_count_and_preserves_public_limits_reset_and_expiry(bool permanent)
     {
         var model = new IntakeTests.FakeModel { Failure = "timeout" }; // No inference.
         await using var factory = fixture.Factory.WithWebHostBuilder(builder =>
@@ -113,7 +146,7 @@ public sealed class OwnerAccessTests(FoundationFixture fixture) : IClassFixture<
         var html = await page.Content.ReadAsStringAsync();
         var formToken = WebUtility.HtmlDecode(Regex.Match(html, "name=\"__RequestVerificationToken\" value=\"([^\"]+)\"").Groups[1].Value);
         Assert.NotEmpty(formToken);
-        var pass = Pass();
+        var pass = permanent ? PermanentPass() : Pass();
         FormUrlEncodedContent Form(string value, bool protection = true, string action = "enable") => new(
             new Dictionary<string, string> { ["pass"] = value, ["action"] = action, ["__RequestVerificationToken"] = protection ? formToken : "" });
         Assert.Equal(HttpStatusCode.Forbidden, (await client.PostAsync("/api/owner-access", Form(pass, false))).StatusCode);
@@ -127,9 +160,11 @@ public sealed class OwnerAccessTests(FoundationFixture fixture) : IClassFixture<
         foreach (var flag in new[] { "secure", "httponly", "samesite=strict", "path=/", "max-age=" })
             Assert.Contains(flag, cookie, StringComparison.OrdinalIgnoreCase);
         Assert.DoesNotContain("domain=", cookie, StringComparison.OrdinalIgnoreCase);
+        if (permanent) Assert.Contains("max-age=34560000", cookie, StringComparison.OrdinalIgnoreCase);
         var enabled = await client.GetAsync("/api/owner-access");
         Assert.True(enabled.Headers.CacheControl!.NoStore);
-        Assert.Contains("Owner access enabled", await enabled.Content.ReadAsStringAsync());
+        Assert.Contains("owner access enabled", await enabled.Content.ReadAsStringAsync(), StringComparison.OrdinalIgnoreCase);
+        Assert.False((await client.GetAsync("/favicon.svg")).Headers.Contains("Set-Cookie"));
         (await Run(client, csrf)).EnsureSuccessStatusCode();
         Assert.Equal(1, model.Calls);
         var current = (await client.GetFromJsonAsync<IntakeView>("/api/intake/"))!;
@@ -144,7 +179,7 @@ public sealed class OwnerAccessTests(FoundationFixture fixture) : IClassFixture<
         try
         {
             Assert.Equal(HttpStatusCode.Unauthorized, (await client.GetAsync("/api/intake/")).StatusCode);
-            Assert.Contains("Owner access enabled", await client.GetStringAsync("/api/owner-access"));
+            Assert.Contains("owner access enabled", await client.GetStringAsync("/api/owner-access"), StringComparison.OrdinalIgnoreCase);
         }
         finally { fixture.Clock.Now = DateTimeOffset.UtcNow; }
         using var visitor = factory.CreateClient(new() { BaseAddress = new Uri(Origin), AllowAutoRedirect = false });
@@ -153,6 +188,23 @@ public sealed class OwnerAccessTests(FoundationFixture fixture) : IClassFixture<
         await Exhaust((await visitor.GetFromJsonAsync<SessionView>("/api/session"))!.Id);
         Assert.Equal(HttpStatusCode.TooManyRequests, (await Run(visitor, visitorCsrf)).StatusCode);
         Assert.Equal(1, model.Calls);
+        if (permanent)
+        {
+            var previous = fixture.Clock.Now;
+            try
+            {
+                fixture.Clock.Now = previous.AddDays(120);
+                var renewed = await client.GetAsync("/api/csrf");
+                var refreshedCookie = renewed.Headers.GetValues("Set-Cookie").Single(x => x.StartsWith(OwnerAccess.CookieName + "="));
+                Assert.Contains("max-age=34560000", refreshedCookie, StringComparison.OrdinalIgnoreCase);
+                Assert.True(renewed.Headers.CacheControl!.NoStore);
+                Assert.Contains("Permanent owner access enabled", await client.GetStringAsync("/api/owner-access"));
+            }
+            finally { fixture.Clock.Now = previous; }
+        }
+        var visitorRefresh = await visitor.GetAsync("/api/csrf");
+        Assert.DoesNotContain(visitorRefresh.Headers.TryGetValues("Set-Cookie", out var visitorCookies) ? visitorCookies : [],
+            value => value.StartsWith(OwnerAccess.CookieName + "="));
         Assert.Equal(HttpStatusCode.OK, (await client.PostAsync("/api/owner-access", Form("", action: "disable"))).StatusCode);
         Assert.Contains("Enable owner access", await client.GetStringAsync("/api/owner-access"));
         Assert.Equal(HttpStatusCode.TooManyRequests, (await Run(client, csrf)).StatusCode);

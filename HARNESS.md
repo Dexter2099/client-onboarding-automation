@@ -1,5 +1,15 @@
 # Development harness
 
+## Permanent owner access — 31 October 2026
+
+Dexter requested removal of the owner grant's 90-day expiry. A v2 grant signs a separate `onboardflow-owner-runs-v2` purpose, canonical public origin, literal permanent scope and random nonce with the existing separate owner key. It has no application calendar expiry; v1 grants retain their bounded expiry and cannot be relabelled into v2. Rotating the public verifier invalidates previously signed grants. Browser Disable removes only the current cookie, so copied bearer credentials must be revoked through key rotation.
+
+Permanent owner cookies retain Secure/HttpOnly/SameSite=Strict/Path=/ and the `__Host-` prefix. Only existing no-store GET `/api/csrf` startup and owner-status reads renew the cookie up to Chrome's 400-day limit, without adding a request or personalizing cached public assets. Browser clearing, eviction or more than 400 days without renewal can still require activation. Reset and new 24-hour workspaces do not remove the grant. Public visitors keep three starts per sandbox; shared spending limits, six-call/token/deadline protections, ownership and manual submission remain unchanged.
+
+Deterministic checks exercise permanent validity after ten years, old-token expiry, wrong purpose/origin/key/version/tampering, key rotation, private form/CSRF/cookie guards, fourth-run owner access with a model double, visitor cap, reset/expiry, and automatic renewal after 120 days without granting a visitor cookie. Connected Chrome must verify enrollment and fresh-GET status on the local correction before publishing, then repeat against the expected live revision. No real AI calls are permitted. The separate read-only abuse assessment and dependency-advisory outputs are retained locally under ignored `.local/owner-access/`; no live load testing or unapproved anti-abuse changes.
+
+Before publication, 180 deterministic backend checks and the existing Chromium/Firefox/WebKit suite passed. Connected Chrome submitted the permanent pass to the corrected local app, retained the Permanent owner access status on a fresh GET, then disabled the temporary local enrollment and closed that tab. The agent endpoint remained blocked during Chrome verification. npm production/all-package advisory scans and the .NET transitive advisory scan reported no known vulnerable dependencies; these are advisory results, not a full penetration test or proof of absence of vulnerabilities. Final CI/live enrollment evidence belongs in the release PR and sanitized local report.
+
 ## Private owner run-count exception — 31 October 2026
 
 The owner pass bypasses only the three-start sandbox check. Public visitors still receive 429 on a fourth start; a client JSON owner flag grants nothing. Reset preserves the usage counter. Six-call/token/deadline restrictions, fixed sandbox lifetime, human-only submission and the shared spending ledger/cap remain unchanged. The owner pass is independent of the 24-hour sandbox and expires within 90 days.
