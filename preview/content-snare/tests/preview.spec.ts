@@ -170,7 +170,7 @@ test('editing clears provenance and submission; invalid values and questions rem
   await page.getByRole('button', { name: 'SUBMIT FOR REVIEW', exact: true }).click();
   await page.getByRole('button', { name: /^Legal Company Name submitted/ }).click();
   await page.getByRole('button', { name: 'EDIT ANSWER', exact: true }).click();
-  expect((await saved(page)).answers.legal.status).toBe('draft');
+  await expect.poll(async () => (await saved(page)).answers.legal.status).toBe('draft');
   await page.getByRole('button', { name: /^Email draft/ }).click();
   await page.getByRole('textbox', { name: 'Email', exact: true }).fill('invalid');
   await page.getByRole('button', { name: 'SUBMIT FOR REVIEW', exact: true }).click();

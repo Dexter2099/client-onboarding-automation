@@ -15,7 +15,8 @@ public static class IntakeEndpoints
             var config = provider.GetRequiredService<IConfiguration>();
             var connection = config["Intake:SpendConnectionString"] ?? config.GetConnectionString("OnboardFlow")
                 ?? throw new InvalidOperationException("The spending ledger needs PostgreSQL.");
-            return new FoundationDb(new DbContextOptionsBuilder<FoundationDb>().UseNpgsql(connection).Options);
+            return new FoundationDb(new DbContextOptionsBuilder<FoundationDb>()
+                .UseNpgsql(PostgresTransport.WithoutOptionalGss(connection)).Options);
         });
         services.AddHttpClient<OllamaIntakeClient>(http =>
         {
