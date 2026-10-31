@@ -2,6 +2,7 @@
 # Original local preview assets are preserved in public/ under versioned release filenames.
 preview/content-snare/public/
 node_modules/
+.wrangler/
 dist/
 **/bin/
 **/obj/

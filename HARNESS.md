@@ -1,5 +1,13 @@
 # Development harness
 
+## Cloudflare public asset delivery — 31 October 2026
+
+Dexter authorised one Cloudflare asset release with unchanged screens/flow and **zero AI calls**. The Hostless application remains on its stable release. The gateway uses the existing Pages asset binding only for approved hashed JS/CSS/fonts and versioned walkthrough files, retaining security headers, immutable caching, HEAD/conditional/range responses and signed read-only fallback for missing assets. HTML, release/readiness and all private API/mutation routes keep the signed origin path; a failed origin cannot become a static success page.
+
+The packager exports only approved regular public files and a revision-stamped Worker, with a sibling hash manifest and a 404 document rather than an app shell. Edge-only CI verifies/builds/packages without invoking the Hostless deploy or automatic paid model check. No secret is exported or transferred to CI. The release PR records exact asset revision/deployment, unchanged backend marker, byte comparisons, zero-AI Chrome first-load/manual-flow evidence and native asset/range/security checks. Local evidence is under `.local/asset-delivery-20261031/`. Local preview simulates the Pages asset binding using the existing development static server; actual Cloudflare behavior and timings must be identified separately after promotion.
+
+Local gateway checks (10), package-boundary checks, frontend build/typecheck, formatting and whitespace checks pass. All seven promoted JS/CSS/font/recording files match current hosted bytes. Wrangler compiles the Worker. Connected Chrome preview checks manual save/submission, persisted reload, source pack, both fonts, full recording playback, desktop reset and 390px layout/reset cancellation, with the model endpoint blocked and no AI requests. Production acceptance is recorded in the release PR after the single Pages promotion.
+
 ## Lean startup, read and old-demo cleanup — 31 October 2026
 
 Dexter authorised these three changes together with connected-Chrome verification and one consolidated release. The existing interface, endpoints, reset and inference controls remain. Startup GETs CSRF and the owned intake concurrently: two requests for an existing visitor; a new visitor adds the session POST, whose transaction creates and returns the initial current request. A concurrent session start can fall back to reading the existing request. Expired workspaces retain explicit fresh-workspace recovery; non-401 failures retain their original problem message. The explicit fresh action also uses the created snapshot when available.

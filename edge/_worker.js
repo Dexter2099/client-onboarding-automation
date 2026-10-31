@@ -1,7 +1,72 @@
 const PUBLIC_ORIGIN = 'https://dexter-onboardflow.pages.dev';
 const UPSTREAM_ORIGIN = 'https://onboardflow.hostless.app';
 const MAX_BODY_BYTES = 16384;
+const ASSET_RELEASE = 'unpackaged';
+const ASSET_POLICY =
+  "default-src 'none'; script-src 'self'; script-src-attr 'none'; " +
+  "style-src 'self'; style-src-attr 'none'; img-src 'self'; font-src 'self'; media-src 'self'; connect-src 'self'; " +
+  "base-uri 'none'; object-src 'none'; frame-ancestors 'none'; form-action 'none'";
 let importedKey;
+
+export function publicAssetType(path) {
+  const extension = /^\/assets\/[A-Za-z0-9_-]+-[A-Za-z0-9_-]{8,}\.(js|css|woff2)$/.exec(path)?.[1];
+  if (extension) return { js: 'javascript', css: 'text/css', woff2: 'font/woff2' }[extension];
+  return {
+    '/onboardflow-local-ai-20261025.mp4': 'video/mp4',
+    '/onboardflow-local-ai-20261025.webm': 'video/webm',
+    '/onboardflow-local-ai-20261025.webp': 'image/webp',
+  }[path];
+}
+
+async function publicAsset(request, env, expectedType) {
+  if (!env.ASSETS) return null;
+  try {
+    // Public immutable files never need visitor credentials or forwarding headers.
+    const headers = new Headers();
+    for (const name of [
+      'Range',
+      'If-Range',
+      'If-None-Match',
+      'If-Modified-Since',
+      'Accept-Encoding',
+    ]) {
+      if (request.headers.has(name)) headers.set(name, request.headers.get(name));
+    }
+    const asset = await env.ASSETS.fetch(
+      new Request(request.url, { method: request.method, headers }),
+    );
+    const type = asset.headers.get('content-type') ?? '';
+    const valid = [200, 206].includes(asset.status) && type.includes(expectedType);
+    const conditional =
+      asset.status === 304 && (headers.has('If-None-Match') || headers.has('If-Modified-Since'));
+    const rangeError =
+      asset.status === 416 &&
+      headers.has('Range') &&
+      /^bytes \*\/\d+$/.test(asset.headers.get('content-range') ?? '');
+    // A missing file or SPA fallback must never be returned as JavaScript. Old hashes
+    // can still use the signed origin, including while release versions overlap.
+    if (!valid && !conditional && !rangeError) return null;
+    const responseHeaders = new Headers(asset.headers);
+    responseHeaders.delete('Set-Cookie');
+    responseHeaders.set(
+      'Cache-Control',
+      rangeError ? 'no-store' : 'public, max-age=31536000, immutable',
+    );
+    responseHeaders.set('Content-Security-Policy', ASSET_POLICY);
+    responseHeaders.set('X-Content-Type-Options', 'nosniff');
+    responseHeaders.set('X-Frame-Options', 'DENY');
+    responseHeaders.set('Referrer-Policy', 'no-referrer');
+    responseHeaders.set('Strict-Transport-Security', 'max-age=86400');
+    responseHeaders.set('X-OnboardFlow-Asset-Source', 'pages');
+    responseHeaders.set('X-OnboardFlow-Asset-Revision', ASSET_RELEASE);
+    return new Response(request.method === 'HEAD' ? null : asset.body, {
+      status: asset.status,
+      headers: responseHeaders,
+    });
+  } catch {
+    return null; // Only a public GET/HEAD can fall back; never replay an API mutation.
+  }
+}
 
 const unavailable = () =>
   new Response('The demo is temporarily unavailable. Please try again shortly.', {
@@ -45,6 +110,12 @@ export default {
       return Response.redirect(PUBLIC_ORIGIN + incoming.pathname + incoming.search, 308);
     }
     if (!env.EDGE_SIGNING_KEY) return unavailable();
+    const assetType =
+      ['GET', 'HEAD'].includes(request.method) && publicAssetType(incoming.pathname);
+    if (assetType) {
+      const asset = await publicAsset(request, env, assetType);
+      if (asset) return asset;
+    }
     const body = await readBody(request);
     if (body === null) return new Response('Request too large.', { status: 413 });
     try {
