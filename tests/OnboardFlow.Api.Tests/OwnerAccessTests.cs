@@ -109,6 +109,7 @@ public sealed class OwnerAccessTests(FoundationFixture fixture) : IClassFixture<
         Assert.Equal(0, model.Calls);
         var page = await client.GetAsync("/api/owner-access");
         Assert.True(page.Headers.CacheControl!.NoStore);
+        Assert.Contains("form-action 'self'", page.Headers.GetValues("Content-Security-Policy").Single());
         var html = await page.Content.ReadAsStringAsync();
         var formToken = WebUtility.HtmlDecode(Regex.Match(html, "name=\"__RequestVerificationToken\" value=\"([^\"]+)\"").Groups[1].Value);
         Assert.NotEmpty(formToken);
