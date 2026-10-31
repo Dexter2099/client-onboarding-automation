@@ -2,6 +2,8 @@
 
 ## Private owner run-count exception — 31 October 2026
 
+Chrome exposed that native owner-form submission was blocked by the public `form-action 'none'` CSP, which API-only tests cannot exercise. Permit `form-action 'self'` only on `/api/owner-access`, retain the public policy, and require real browser form submission in regression before publishing the correction. Preserve the first rollout and failed live-check evidence; do not rerun the deployment job to repair a switchover timeout.
+
 Dexter explicitly requested removal of the three-run sandbox cap for himself only. Implement the private signed owner pass, leave visitor limits and shared spending/per-run/ownership safeguards unchanged, and verify with zero inference. The separate owner private key and bearer pass stay DPAPI-encrypted in ignored `.local/owner-access/`; only the owner public verification key is committed. Never print or put a pass in a URL, chat, artifact upload or repository. Enroll through the CSRF-protected HTTPS owner form and secure HttpOnly host cookie; no public demo flow/UI changes. Do not implement the reassessment proposals without separate authority. Owner verification uses test doubles and the read-only private status page, not a paid AI run. Frontend/edge bytes are unchanged, so preserve the existing Pages release and publish only one app rollout after checks.
 
 ## Cold public metadata correction — 31 October 2026
