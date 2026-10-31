@@ -101,6 +101,10 @@ test('metadata and video ranges retain the signed origin handler; Pages serves c
       assert(init.headers.has('x-onboardflow-edge-signature'));
       for (const [name, value] of Object.entries(scenario.input))
         assert.equal(init.headers.get(name), value);
+      // Model the CDN's cold-cache HEAD rewrite; bypass must preserve the signed method.
+      if (init.method === 'HEAD' && init.cache !== 'no-store')
+        return new Response(null, { status: 308, headers: { Location: origin } });
+      assert.equal(init.cache, 'no-store');
       return new Response(scenario.body, { status: scenario.status, headers: scenario.output });
     };
     const response = await worker.fetch(

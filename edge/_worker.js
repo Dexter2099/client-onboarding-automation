@@ -151,6 +151,9 @@ export default {
         headers,
         body: body.byteLength ? body : undefined,
         redirect: 'manual',
+        // Cache fills may rewrite HEAD to GET, invalidating the method-bound signature.
+        // Pages assets retain native caching; signed origin requests must reach origin unchanged.
+        cache: 'no-store',
         signal: request.signal,
       });
       // A failed origin must fail visibly rather than redirect visitors into a loop.
