@@ -1,5 +1,15 @@
 # Development harness
 
+## Optional PostgreSQL GSS log errors — 31 October 2026
+
+Hostless emailed **Application errors detected** at **10:07:41** and **10:12:04 Brisbane**. The incidents were `6ae5314cc930193701bd6aa7` (detected 10:06:29) and `6ae53253c930193701c84ac7` (detected 10:10:29). The latter's captured logs contain `Cannot load library libgssapi_krb5.so.2` and `Error: Error loading shared library libgssapi_krb5.so.2: No such file or directory` at **10:07:06**. Live page, release marker, CSRF and database-readiness checks passed at **10:12:41**. Successful request checks did not establish clean native logs.
+
+[Npgsql's security documentation](https://www.npgsql.org/doc/security.html) describes this exact Npgsql 10 default-GSS-preference error and the successful fallback. The app uses its configured TLS/password connection; `PostgresTransport.WithoutOptionalGss` changes optional GSS Prefer to Disable in both the main EF registration and the separate spending-ledger registration. It preserves every other connection-string setting and an explicit GSS Require. No credentials, TLS options, dependencies, database/ledger data or alert rules are changed.
+
+Four DI-level connection tests cover the main database, ledger fallback, dedicated ledger, quoted credentials, TLS/certificate/channel-binding settings and explicit GSS Require/Disable. The two optional-GSS cases failed before the fix; all four pass afterward, alongside the seven liveness and 16 signature-boundary cases (**27 targeted checks**). Production log acceptance is pending at this checkpoint; do not claim the alerts are fixed from the passing request tests alone.
+
+A separate CPU-throttling warning captured **29.38% peak / 0.67% last sample**, threshold 25%, over **10:03:10–10:13:10** on the existing 0.25-core/512-MiB release. That overlaps deployment/testing, but time overlap does not establish causation. Its automatic recovery remains to be observed; no resource or alert-threshold change was made.
+
 ## Native HTTP liveness — 31 October 2026
 
 **HTTP GET `/health` every 10 seconds is active**, replacing TCP every 30 seconds. Hostless shows **Running**, the health settings have no pending-deployment banner, and the public runtime marker is **40b7a1d906b6263f28590f730509e3e8110e3007**. Manual repaired deployment **6ae52ce79d45df4e790f048f** became Deployed/Live; the subsequent GitHub release **6ae5309f21d7d1faa33ff131**, source **c44c68b094aa92c3f524036cad996a44ef408349**, also became Deployed/Live with the same runtime and HTTP setting. This supersedes the earlier pending checkpoint.
