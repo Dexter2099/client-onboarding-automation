@@ -1,5 +1,9 @@
 # OnboardFlow agent instructions
 
+## Cold public metadata correction — 31 October 2026
+
+Live probes proved the hosting CDN converts a cold cacheable HEAD into GET before method-bound signature verification, even with caller cache bypass. For approved public-file HEAD only, explicitly sign/fetch an origin GET with identity encoding, cancel its body and return native metadata without a body. Keep private/API HEAD, writes and range GETs unchanged; do not add a signature-method exception or implement media slicing. Verify first HEAD on fresh query keys before any warming GET. Caller cache bypass alone failed live acceptance; do not repeat that as a complete fix. This is an edge-only correction; keep the live backend and zero-inference authority unchanged.
+
 ## Latency, cleanup and recovery authority — 31 October 2026
 
 Dexter authorised the request-latency, obsolete-frontend/completed-conversation cleanup and save-recovery fixes, unchanged screens/flow, connected Chrome verification with **zero AI calls**, and one consolidated release. This supersedes older real-model acceptance requirements for this non-model release. Preserve locking, ownership/expiry, command receipts, source/trace/spending records, model/prompt/limits, signed gateway, native media semantics and existing health/monitoring. Ordinary read/save timeouts use the existing Load saved work action; do not replay uncertain writes. Removing redundant savepoints is scoped to IntakeStore's owned, whole-transaction rollback. Real-model macOS acceptance now requires explicit `LIVE_AI_ACCEPTANCE_ENABLED=true`; keep it unset for this release. Retire only the superseded frontend and exclusive dependency; legacy stored-project APIs and used local adapters remain supported.
